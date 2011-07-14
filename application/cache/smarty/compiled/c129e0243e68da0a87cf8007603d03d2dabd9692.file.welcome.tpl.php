@@ -1,23 +1,23 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 19:47:09
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 23:20:12
          compiled from "application/views/welcome.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:4865723934e1f39ad4740d8-71560670%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:11120315374e1f6b9ca1cbb7-76093525%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'c129e0243e68da0a87cf8007603d03d2dabd9692' => 
     array (
       0 => 'application/views/welcome.tpl',
-      1 => 1310668673,
+      1 => 1310682011,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '4865723934e1f39ad4740d8-71560670',
+  'nocache_hash' => '11120315374e1f6b9ca1cbb7-76093525',
   'function' => 
   array (
   ),
   'has_nocache_code' => false,
 )); /*/%%SmartyHeaderCode%%*/?>
-<h1>Welcome to CodeIgniter!</h1>
+<h1>Welcome to the Infinite Conflict game editor!</h1>
 
 <ul>
   <li><a href="/resources">Resource Editor</a></li>

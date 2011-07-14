@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 22:14:43
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 23:59:49
          compiled from "application/views/resources/index.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:15007888094e1f5c431e35b0-03243156%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:9648547024e1f74e50a4458-35445903%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '82d85804c453e97341bf796241cae70d315ffa19' => 
     array (
       0 => 'application/views/resources/index.tpl',
-      1 => 1310678036,
+      1 => 1310684387,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '15007888094e1f5c431e35b0-03243156',
+  'nocache_hash' => '9648547024e1f74e50a4458-35445903',
   'function' => 
   array (
   ),
@@ -40,7 +40,7 @@ $_smarty_tpl->decodeProperties(array (
   <tbody>
 
     <tr>
-      <td colspan="10"><a href="/resources/add">Add</a></td>
+      <td colspan="11"><a href="/resources/add">Add</a></td>
     </tr>
 
     <?php if ($_smarty_tpl->getVariable('res')->value){?>

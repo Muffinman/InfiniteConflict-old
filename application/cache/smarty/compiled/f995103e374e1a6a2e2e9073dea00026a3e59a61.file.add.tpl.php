@@ -1,26 +1,25 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-15 00:02:06
-         compiled from "application/views/resources/edit.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:18803094054e1f756e8ee0f8-10541495%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 21:44:08
+         compiled from "application/views/research/add.tpl" */ ?>
+<?php /*%%SmartyHeaderCode:20085459404e1f55189a3915-87091063%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
-    'b5a9be771c628ccd51ac41aaf071094a0f88f8c0' => 
+    'f995103e374e1a6a2e2e9073dea00026a3e59a61' => 
     array (
-      0 => 'application/views/resources/edit.tpl',
-      1 => 1310590805,
+      0 => 'application/views/research/add.tpl',
+      1 => 1310675824,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '18803094054e1f756e8ee0f8-10541495',
+  'nocache_hash' => '20085459404e1f55189a3915-87091063',
   'function' => 
   array (
   ),
   'has_nocache_code' => false,
 )); /*/%%SmartyHeaderCode%%*/?>
-<h1>Editing <?php echo $_smarty_tpl->getVariable('res')->value['name'];?>
-</h1>
+<h1>Adding research</h1>
 
-<p><a href="/resources">Back to resources</a></p>
+<p><a href="/research">Back to research</a></p>
 
 <?php if ($_smarty_tpl->getVariable('messages')->value){?>
   <?php  $_smarty_tpl->tpl_vars['m'] = new Smarty_Variable;

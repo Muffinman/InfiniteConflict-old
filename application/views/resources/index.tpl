@@ -21,7 +21,7 @@
   <tbody>
 
     <tr>
-      <td colspan="10"><a href="/resources/add">Add</a></td>
+      <td colspan="11"><a href="/resources/add">Add</a></td>
     </tr>
 
     {if $res}

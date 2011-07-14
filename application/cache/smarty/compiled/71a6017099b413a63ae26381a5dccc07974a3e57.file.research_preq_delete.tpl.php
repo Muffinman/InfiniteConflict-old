@@ -1,26 +1,27 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-15 00:02:06
-         compiled from "application/views/resources/edit.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:18803094054e1f756e8ee0f8-10541495%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 22:43:26
+         compiled from "application/views/research/research_preq_delete.tpl" */ ?>
+<?php /*%%SmartyHeaderCode:19058692914e1f62fe8396a9-77824274%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
-    'b5a9be771c628ccd51ac41aaf071094a0f88f8c0' => 
+    '71a6017099b413a63ae26381a5dccc07974a3e57' => 
     array (
-      0 => 'application/views/resources/edit.tpl',
-      1 => 1310590805,
+      0 => 'application/views/research/research_preq_delete.tpl',
+      1 => 1310675966,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '18803094054e1f756e8ee0f8-10541495',
+  'nocache_hash' => '19058692914e1f62fe8396a9-77824274',
   'function' => 
   array (
   ),
   'has_nocache_code' => false,
 )); /*/%%SmartyHeaderCode%%*/?>
-<h1>Editing <?php echo $_smarty_tpl->getVariable('res')->value['name'];?>
-</h1>
+<h1>Deleting <?php echo $_smarty_tpl->getVariable('research')->value['name'];?>
+ prerequisites</h1>
 
-<p><a href="/resources">Back to resources</a></p>
+<p><a href="/research/research_preq/<?php echo $_smarty_tpl->getVariable('research')->value['id'];?>
+">Back to research</a></p>
 
 <?php if ($_smarty_tpl->getVariable('messages')->value){?>
   <?php  $_smarty_tpl->tpl_vars['m'] = new Smarty_Variable;
@@ -43,11 +44,3 @@ if ($_smarty_tpl->_count($_from) > 0){
     </div>
   <?php }} ?>
 <?php }?>
-
-
-<?php if ($_smarty_tpl->getVariable('errors')->value){?>
-  <?php echo $_smarty_tpl->getVariable('errors')->value;?>
-
-<?php }?>
-<?php echo $_smarty_tpl->getVariable('form')->value;?>
-

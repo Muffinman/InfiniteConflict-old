@@ -3,64 +3,36 @@
 <head>
 	<meta charset="utf-8">
 	<title>{$meta_title}</title>
-
-<style type="text/css">
-
-body {
- background-color: #fff;
- margin: 40px;
- font-family: Lucida Grande, Verdana, Sans-serif;
- font-size: 14px;
- color: #4F5155;
-}
-
-a {
- color: #003399;
- background-color: transparent;
- font-weight: normal;
-}
-
-h1 {
- color: #444;
- background-color: transparent;
- border-bottom: 1px solid #D0D0D0;
- font-size: 16px;
- font-weight: bold;
- margin: 24px 0 2px 0;
- padding: 5px 0 6px 0;
-}
-
-code {
- font-family: Monaco, Verdana, Sans-serif;
- font-size: 12px;
- background-color: #f9f9f9;
- border: 1px solid #D0D0D0;
- color: #002166;
- display: block;
- margin: 14px 0 14px 0;
- padding: 12px 10px 12px 10px;
-}
-
-table{
-  margin:20px 0;
-}
-
-
-td, th{
-  padding:4px;
-  font-size:13px;
-}
-
-
-</style>
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
 
-{if $content}
-  {$content}
-{/if}
+<div id="background">
+  <div id="container">
 
-<p><br />Page rendered in {literal}{elapsed_time}{/literal} seconds</p>
+    <ul id="menu">
+      <li class="home"><a href="">Home</a></li>
+      <li class="planets"><a href="">Planets</a></li>
+      <li class="fleets"><a href="">Fleets</a></li>
+      <li class="navigation"><a href="">Navigation</a></li>
+      <li class="research"><a href="">Research</a></li>
+      <li class="alliances"><a href="">Alliances</a></li>
+    </ul>
+    <div class="content headbar menu">
+      <p>Welcome to the Infinite Conflict Game Editor</p>
+    </div>
+
+    <div class="content">
+      {if $content}
+        {$content}
+      {/if}
+    </div>
+
+    <div class="content headbar">
+      <p>Page rendered in {literal}{elapsed_time}{/literal} seconds</p>
+    </div>
+  </div>
+  </div>
 
 </body>
 </html>

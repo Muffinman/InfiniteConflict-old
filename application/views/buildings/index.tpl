@@ -17,7 +17,7 @@
   </thead>
   <tbody>
     <tr>
-      <td colspan="7"><a href="/buildings/add">Add</a></td>
+      <td colspan="9"><a href="/buildings/add">Add</a></td>
     </tr>
     {if $buildings}
       {foreach from=$buildings item=b}

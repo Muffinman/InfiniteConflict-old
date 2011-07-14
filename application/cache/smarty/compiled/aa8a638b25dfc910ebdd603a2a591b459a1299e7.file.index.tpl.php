@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 20:58:18
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-15 00:01:49
          compiled from "application/views/buildings/index.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:4129811554e1f4a5a520340-94282646%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:13532948124e1f755ded6021-76088821%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'aa8a638b25dfc910ebdd603a2a591b459a1299e7' => 
     array (
       0 => 'application/views/buildings/index.tpl',
-      1 => 1310673496,
+      1 => 1310684508,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '4129811554e1f4a5a520340-94282646',
+  'nocache_hash' => '13532948124e1f755ded6021-76088821',
   'function' => 
   array (
   ),
@@ -36,7 +36,7 @@ $_smarty_tpl->decodeProperties(array (
   </thead>
   <tbody>
     <tr>
-      <td colspan="7"><a href="/buildings/add">Add</a></td>
+      <td colspan="9"><a href="/buildings/add">Add</a></td>
     </tr>
     <?php if ($_smarty_tpl->getVariable('buildings')->value){?>
       <?php  $_smarty_tpl->tpl_vars['b'] = new Smarty_Variable;

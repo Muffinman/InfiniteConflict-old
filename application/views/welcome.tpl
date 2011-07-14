@@ -1,4 +1,4 @@
-<h1>Welcome to CodeIgniter!</h1>
+<h1>Welcome to the Infinite Conflict game editor!</h1>
 
 <ul>
   <li><a href="/resources">Resource Editor</a></li>
