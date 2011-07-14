@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-13 21:58:55
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 22:14:43
          compiled from "application/views/resources/index.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:194195244e1e070f9fc923-03605144%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:15007888094e1f5c431e35b0-03243156%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '82d85804c453e97341bf796241cae70d315ffa19' => 
     array (
       0 => 'application/views/resources/index.tpl',
-      1 => 1310590731,
+      1 => 1310678036,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '194195244e1e070f9fc923-03605144',
+  'nocache_hash' => '15007888094e1f5c431e35b0-03243156',
   'function' => 
   array (
   ),
@@ -34,6 +34,7 @@ $_smarty_tpl->decodeProperties(array (
       <th>Creation Time</th>
       <th>Interest Rate</th>
       <th>Requires Storage</th>
+      <th>Global</th>
     </tr>
   </thead>
   <tbody>
@@ -68,6 +69,8 @@ if ($_smarty_tpl->_count($_from) > 0){
           <td><?php echo $_smarty_tpl->tpl_vars['r']->value['interest'];?>
 </td>
           <td><?php echo $_smarty_tpl->tpl_vars['r']->value['req_storage'];?>
+</td>
+          <td><?php echo $_smarty_tpl->tpl_vars['r']->value['global'];?>
 </td>
         </tr>
       <?php }} ?>

@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-13 21:59:41
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 22:13:19
          compiled from "application/views/resources/conversion_list.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:5121141294e1e073dacb0e9-08722321%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:868469054e1f5befb45c60-74083002%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '32769c680104e5fb21aa5b2f64f369aebade64f2' => 
     array (
       0 => 'application/views/resources/conversion_list.tpl',
-      1 => 1310590780,
+      1 => 1310677940,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '5121141294e1e073dacb0e9-08722321',
+  'nocache_hash' => '868469054e1f5befb45c60-74083002',
   'function' => 
   array (
   ),
@@ -30,6 +30,7 @@ $_smarty_tpl->decodeProperties(array (
       <th>Resource Name</th>
       <th>Quantity</th>
       <th>Refund</th>
+      <th>Global</th>
     </tr>
   </thead>
   <tbody>
@@ -57,6 +58,8 @@ if ($_smarty_tpl->_count($_from) > 0){
           <td><?php echo $_smarty_tpl->tpl_vars['c']->value['qty'];?>
 </td>
           <td><?php echo $_smarty_tpl->tpl_vars['c']->value['refund'];?>
+</td>
+          <td><?php echo $_smarty_tpl->tpl_vars['c']->value['global'];?>
 </td>
         </tr>
       <?php }} ?>

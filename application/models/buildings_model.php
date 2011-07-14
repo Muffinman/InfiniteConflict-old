@@ -68,7 +68,7 @@ class Buildings_model extends CI_Model {
     if ($query->num_rows() > 0){
       return $query->row_array();
     }
-    return false;            
+    return false;
   }
 
   public function resources_avail($id){
@@ -105,6 +105,103 @@ class Buildings_model extends CI_Model {
   
   public function resources_delete($id, $resource_id){
     $q = "DELETE FROM building_has_resource WHERE building_id=" . $this->db->escape($id) . " AND resource_id=" . $this->db->escape($resource_id);
+    return $this->db->query($q);
+  }
+
+  public function buildings_preq_list($id){
+    $q = "SELECT b.* FROM building_prereq AS p
+              LEFT JOIN building AS b ON p.prereq = b.id
+              WHERE p.building_id=" . $this->db->escape($id);
+    $query = $this->db->query($q);
+    if ($query->num_rows() > 0){
+      return $query->result_array();
+    }
+    return false;
+  }
+
+  public function buildings_preq_avail($id){
+    $buildings = $this->read();
+    $used = $this->buildings_preq_list($id);
+
+    $avail = array();
+    foreach ($buildings as $b){
+      if (!empty($used)){
+        foreach ($used as $b2){
+          if ($b2['id'] == $b['id']){
+            continue 2;
+          }
+        }
+      }
+      $avail[] = $b;
+    }
+    if (!empty($avail)){
+      return $avail;
+    }
+    return false;
+  }
+
+  public function buildings_preq_create($id, $data){
+    $data['building_id'] = $id;
+    $q = $this->db->insert_string('building_prereq', $data);
+    return $this->db->query($q);
+  }
+
+  public function buildings_preq_delete($id, $prereq){
+    $q = "DELETE FROM building_prereq WHERE building_id=" . $this->db->escape($id) . " AND prereq=" . $this->db->escape($prereq);
+    return $this->db->query($q);
+  }
+
+
+  public function research_list(){
+    $q = "SELECT * FROM research ORDER BY id ASC";
+    $query = $this->db->query($q);
+    if ($query->num_rows() > 0){
+      return $query->result_array();
+    }
+    return false;
+  }
+
+
+  public function research_preq_list($id){
+    $q = "SELECT r.* FROM building_res_prereq AS p
+              LEFT JOIN research AS r ON p.research_id = r.id
+              WHERE p.building_id=" . $this->db->escape($id);
+    $query = $this->db->query($q);
+    if ($query->num_rows() > 0){
+      return $query->result_array();
+    }
+    return false;
+  }
+
+  public function research_preq_avail($id){
+    $researches = $this->research_list();
+    $used = $this->research_preq_list($id);
+
+    $avail = array();
+    foreach ($researches as $b){
+      if (!empty($used)){
+        foreach ($used as $b2){
+          if ($b2['id'] == $b['id']){
+            continue 2;
+          }
+        }
+      }
+      $avail[] = $b;
+    }
+    if (!empty($avail)){
+      return $avail;
+    }
+    return false;
+  }
+
+  public function research_preq_create($id, $data){
+    $data['building_id'] = $id;
+    $q = $this->db->insert_string('building_res_prereq', $data);
+    return $this->db->query($q);
+  }
+
+  public function research_preq_delete($id, $prereq){
+    $q = "DELETE FROM building_res_prereq WHERE building_id=" . $this->db->escape($id) . " AND research_id=" . $this->db->escape($prereq);
     return $this->db->query($q);
   }
 

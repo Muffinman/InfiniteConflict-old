@@ -21,7 +21,7 @@ class Resources extends CI_Controller{
 
   public function edit($id){
     $messages = array();
-    
+
     $resource = $this->Resources_model->read_single($id);
 
     if ($this->input->post()){
@@ -36,6 +36,7 @@ class Resources extends CI_Controller{
     $this->formclass->Integer('turns', false, 0, 11);
     $this->formclass->Float('interest', false);
     $this->formclass->Checkbox('req_storage', true);
+    $this->formclass->Checkbox('global', true);
 
     $this->smarty->assign('form', $this->formclass->DrawForm());
 

@@ -113,7 +113,7 @@ class Buildings extends CI_Controller{
 
 
   public function resources($id, $action='list', $resource_id=false){
-  
+
     switch ($action){
       case 'add':  $this->resources_add($id); break;
       case 'edit': $this->resources_edit($id, $resource_id); break;
@@ -121,13 +121,13 @@ class Buildings extends CI_Controller{
       case 'list':
       default: $this->resources_list($id); break;
     }
-    
+
   }
 
 
 
   private function resources_list($id){
-    $building = $this->Buildings_model->read_single($id); 
+    $building = $this->Buildings_model->read_single($id);
     $resources = $this->Buildings_model->building_resources_list($id);
 
     $this->smarty->assign('building', $building);
@@ -135,10 +135,10 @@ class Buildings extends CI_Controller{
     $this->smarty->assign('meta_title', 'Editing ' . $building['name']);
 
     $this->smarty->assign('content', $this->parser->parse('buildings/resources_list.tpl', array(), true));
-    $this->parser->parse('layout.tpl', array());  
+    $this->parser->parse('layout.tpl', array());
   }
-  
-  
+
+
 
   private function resources_add($id){
     $building = $this->Buildings_model->read_single($id);
@@ -164,9 +164,9 @@ class Buildings extends CI_Controller{
     $this->formclass->Float('interest', false);
     $this->formclass->Float('abundance', false);
     $this->formclass->Float('refund', false);
-    
+
     $this->smarty->assign('form', $this->formclass->DrawForm());    
-    
+
     if ($this->formclass->hasErrors){
       if ($this->input->post()){
         $this->smarty->assign('errors', $this->formclass->DisplayErrors());
@@ -184,12 +184,12 @@ class Buildings extends CI_Controller{
     $this->smarty->assign('meta_title', 'Adding ' . $building['name'] . ' ' . $resources['name'] . 'resource cost');
 
     $this->smarty->assign('content', $this->parser->parse('buildings/resources_add.tpl', array(), true));
-    $this->parser->parse('layout.tpl', array());  
+    $this->parser->parse('layout.tpl', array());
   }
   
   
 
-  private function resources_edit($id, $resource_id){    
+  private function resources_edit($id, $resource_id){
     $building = $this->Buildings_model->read_single($id);
     $resources = $this->Buildings_model->building_resources_single($id, $resource_id);
 
@@ -231,11 +231,11 @@ class Buildings extends CI_Controller{
 
 
   private function resources_delete($id, $resource_id){
-    $building = $this->Buildings_model->read_single($id); 
-    $resources = $this->Buildings_model->resources_single($resource_id); 
+    $building = $this->Buildings_model->read_single($id);
+    $resources = $this->Buildings_model->resources_single($resource_id);
     $messages = array();
     
-    
+
     if ($this->Buildings_model->resources_delete($id, $resource_id)){
       $messages['success'][] = 'The resource cost has been deleted.';
     }else{
@@ -249,7 +249,183 @@ class Buildings extends CI_Controller{
     $this->smarty->assign('messages', $messages);
     
     $this->smarty->assign('content', $this->parser->parse('buildings/resources_delete.tpl', array(), true));
-    $this->parser->parse('layout.tpl', array()); 
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  public function buildings_preq($id, $action='list', $building_id=false){
+    switch ($action){
+      case 'add':  $this->buildings_preq_add($id); break;
+      case 'delete': $this->buildings_preq_delete($id, $building_id); break;
+      case 'list':
+      default: $this->buildings_preq_list($id); break;
+    }
+  }
+
+
+  private function buildings_preq_list($id){
+    $building = $this->Buildings_model->read_single($id);
+    $prereq = $this->Buildings_model->buildings_preq_list($id);
+
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('prereq', $prereq);
+    $this->smarty->assign('meta_title', 'Prereq for  ' . $building['name']);
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/buildings_preq_list.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  private function buildings_preq_add($id){
+    $building = $this->Buildings_model->read_single($id);
+    $avail = $this->Buildings_model->buildings_preq_avail($id);
+
+    if (!empty($avail)){
+      $out = array();
+      foreach ($avail as $b){
+        $out[$b['name']] = $b['id'];
+      }
+    }else{
+      $this->formclass->AddError('building', 'All avaliable buildings are already being used.');
+    }
+
+    if ($this->input->post()){
+      $this->formclass->POST = $this->input->post();
+    }
+
+    $this->formclass->Select('prereq', false, $out);
+
+    $this->smarty->assign('form', $this->formclass->DrawForm());
+
+    if ($this->formclass->hasErrors){
+      if ($this->input->post()){
+        $this->smarty->assign('errors', $this->formclass->DisplayErrors());
+      }
+    }else{
+      if ($this->Buildings_model->buildings_preq_create($id, $this->formclass->formData)){
+        $messages['success'][] = 'The prerequisite has been added.';
+      }else{
+        $messages['error'][] = 'There was an error adding the prerequisite.';
+      }
+    }
+
+    $this->smarty->assign('messages', $messages);
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('meta_title', 'Adding ' . $building['name'] . ' prerequisite');
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/buildings_preq_add.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  private function buildings_preq_delete($id, $building_id){
+    $building = $this->Buildings_model->read_single($id);
+    $prereq = $this->Buildings_model->read_single($building_id);
+    $messages = array();
+
+
+    if ($this->Buildings_model->buildings_preq_delete($id, $building_id)){
+      $messages['success'][] = 'The prerequisite has been deleted.';
+    }else{
+      $messages['success'][] = 'There was a problem deleting the prerequisite.';
+    }
+
+    $this->smarty->assign('meta_title', 'Deleting ' . $building['name'] . ' prerequisite');
+
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('prereq', $prereq);
+    $this->smarty->assign('messages', $messages);
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/buildings_preq_delete.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  public function research_preq($id, $action='list', $research_id=false){
+    switch ($action){
+      case 'add':  $this->research_preq_add($id); break;
+      case 'delete': $this->research_preq_delete($id, $research_id); break;
+      case 'list':
+      default: $this->research_preq_list($id); break;
+    }
+  }
+
+
+  private function research_preq_list($id){
+    $building = $this->Buildings_model->read_single($id);
+    $prereq = $this->Buildings_model->research_preq_list($id);
+
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('prereq', $prereq);
+    $this->smarty->assign('meta_title', 'Prereq for  ' . $building['name']);
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/research_preq_list.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  private function research_preq_add($id){
+    $building = $this->Buildings_model->read_single($id);
+    $avail = $this->Buildings_model->research_preq_avail($id);
+
+    if (!empty($avail)){
+      $out = array();
+      foreach ($avail as $b){
+        $out[$b['name']] = $b['id'];
+      }
+    }else{
+      $this->formclass->AddError('research', 'All avaliable research is already being used.');
+    }
+
+    if ($this->input->post()){
+      $this->formclass->POST = $this->input->post();
+    }
+
+    $this->formclass->Select('research_id', false, $out);
+
+    $this->smarty->assign('form', $this->formclass->DrawForm());
+
+    if ($this->formclass->hasErrors){
+      if ($this->input->post()){
+        $this->smarty->assign('errors', $this->formclass->DisplayErrors());
+      }
+    }else{
+      if ($this->Buildings_model->research_preq_create($id, $this->formclass->formData)){
+        $messages['success'][] = 'The prerequisite has been added.';
+      }else{
+        $messages['error'][] = 'There was an error adding the prerequisite.';
+      }
+    }
+
+    $this->smarty->assign('messages', $messages);
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('meta_title', 'Adding ' . $building['name'] . ' prerequisite');
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/research_preq_add.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
+  }
+
+
+  private function research_preq_delete($id, $research_id){
+    $building = $this->Buildings_model->read_single($id);
+    $prereq = $this->Buildings_model->read_single($research_id);
+    $messages = array();
+
+
+    if ($this->Buildings_model->research_preq_delete($id, $research_id)){
+      $messages['success'][] = 'The prerequisite has been deleted.';
+    }else{
+      $messages['success'][] = 'There was a problem deleting the prerequisite.';
+    }
+
+    $this->smarty->assign('meta_title', 'Deleting ' . $building['name'] . ' prerequisite');
+
+    $this->smarty->assign('building', $building);
+    $this->smarty->assign('prereq', $prereq);
+    $this->smarty->assign('messages', $messages);
+
+    $this->smarty->assign('content', $this->parser->parse('buildings/research_preq_delete.tpl', array(), true));
+    $this->parser->parse('layout.tpl', array());
   }
 
 }

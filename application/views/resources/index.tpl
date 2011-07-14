@@ -15,6 +15,7 @@
       <th>Creation Time</th>
       <th>Interest Rate</th>
       <th>Requires Storage</th>
+      <th>Global</th>
     </tr>
   </thead>
   <tbody>
@@ -36,6 +37,7 @@
           <td>{$r.turns}</td>
           <td>{$r.interest}</td>
           <td>{$r.req_storage}</td>
+          <td>{$r.global}</td>
         </tr>
       {/foreach}
     {/if}
