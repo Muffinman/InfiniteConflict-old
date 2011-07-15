@@ -20,7 +20,7 @@ body {
 }
 
 #container{
-  width:980px;
+  width:950px;
   margin:0px auto;
 }
 
@@ -158,8 +158,17 @@ td{
   background:#4e4e4e;
 }
 
-
 table tr:nth-child(2n) td{
   background:#454545;
+}
+
+
+label{
+  display:block;
+  float:left;
+  width:150px;
+  text-align: right;
+  padding-right:10px;
+  text-transform:capitalize;
 }
 
