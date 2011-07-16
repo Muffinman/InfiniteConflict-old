@@ -160,6 +160,7 @@ class Buildings extends CI_Controller{
     $this->formclass->Select('resource_id', false, $out);
     $this->formclass->Integer('cost', false, 0, 11);
     $this->formclass->Integer('output', false, 0, 11);
+    $this->formclass->Checkbox('single_output', true);
     $this->formclass->Integer('stores', false, 0, 11);
     $this->formclass->Float('interest', false);
     $this->formclass->Float('abundance', false);
@@ -200,6 +201,7 @@ class Buildings extends CI_Controller{
     $this->formclass->loadData = $resources;
     $this->formclass->Integer('cost', false, 0, 11);
     $this->formclass->Integer('output', false, 0, 11);
+    $this->formclass->Checkbox('single_output', true);
     $this->formclass->Integer('stores', false, 0, 11);
     $this->formclass->Float('interest', false);
     $this->formclass->Float('abundance', false);

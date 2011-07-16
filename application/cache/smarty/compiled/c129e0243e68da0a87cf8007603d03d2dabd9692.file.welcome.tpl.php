@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.7, created on 2011-07-14 23:20:12
+<?php /* Smarty version Smarty-3.0.7, created on 2011-07-16 15:58:18
          compiled from "application/views/welcome.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:11120315374e1f6b9ca1cbb7-76093525%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:3883582734e21a70a95e328-88880649%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'c129e0243e68da0a87cf8007603d03d2dabd9692' => 
     array (
       0 => 'application/views/welcome.tpl',
-      1 => 1310682011,
+      1 => 1310828239,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '11120315374e1f6b9ca1cbb7-76093525',
+  'nocache_hash' => '3883582734e21a70a95e328-88880649',
   'function' => 
   array (
   ),
@@ -27,3 +27,9 @@ $_smarty_tpl->decodeProperties(array (
 </ul>
 
 
+<ul>
+  <li><a href="/start_resources">Starting Resources</a></li>
+  <li><a href="/start_buildings">Starting Buildings</a></li>
+  <li><a href="/colo_resources">Colonisation Resources</a></li>
+  <li><a href="/colo_buildings">Colonisation Buildings</a></li>
+</ul>
