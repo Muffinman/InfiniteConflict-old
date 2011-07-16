@@ -11,7 +11,7 @@
   <div id="container">
 
     <ul id="menu">
-      <li class="home"><a href="">Home</a></li>
+      <li class="home"><a href="/">Home</a></li>
       <li class="planets"><a href="">Planets</a></li>
       <li class="fleets"><a href="">Fleets</a></li>
       <li class="navigation"><a href="">Navigation</a></li>
