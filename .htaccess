@@ -1,3 +1,4 @@
 RewriteEngine on
+
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-RewriteRule !^(index\.php|images|css|robots\.txt|favicon\.ico|user_guide) index.php [L]
+RewriteRule !^(index\.php|css|js|images|robots\.txt|favicon\.ico|.*\.pdf|favicon\.ico) index.php [L]
