@@ -78,12 +78,12 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < $max chars");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -96,34 +96,6 @@ class Form {
     $this->html .= '</' . $this->div . '>' . "\n";
   }
 
-  /*
-   *  STEAM ID FIELD
-   *
-   *  Checks whether or not a text input is within the allowable length
-   */
-  function SteamID($ref, $optional=false) {
-    $data = $GLOBALS['data'][$ref];
-    if ($_POST && !$_POST['back'] && $this->postData){
-      $data = $_POST[$this->Clean($ref)];
-    }
-
-    if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
-    } else if (!empty($data)) {
-      if (!eregi($this->regexpSteam, $data)){
-        $this->AddError($data, "$ref is invalid. Should be in the format STEAM_0:X:XXXX");
-      }
-    }
-    $this->formData[$ref] = $data;
-    $this->html .= '<' . $this->div . '>' . "\n";
-    if ($this->labels)
-      $this->html .= '  <label for="' . $this->Clean($ref) . '">' . $ref . '</label>' . "\n";
-    $this->html .= '  <input type="text" name="' . $this->Clean($ref) . '" id="' . $this->Clean($ref) . '" value="' . htmlspecialchars($this->formData[$ref]) . '" maxlength="32" />' . "\n";
-    if ($optional === false){
-      $this->html .= '  <span class="required">*</span>' . "\n";
-    }
-    $this->html .= '</' . $this->div . '>' . "\n";
-  }
 
   /*
    *  TEXTAREA FIELD
@@ -137,12 +109,12 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < $max chars");
     }
 
     if ($html === false){
@@ -174,12 +146,12 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < $max chars");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . ' style="height:' . ($height+15) . 'px;">' . "\n";
@@ -205,16 +177,16 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min){
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       }
       else if ($max && strlen($data) > $max){
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < than $max chars");
       }
       else if (!eregi($this->regexpIRC, $data)){
-        $this->AddError($data, "$ref is not a valid IRC Channel");
+        $this->AddError($ref, "Not a valid IRC Channel");
       }
     }
     $this->formData[$ref] = $data;
@@ -235,14 +207,14 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < $max chars");
       else if (!eregi($this->regexpURL, $data)){
-        $this->AddError($data, "$ref is not a valid URL, should be in the format http://www.example.com");
+        $this->AddError($ref, "Not a valid URL (http://www.example.com)");
       }
     }
     $this->formData[$ref] = $data;
@@ -264,12 +236,12 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0)) {
       if (!eregi($this->regexpUsername, $data)){
-        $this->AddError($data, "$ref is not valid. Accepted characters are \"A-Z 0-9_-.\"");
+        $this->AddError($ref, "Accepted chars are \"A-Z 0-9_-.\"");
       }else{
         if (strlen($data) < $min)
-          $this->AddError($data, "$ref must be at least $min characters long");
+          $this->AddError($ref, "Must be > $min chars");
         else if ($max && strlen($data) > $max)
-          $this->AddError($data, "$ref cannot be more than $max characters long");
+          $this->AddError($ref, "Must be < $max chars");
       }
     }
 
@@ -291,12 +263,12 @@ class Form {
     }
 
     if ($optional === false && empty($data)) {
-      $this->AddError($data, "$ref cannot be empty");
+      $this->AddError($ref, "Cannot be empty");
     } else if (!empty($data)) {
       if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $max characters long");
+        $this->AddError($ref, "Must be < $max chars");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -333,12 +305,12 @@ class Form {
       if ($found === true || $this->checkSelect ===  false){
         $data = $_POST[$this->Clean($ref)];
       }else{
-        $this->AddError($data, "The POST data did not match $ref options. This hack attempt has been logged.");
+        $this->AddError($ref, "The POST data did not match $ref options. This hack attempt has been logged.");
       }
     }
 
     if ($optional===false && !$data){
-      $this->AddError($data, "You must select an opiton for $ref.");
+      $this->AddError($ref, "You must select an opiton for $ref.");
     }
 
     $this->formData[$ref] = $data;
@@ -374,14 +346,14 @@ class Form {
     }
 
     if ($optional === false && strlen($data) == 0) {
-      $this->AddError($data, "$ref must not be empty");
+      $this->AddError($ref, "Must not be empty");
     }else{
       if (!is_int($data))
-        $this->AddError($data, "$ref must be an integer");
+        $this->AddError($ref, "Must be an integer");
       else if (strlen($data) < $min)
-        $this->AddError($data, "$ref must be at least $min characters long");
+        $this->AddError($ref, "Must be > $min chars");
       else if ($max && strlen($data) > $max)
-        $this->AddError($data, "$ref cannot be more than $min characters long");
+        $this->AddError($ref, "Must be < $max chars");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -408,7 +380,7 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!mb_eregi($this->regexpFloat, $data))
-        $this->AddError($data, "$ref is not a valid number");
+        $this->AddError($ref, "Not a valid number");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -433,7 +405,7 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!eregi($this->regexpEmail, $data))
-        $this->AddError($data, "$ref is not a valid address");
+        $this->AddError($ref, "Not a valid email");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -463,7 +435,7 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!mb_eregi($regexp, $data))
-        $this->AddError($data, "$ref is not a valid date");
+        $this->AddError($ref, "Not a valid date");
     }
     $this->formData[$ref] = $data;
 
@@ -534,7 +506,7 @@ class Form {
         $ereg = $this->regexpDate4;
       }
       if (!mb_eregi($ereg, $data)){
-        $this->AddError($data, "$ref is not a valid date");
+        $this->AddError($ref, "Not a valid date");
       }
     }
     $this->formData[$ref] = $data;
@@ -624,7 +596,7 @@ class Form {
     if ($optional === false || ($optional === true && strlen($data) != 0)) {
       $ereg = $this->regexpTime;
       if (!mb_eregi($ereg, $data)){
-        $this->AddError($data, "$ref is not a valid date");
+        $this->AddError($ref, "Not a valid date");
       }
     }
     $this->formData[$ref] = $data;
@@ -668,10 +640,10 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!eregi($this->regexpTime, $data))
-        $this->AddError($data, "$ref is not a valid time");
+        $this->AddError($ref, "Not a valid time");
       $arrTime = explode(':', $data);
       if ($arrTime[0] > 23)
-        $this->AddError($data, "$ref is not a valid time");
+        $this->AddError($ref, "Not a valid time");
     }
     $this->formData[$ref] = $data;
     $this->html .= '<' . $this->div . '>' . "\n";
@@ -696,7 +668,7 @@ class Form {
 
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!mb_eregi($this->regexpDateTime, $data))
-        $this->AddError($data, "$ref is not a valid date");
+        $this->AddError($ref, "Not a valid date");
     }
     $this->formData[$ref] = $data;
   }
@@ -715,7 +687,7 @@ class Form {
     $regexp = $this->regexpUrlFriendlyStr;
     if ($optional === false || ($optional === true && strlen($data) != 0) ) {
       if (!mb_eregi($regexp, $data))
-        $this->AddError($data, "$ref contains some invalid characters");
+        $this->AddError($ref, "Contains invalid chars");
     }
     $this->formData[$ref] = $data;
   }
@@ -739,7 +711,7 @@ class Form {
     else if ($data == 0 || $data == "false")
       $this->formData[$ref] = 0;
     else {
-      $this->AddError($data, "$ref must be true or false");
+      $this->AddError($ref, "Must be true or false");
       $this->formData[$ref] = $data;
     }
   }
@@ -756,7 +728,7 @@ class Form {
     }
 
     if ($optional === false && !isset($_POST[$this->Clean($ref)])) {
-      $this->AddError($data, "$ref is required");
+      $this->AddError($ref, "Field is required");
     }
 
     $this->formData[$ref] = $data;
@@ -784,7 +756,7 @@ class Form {
     }
 
     if ($optional === false && !isset($_POST[$this->Clean($ref)])) {
-      $this->AddError($data, "$ref is required");
+      $this->AddError($ref, "Field is required");
     }
 
     $this->formData[$ref] = $data;
@@ -827,12 +799,14 @@ class Form {
    *  only records an error when necessary.
    */
   function Match($ref1, $ref2, $ref) {
-    $data1 = $_POST[str_replace(" ", "_", $ref1)];
-    $data2 = $_POST[str_replace(" ", "_", $ref2)];
+    $data1 = $_POST[$this->Clean($ref1)];
+    $data2 = $_POST[$this->Clean($ref2)];
     if (is_array($data2) && !in_array($data1, $data2)) {
       $this->AddError($data1, "$ref is not valid");
-    } else if (!is_array($data2) && $data1 != $data2)
-      $this->AddError($data1, "$ref fields do not match");
+    } else if (!is_array($data2) && $data1 != $data2){
+      $this->AddError($ref1, "Fields do not match");
+      $this->AddError($ref2, "Fields do not match");
+    }
     $this->formData[$ref] = $data1;
   }
 
@@ -938,13 +912,9 @@ class Form {
    *  ADD ERROR
    */
   function AddError($field, $msg) {
-    global $log;
-    if ($_POST){
-      $log->add($msg);
-    }
     $this->hasErrors = true;
     $this->errFields[] = $field;
-    $this->errHelp[] = $msg;
+    $this->errHelp[$field] = $msg;
   }
 
   function FieldSet($name, $open=true, $class=''){

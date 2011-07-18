@@ -9,7 +9,11 @@ ob_start();
 require_once 'reset.css.php';
 require_once 'template.css.php';
 
-if (file_exists($_GET['p'] . '.css.php')){
+if ($_GET['p'] == 'login' || $_GET['p'] == 'register' || $_GET['p'] == 'forgetten' || $_GET['p'] == 'confirm'){
+  require_once 'login.css.php';
+}
+
+else if (file_exists($_GET['p'] . '.css.php')){
   require_once $_GET['p'] . '.css.php';
 }
 

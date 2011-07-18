@@ -94,7 +94,7 @@ class mysql {
         if ($cacheQuery === true){
           $this->queryCache[md5($q)] = $allRows;
         }
-        
+
         return $allRows;
       } else {
         $this->errStr = "No database matches found";
@@ -276,7 +276,11 @@ class mysql {
       }
 
       foreach ($data as $k => $v){
-        $qs[] = '`' . $this->esc($k) . '` = \'' . $this->esc($v) . '\'';
+        if ($v === NULL){
+          $qs[] = '`' . $this->esc($k) . '` = NULL';
+        }else{
+          $qs[] = '`' . $this->esc($k) . '` = \'' . $this->esc($v) . '\'';
+        }
       }
 
 

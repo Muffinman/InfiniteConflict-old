@@ -1,11 +1,13 @@
 html{
   width:100%;
   height:100%;
+  background: black url(/images/background.jpg) top right no-repeat;
 }
 
 body{
   width:100%;
   height:100%;
+  background:none;
 }
 
 #login{
@@ -24,22 +26,24 @@ body{
   font-size:30px;
   height:35px;
   line-height:35px;
-  margin-bottom:15px;
+  margin-bottom:10px;
   text-transform:uppercase;
   text-shadow:0px 0px 20px #000;
 }
 
-#login form{
+#login .formdiv{
   padding:12px;
+  position:relative;
+  height:220px;
 }
 
 #login p{
-  margin-bottom:12px;
+  margin-bottom:10px;
   text-shadow:1px 1px 0px #000;
 }
 
 #login .login-box{
-  margin-top:30px;
+  margin-top:20px;
 }
 
 #login input{
@@ -48,4 +52,25 @@ body{
   color:white;
   border-radius:3px;
   padding:2px;
+}
+
+#login input[type=submit]{
+  width:80px;
+  margin-left:160px;
+}
+
+#login input:focus{
+  border-color:white;
+  background:black;
+}
+
+#login input[type=submit]:hover{
+  background:black;
+}
+
+#login .form-options{
+  width:456px;
+  position:absolute;
+  bottom:0;
+  text-align:center;
 }

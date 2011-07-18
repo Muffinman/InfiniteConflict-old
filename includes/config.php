@@ -21,6 +21,8 @@ define('SITE_LOCATION', 'http://'.$_SERVER['HTTP_HOST'].'/');
 define('SITE_ROOTPATH', $_SERVER['DOCUMENT_ROOT'].'/');
 define('SITE_HTTPPATH', SITE_LOCATION);
 define('SCRIPT', basename($_SERVER['SCRIPT_FILENAME']));
+define('COOKIE_NAME', 'ic_session');
+define('COOKIE_LIFETIME', 365*24*3600);
 
 $config = array();
 

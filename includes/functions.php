@@ -1,5 +1,9 @@
 <?php
 
+function __autoload($class_name) {
+    include 'classes/class.' . strtolower($class_name) . '.php';
+}
+
 function fetch_url_parts() {
 	if (substr($_SERVER['REQUEST_URI'], 0, 1) == '/') {
 		$_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 1);
@@ -11,8 +15,8 @@ function fetch_url_parts() {
 }
 
 function template_data() {
-	global $db, $smarty, $request, $config;
-	
+	global $db, $smarty, $request, $config, $IC;
+
 	$smarty->assign('site_url', SITE_LOCATION);
 
 	# Meta data
@@ -23,7 +27,11 @@ function template_data() {
       $config[$row['key']] = $row['val'];
     }
   }
-  
+
+  if ($sess = $IC->LoadSession($_COOKIE['ic_session'])){
+    $_SESSION['ruler'] = $IC->LoadRuler($sess['ruler_id']);
+  }
+
 	$smarty->assign('title', $config['meta_title']);
 	$smarty->assign('description', $config['meta_description']);
 	$smarty->assign('keywords', $config['meta_keywords']);

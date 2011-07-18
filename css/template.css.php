@@ -1,11 +1,11 @@
 
 html{
-  background: black url(/images/planet3.jpg) bottom right no-repeat;
+  background: black url(/images/planet2.jpg) 0 80px no-repeat;
 }
 
 
 body {
-  background:transparent url(/images/planet2.jpg) 0 80px no-repeat;
+  background: transparent url(/images/planet3.jpg) bottom right no-repeat;
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 13px;
   color: white;
