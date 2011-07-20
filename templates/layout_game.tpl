@@ -21,6 +21,13 @@
 	<!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
 	<!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
+    <img id="background" alt="" src="/images/background2.jpg">
+
+    <div id="logo">
+      <h1>Infinite<span>Conflict</span></h1>
+      <h2>The Alpha approaches...</h2>
+    </div>
+
     <div id="userbox">
       <p class="avatar"><img src="{$ruler.avatar}" alt="{$ruler.name}"></p>
       <p>{$ruler.name} <a href="/logout">[Logout]</a> - Turn : <a href="/turns">{$config.turn}</a> {$smarty.now|date_format:"%H:%M %Z"}</p>
@@ -29,7 +36,7 @@
     </div>
 
 
-    <div id="background">
+    <div id="outer">
       <div id="container">
 
         <ul id="menu">
@@ -51,9 +58,10 @@
           {if $content}
             {$content}
           {/if}
+          <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time} seconds</p>
+            <p>Page generated in {$page_time}s, using {$page_queries} hamsters ({$page_query_time}s wheel time).</p>
           </div>
         </div>
       </div>

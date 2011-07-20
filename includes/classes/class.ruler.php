@@ -1,12 +1,17 @@
 <?
-Class Ruler extends IC {
+
+class Ruler extends IC {
+
+  var $db;
 
   function __construct($db){
-    parent::__construct($db);
+    $this->db = $db;
+    $this->Planet = new Planet($db);
   }
 
   function LoadRuler($id){
-    return $this->db->QuickSelect('ruler', $id);
+    $ruler = $this->db->QuickSelect('ruler', $id);
+    return $ruler;
   }
 
   function CheckConfirmCode($code){
@@ -52,13 +57,40 @@ Class Ruler extends IC {
       $planet['ruler_id'] = $ruler['id'];
 
       $this->db->QuickEdit('planet', $planet);
-      return true;
+
+      $this->SetHomePlanetBuildings($planet['id']);
+
+      return $ruler;
     }
     return false;
   }
 
+  function SetHomePlanetBuildings($id){
+    $planet = $this->LoadPlanet($id);
+    $buildings = $this->LoadStartingBuildings();
+    $out = array();
+    foreach ($buildings as $b){
+      $b['planet_id'] = $id;
+      $out[] = $b;
+    }
+    $this->db->MultiInsert('planet_has_building', $out);
+  }
+
+  function LoadStartingResources(){
+    $q = "SELECT * FROM planet_starting_resource";
+    return $this->db->Select($q);
+  }
+
+  function LoadStartingBuildings(){
+    $q = "SELECT * FROM planet_starting_building";
+    return $this->db->Select($q);
+  }
+
+
+
   function CheckLogin($email, $password){
     $q = "SELECT * FROM ruler WHERE email='" . $this->db->esc($email) . "' AND `password`='" . $this->db->esc($this->CreatePassword($email, $password)) . "' LIMIT 1";
+    FB::log($q);
     if ($r = $this->db->Select($q)){
       return $r[0];
     }

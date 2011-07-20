@@ -1,7 +1,7 @@
 <?php
 
 function __autoload($class_name) {
-    include 'classes/class.' . strtolower($class_name) . '.php';
+    require_once 'classes/class.' . strtolower($class_name) . '.php';
 }
 
 function fetch_url_parts() {
@@ -30,6 +30,7 @@ function template_data() {
 
   if ($sess = $IC->LoadSession($_COOKIE['ic_session'])){
     $_SESSION['ruler'] = $IC->LoadRuler($sess['ruler_id']);
+    $_SESSION['ruler']['avatar'] = '/images/avatar.png';
   }
 
 	$smarty->assign('title', $config['meta_title']);

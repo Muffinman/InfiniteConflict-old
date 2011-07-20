@@ -1,13 +1,20 @@
 html{
   width:100%;
   height:100%;
-  background: black url(/images/background.jpg) top right no-repeat;
+  background: black;
 }
 
 body{
   width:100%;
   height:100%;
   background:none;
+}
+
+#background{
+  min-width:100%;
+  max-width:100%;
+  position:fixed;
+  z-index:1;
 }
 
 #login{
@@ -19,6 +26,7 @@ body{
   margin-top:-150px;
   background:url(/images/login.png) top left no-repeat;
   padding:10px;
+  z-index:2;
 }
 
 #login h1{

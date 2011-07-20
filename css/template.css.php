@@ -1,16 +1,38 @@
+@font-face {
+	font-family: Atarian;
+	src: url('SF Atarian System.ttf');
+}
+
+@font-face {
+	font-family: Atarian;
+	font-weight: bold;
+	src: url('SF Atarian System.ttf');
+}
 
 html{
-  background: black url(/images/planet2.jpg) 0 80px no-repeat;
+  /* background: black url(/images/planet2.jpg) 0 80px no-repeat;  */
+  background: black;
 }
 
 
 body {
-  background: transparent url(/images/planet3.jpg) bottom right no-repeat;
+  /* background: transparent url(/images/planet3.jpg) bottom right no-repeat; */
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 13px;
   color: white;
   margin:0;
   padding:0;
+}
+
+#background{
+  height:auto;
+  min-width:1024px;
+  min-height:100%;
+  width:100%;
+  left:0;
+  top:0;
+  position:fixed;
+  z-index:1;
 }
 
 a {
@@ -31,17 +53,6 @@ h1 {
   line-height:15px;
   font-weight: bold;
   margin-top:0;
-}
-
-code {
-  font-family: Monaco, Verdana, Sans-serif;
-  font-size: 12px;
-  background-color: #f9f9f9;
-  border: 1px solid #D0D0D0;
-  color: #002166;
-  display: block;
-  margin: 14px 0 14px 0;
-  padding: 12px 10px 12px 10px;
 }
 
 table{
@@ -90,21 +101,49 @@ label{
   top:10px;
   right:10px;
   padding:10px;
+  z-index:3;
+}
+
+#logo{
+  position:absolute;
+  width:380px;
+  height:60px;
+  top:20px;
+  left:30px;
+  z-index:3;  
+}
+
+#logo h1{
+  font-family: Play, Arial Black, sans-serif;
+  font-size:45px;
+  line-height:50px;
+  color:#aaa;
+  text-shadow:1px 1px 0 white;
+}
+
+#logo h1 span{
+  color:white;
+  text-shadow:1px 1px 0 black;
+}
+
+#logo h2{
+  font-size:12px;
+  color:#ccc;
+  font-family: Play, Arial Black, sans-serif;
+  float:right;
+  font-weight:normal;
 }
 
 #userbox .avatar{
   float:right;
 }
 
-#background{
-  background: transparent url(/images/head1back.gif) 0 76px repeat-x;
-  min-height:800px;
-  padding-top:100px;
-}
-
 #container{
   width:950px;
   margin:0px auto;
+  padding-top:100px;
+  position:relative;
+  z-index:2;
 }
 
 #menu{
@@ -198,8 +237,7 @@ label{
 }
 
 .lower-content{
-  background:#393939;
-  padding:1px;
+
 }
 
 .content{
@@ -207,7 +245,18 @@ label{
   padding:10px;
   border:1px solid black;
   margin-bottom:10px;
-  height:50px;
+}
+
+.content h1{
+  font-family:Play, 'Arial Black', sans-serif;
+  text-transform:uppercase;
+  text-shadow:0px 0px 20px #000;
+  margin-bottom:10px;
+  height:20px;
+}
+
+.content h1 a{
+  font-weight:bold;
 }
 
 .headbar{
@@ -222,6 +271,20 @@ label{
 
 .menu{
 
+}
+
+.clear{
+  clear:both;
+}
+
+.left{
+  width:300px;
+  float:left;
+}
+
+.right{
+  width:590px;
+  float:right;
 }
 
 .footer{

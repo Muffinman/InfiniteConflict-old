@@ -1,9 +1,6 @@
 <?
 
-$R = new Ruler($db);
-$R->smarty = $smarty;
-
-if (!$R->CheckConfirmCode($request[1])){
+if (!$IC->Ruler->CheckConfirmCode($request[1])){
   $smarty->assign('content', $smarty->fetch('confirm_error.tpl'));
   $smarty->display('layout_login.tpl');
   exit;
@@ -15,7 +12,7 @@ $form->Text('planetname', false, 3, 45);
 
 if ($_POST){
 
-  if (!$R->CheckRulerName($form->formData['rulername'])){
+  if (!$IC->Ruler->CheckRulerName($form->formData['rulername'])){
     $form->AddError('rulername', 'Name already in use');
   }
 
@@ -30,8 +27,8 @@ if ($_POST){
       'hash' => $request[1]
     );
 
-    if ($ruler = $R->SignupRuler($arr)){
-      $R->Login($ruler['id']);
+    if ($ruler = $IC->Ruler->SignupRuler($arr)){
+      $IC->Ruler->Login($ruler['id']);
       header('Location: /');
       exit;
     }

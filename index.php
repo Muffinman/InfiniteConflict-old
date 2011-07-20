@@ -4,6 +4,7 @@ require_once 'includes/config.php';
 require_once 'includes/functions.php';
 
 $IC = new IC($db);
+$IC->smarty = $smarty;
 
 # Detect URL components
 $request = fetch_url_parts();
@@ -27,24 +28,10 @@ $smarty->assign('ruler', $_SESSION['ruler']);
 $smarty->assign('config', $config);
 
 
-switch ($request[0]) {
-  case 'login':
-		require_once 'includes/pages/login.php';
-		break;
-  case 'register':
-		require_once 'includes/pages/register.php';
-		break;
-  case 'confirm':
-		require_once 'includes/pages/confirm.php';
-		break;
-
-  case 'generateUniverse':
-		require_once 'includes/pages/generate_universe.php';
-		break;
-
-	default:
-		require_once 'includes/pages/default.php';
-		break;
+if (file_exists('includes/pages/' . $request[0] . '.php')){
+  require_once 'includes/pages/' . $request[0] . '.php';
+}else{
+  require_once 'includes/pages/default.php';
 }
 
 closedown($pagestart);

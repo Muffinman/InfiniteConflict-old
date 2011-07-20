@@ -37,6 +37,7 @@ class mysql {
   var $startTime;
   var $endTime;
   var $errStr;
+  var $recordQueries = true;
   var $queryCache = array();
 
   function mysql() {
@@ -308,7 +309,11 @@ class mysql {
     if (is_array($arr) && !empty($arr)){
       $IDs = array();
       foreach ($arr as $row){
-        $IDs[] = $this->QuickEdit($table, $row, $mode, $PK);
+        if ($row[$PK]){
+          $IDs[] = $this->QuickEdit($table, $row, $mode, $PK);
+        }else{
+          $IDs[] = $this->QuickInsert($table, $row);
+        }
       }
     }
     return $IDs;
@@ -542,8 +547,10 @@ class mysql {
   *  developers debug their code.
   */
   function AddQuery($q) {
-   // $this->allQueries[] = array('time' => round($this->lastQueryTime,4), 'query' => $q);
-    $this->numQueries = sizeof($this->allQueries);
+    if ($this->recordQueries){
+      $this->allQueries[] = array('time' => round($this->lastQueryTime,4), 'query' => $q);
+    }
+    $this->numQueries++;
   }
   
   function ClearCache(){

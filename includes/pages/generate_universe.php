@@ -1,6 +1,12 @@
 <?
 set_time_limit(0);
 
+$q = "TRUNCATE TABLE ruler";
+$db->Query($q);
+
+$q = "TRUNCATE TABLE session";
+$db->Query($q);
+
 $q = "TRUNCATE TABLE galaxy";
 $db->Query($q);
 

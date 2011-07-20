@@ -21,6 +21,8 @@
 	<!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
 	<!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
+    <img id="background" alt="" src="/images/background.jpg">
+
     <div id="login">
       {$content}
     </div>
