@@ -36,7 +36,7 @@ body {
 }
 
 a {
-  color: #D3E8F6;
+  color: #9ce3ff;
   background-color: transparent;
   font-weight: normal;
   text-decoration:none;
@@ -250,7 +250,7 @@ label{
 .content h1{
   font-family:Play, 'Arial Black', sans-serif;
   text-transform:uppercase;
-  text-shadow:0px 0px 20px #000;
+  text-shadow:1px 1px 0px black;
   margin-bottom:10px;
   height:20px;
 }
