@@ -28,11 +28,19 @@ $smarty->assign('ruler', $_SESSION['ruler']);
 $smarty->assign('config', $config);
 
 
+if ($request[0] == 'ajax'){
+  if (file_exists('includes/ajax/' . $request[1] . '/' . $request[2] . '.php')){
+    require_once 'includes/ajax/' . $request[1] . '/' . $request[2] . '.php';
+  }
+}
+
 if (file_exists('includes/pages/' . $request[0] . '.php')){
   require_once 'includes/pages/' . $request[0] . '.php';
 }else{
   require_once 'includes/pages/default.php';
 }
+
+//FB::log($db->allQueries, 'Database');
 
 closedown($pagestart);
 $smarty->display('layout_game.tpl');

@@ -38,6 +38,7 @@ class mysql {
   var $endTime;
   var $errStr;
   var $recordQueries = true;
+  var $cacheQueries = true;
   var $queryCache = array();
 
   function mysql() {
@@ -92,7 +93,7 @@ class mysql {
         }
         mysql_free_result($r);
         
-        if ($cacheQuery === true){
+        if ($cacheQuery === true && $this->cacheQueries === true){
           $this->queryCache[md5($q)] = $allRows;
         }
 
@@ -146,7 +147,10 @@ class mysql {
     if ($r = mysql_query($q, $this->dbLink)) {
       $this->stopTiming();
       $this->AddQuery($q);
-      return mysql_insert_id($this->dbLink);
+      if ($id = mysql_insert_id($this->dbLink)){
+        return $id;
+      }
+      return 'No single PK in table.';
     }
     else {
       $this->stopTiming();
@@ -174,7 +178,6 @@ class mysql {
     }
 
     $q = 'INSERT INTO `' . $this->esc($table) . '` (' . implode(',', $cols) . ') VALUES (' . implode(',', $vals) . ')';
-
     if ($id = $this->Insert($q)){
       return $id;
     }
@@ -452,6 +455,29 @@ class mysql {
   }
 
 
+
+  /*
+  *  SORT RANKS
+  *  ---------
+  *  Useful for reordering a table where rank has been edited so that it is non-sequential.
+  */
+  function SortRank($table, $rankcolumn='rank', $PK='id', $whereclause='') {
+    $q = "SELECT * FROM $table $whereclause ORDER BY $rankcolumn ASC";
+    FB::log($q);
+    $i=1;
+    if ($x = $this->Select($q, false, false, false)) {
+      foreach ($x as $row){
+        $row['rank'] = $i;
+        $this->QuickEdit($table, $row);
+        $i++;
+      }
+      return true;
+    }
+    else
+    return false;
+  }
+
+
   /*
   *  DATE ENCODE
   *  -----------
@@ -548,7 +574,7 @@ class mysql {
   */
   function AddQuery($q) {
     if ($this->recordQueries){
-      $this->allQueries[] = array('time' => round($this->lastQueryTime,4), 'query' => $q);
+      $this->allQueries[] = array('time' => round($this->lastQueryTime, 4), 'query' => $q);
     }
     $this->numQueries++;
   }

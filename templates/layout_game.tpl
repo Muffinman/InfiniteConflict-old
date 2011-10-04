@@ -10,8 +10,8 @@
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="/css/styles.css.php?p={$request.0}">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script src="/js/modernizr-1.5.min.js"></script>
+    <script src="/js/jquery-1.6.2.min.js"></script>
+    <script src="/js/jquery-ui-1.8.14.custom.min.js"></script>
     <script src="/js/scripts.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Play:400,700&v2' rel='stylesheet' type='text/css'>
 
@@ -61,7 +61,7 @@
           <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time}s, using {$page_queries} hamsters ({$page_query_time}s wheel time).</p>
+            <p>Page generated in {$page_time}s.</p>
           </div>
         </div>
       </div>

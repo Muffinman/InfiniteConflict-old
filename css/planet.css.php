@@ -62,6 +62,10 @@
   color:#4884d8;
 }
 
+.resource7{
+  color:#FDD473;
+}
+
 .planet-actions{
   margin:0;
   padding:0;
@@ -128,4 +132,66 @@
   margin:0;
   float:none;
   margin-top:12px;
+}
+
+.queue td{
+  line-height:28px;
+  cursor:move;
+}
+
+.queue td img{
+  width:28px;
+  height:28px;
+}
+
+.queue .rank, .queue .image{
+  width:28px;
+  text-align:center;
+} 
+
+.queue .turns{
+  text-align:center;
+}
+
+.queue .remove{
+  width:50px;
+}
+
+.available{
+  float:right;
+  margin-left:10px;
+  width:540px;  
+}
+
+.available td img{
+  width:28px;
+  height:28px;
+}
+
+.available td{
+  line-height:28px;
+}
+
+.available p{
+  float:right;
+  margin:10px 0;
+}
+
+.disabled{
+  opacity:0.5;
+}
+
+
+.planet-list .planet-image, .planet-list .planet-image img{
+  width:100px;
+  height:100px;
+}
+
+.planet-list .planet-info{
+  border:none;
+  background:none;
+}
+
+td.nopadding{
+  padding:0;
 }

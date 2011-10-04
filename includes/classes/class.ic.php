@@ -7,6 +7,7 @@ class IC {
 
   function __construct($db){
     $this->db = $db;
+    $this->Research = new Research($db);
     $this->Planet = new Planet($db);
     $this->Ruler = new Ruler($db);
   }

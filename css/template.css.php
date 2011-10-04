@@ -32,7 +32,7 @@ body {
   left:0;
   top:0;
   position:fixed;
-  z-index:1;
+  z-index:-1;
 }
 
 a {
@@ -93,6 +93,12 @@ label{
   text-transform:capitalize;
 }
 
+input{
+  background:black;
+  color:white;
+  border:1px solid #555;
+}
+
 #userbox{
   position:absolute;
   width:380px;
@@ -142,8 +148,6 @@ label{
   width:950px;
   margin:0px auto;
   padding-top:100px;
-  position:relative;
-  z-index:2;
 }
 
 #menu{
@@ -291,4 +295,5 @@ label{
   text-align:center;
   height:24px;
   margin:0;
+  margin-bottom:20px;
 }

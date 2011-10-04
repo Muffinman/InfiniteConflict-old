@@ -14,6 +14,19 @@ class Ruler extends IC {
     return $ruler;
   }
 
+  function LoadRulerPlanets($id){
+    $q = "SELECT * FROM planet WHERE ruler_id='" . $this->db->esc($id) . "'
+            ORDER BY id ASC";
+    if ($r = $this->db->Select($q)){
+      $planets = array();
+      foreach ($r as $row){
+        $planets[] = $this->LoadPlanet($row['id']);
+      }
+      return $planets;
+    }
+    return false;
+  }
+
   function CheckConfirmCode($code){
     $q = "SELECT * FROM ruler WHERE hash='" . $this->db->esc($code) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
@@ -89,8 +102,9 @@ class Ruler extends IC {
 
 
   function CheckLogin($email, $password){
-    $q = "SELECT * FROM ruler WHERE email='" . $this->db->esc($email) . "' AND `password`='" . $this->db->esc($this->CreatePassword($email, $password)) . "' LIMIT 1";
-    FB::log($q);
+    $q = "SELECT * FROM ruler
+            WHERE email='" . $this->db->esc($email) . "'
+            AND `password`='" . $this->db->esc($this->CreatePassword($email, $password)) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
       return $r[0];
     }
