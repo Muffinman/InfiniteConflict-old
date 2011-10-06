@@ -10,10 +10,8 @@
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="/css/styles.css.php?p={$request.0}">
-    <script src="/js/jquery-1.6.2.min.js"></script>
-    <script src="/js/jquery-ui-1.8.14.custom.min.js"></script>
-    <script src="/js/scripts.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Play:400,700&v2' rel='stylesheet' type='text/css'>
+    <script src="/js/scripts.js.php?p={$request.0}"></script>
 
   </head>
   <!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
@@ -22,6 +20,7 @@
   <!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
     <img id="background" alt="" src="/images/background2.jpg">
+    <img id="ajax" alt="Loading... Please wait." src="/images/ajax.gif">
 
     <div id="logo">
       <h1>Infinite<span>Conflict</span></h1>

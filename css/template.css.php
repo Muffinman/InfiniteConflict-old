@@ -24,6 +24,14 @@ body {
   padding:0;
 }
 
+#ajax{
+  display:none;
+  position:fixed;
+  left:10px;
+  top:10px;
+  z-index:999;
+}
+
 #background{
   height:auto;
   min-width:1024px;

@@ -152,7 +152,7 @@
                 {if $b.rank > 1}
                   Queued
                 {else}
-                  Waiting
+                  Starting
                 {/if}
               {/if}
               </td>
@@ -165,11 +165,11 @@
     <input type="hidden" id="planet_id" name="planet_id" value="{$planet.id}">
   </form>
 
-  {if !$buildingsQueue}
-    <div>
-      <p>You do not have any structures in the queue</p>
-    </div>
-  {/if}
+
+  <div class="empty-queue"{if $buildingsQueue} style="display:none"{/if}>
+    <p>You do not have any structures in the queue</p>
+  </div>
+
 </div>
 
 <div class="content available">

@@ -28,7 +28,9 @@ switch($request[3]){
 }
 
 
-$data['queue'] = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $_POST['planet_id']);
+if ($queue = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $_POST['planet_id'])){
+  $data['queue'] = $queue;
+}
 $data['available'] = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $_POST['planet_id']);
 
 echo json_encode($data);
