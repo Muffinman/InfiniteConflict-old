@@ -35,13 +35,13 @@ if ($_SERVER['ENVIRONMENT'] == 'matt-netbook') {
 } else if ($_SERVER['ENVIRONMENT'] == 'beta') {
   FB::setEnabled(true);
   $db_name = 'ic';
-  $db_user = 'root';
-  $db_pass = '';
+  $db_user = 'ic';
+  $db_pass = 'matt15';
 } else {
   FB::setEnabled(false);
   $db_name = 'ic';
-  $db_user = 'root';
-  $db_pass = '';
+  $db_user = 'ic';
+  $db_pass = 'matt15';
   
   // If we're using the live server, then we need to force the main URL for the payment processing to work.
   if ($_SERVER['HTTP_HOST'] != 'www.infiniteconflict.com'){
