@@ -24,6 +24,15 @@
   margin-right:20px;
 }
 
+.planet-info h1 a{
+  font-size:13px;
+  font-weight:normal;
+}
+
+.planet-info h1 a img{
+
+}
+
 .static-resources .resource{
   line-height:22px;
   margin-right:15px;

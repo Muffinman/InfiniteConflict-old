@@ -4,7 +4,7 @@
   </div>
 
   <div class="planet-info">
-    <h1>{$planet.name}</h1>
+    <h1>{$planet.name} <a href="/navigation/{$planet.galaxy_id}/{$planet.system_id}">(<img src="/images/coords.gif" alt="coords" /> {$planet.id})</a></h1>
 
     <p class="static-resources">
       {foreach from=$resources key=res item=r}
