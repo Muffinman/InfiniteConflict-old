@@ -32,6 +32,7 @@ if ($queue = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $_POST['p
   $data['queue'] = $queue;
 }
 $data['available'] = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $_POST['planet_id']);
+$data['resources'] = $IC->LoadResources();
 
 echo json_encode($data);
 die;

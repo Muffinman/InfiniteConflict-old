@@ -3,24 +3,34 @@ class Planet extends IC {
 
   var $db;
 
+
+
   function __construct($db){
     $this->db = $db;
     $this->Research = new Research($db);
   }
+
+
 
   function LoadPlanetResources($id){
     $q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($id) . "'";
     return $this->db->Select($q);
   }
 
+
+
   function LoadBuildings(){
     $q = "SELECT * FROM building";
     return $this->db->Select($q);
   }
 
+
+
   function LoadBuilding($id){
     return $this->db->QuickSelect('building', $id);
   }
+
+
 
   function CalcBuildingResources($planet_id){
     $resources = $this->LoadResources();
@@ -69,6 +79,7 @@ class Planet extends IC {
   }
 
 
+
   function CalcPlanetResources($id){
     $resources = $this->LoadResources();
     $planet = $this->LoadPlanetResources($id);
@@ -102,6 +113,7 @@ class Planet extends IC {
     }
     return $out;
   }
+
 
 
   function CalcOutput($planet_id, $resource_id){
@@ -146,6 +158,7 @@ class Planet extends IC {
   }
 
 
+
   function CalcStorage($planet_id, $resource_id){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
@@ -172,6 +185,7 @@ class Planet extends IC {
 
     return $storage;
   }
+
 
   
   function CalcBusy($planet_id, $resource_id){
@@ -224,6 +238,7 @@ class Planet extends IC {
   }
 
 
+
   function CalcAbundance($planet_id, $resource_id){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
@@ -250,6 +265,7 @@ class Planet extends IC {
   }
 
 
+
   function LoadPlanetResourcesStored($planet_id, $resource_id){
     $res = $this->LoadPlanetResources($planet_id);
     foreach ($res as $r){
@@ -261,10 +277,12 @@ class Planet extends IC {
   }
 
 
+
   function LoadResourceTax($resource_id){
     $q = "SELECT * FROM resource_tax WHERE resource_id='" . $this->db->esc($resource_id) . "'";
     return $this->db->Select($q);
   }
+
 
 
   function LoadResourceTaxOutput($resource_id){
@@ -273,10 +291,12 @@ class Planet extends IC {
   }
 
 
+
   function LoadPlanetBuildings($id){
     $q = "SELECT * FROM planet_has_building WHERE planet_id='" . $this->db->esc($id) . "' ORDER BY id ASC";
     return $this->db->Select($q);
   }
+
 
 
   function LoadBuildingResources($id){
@@ -285,12 +305,14 @@ class Planet extends IC {
   }
 
 
+
   function LoadBuildingResource($id, $resource_id){
     $q = "SELECT * FROM building_has_resource
             WHERE building_id='" . $this->db->esc($id) . "'
             AND resource_id='" . $this->db->esc($resource_id) . "'";
     return $this->db->Select($q);
   }
+
   
   
   function LoadConversionCost($resource_id){
@@ -298,6 +320,7 @@ class Planet extends IC {
     return $this->db->Select($q);  
   }
   
+
   
   function LoadBuildingsQueue($ruler_id, $planet_id){
     $q = "SELECT planet_building_queue.*, building.name, MD5(CONCAT(planet_building_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_building_queue
@@ -317,6 +340,7 @@ class Planet extends IC {
           ORDER BY rank ASC";
     return $this->db->Select($q);    
   } 
+
   
   
   function LoadConversionQueue($planet_id){
@@ -326,6 +350,7 @@ class Planet extends IC {
     return $this->db->Select($q);    
   }  
   
+
   
   function LoadAvailableBuildings($ruler_id, $planet_id){
     $buildings = $this->LoadBuildings();
@@ -467,11 +492,15 @@ class Planet extends IC {
     return false;
   }
 
+
+
   function QueueBuildingRemove($ruler_id, $planet_id, $hash){
     $q = "DELETE FROM planet_building_queue
             WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' LIMIT 1";
     return $this->db->Edit($q);
   }
+
+
 
   function QueueBuildingReorder($ruler_id, $planet_id, $hashes){
     $currentQueue = $this->LoadBuildingsQueue($ruler_id, $planet_id);
@@ -489,6 +518,8 @@ class Planet extends IC {
 
     }
   }
+
+
 
   function VaryResource($planet_id, $resource_id, $qty){
     $q = "UPDATE planet_has_resource SET stored = stored + '" . $this->db->esc($qty) . "'

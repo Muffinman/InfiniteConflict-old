@@ -3,7 +3,8 @@ $(document).ready(function(){
 	$("#building-list").submit(function(e){
 	  e.preventDefault();
 	  $.post('/ajax/buildings/queue/add/', $(this).serialize(), function(data){
-      redrawBuildingMenu(data);
+      redrawBuildingQueue(data);
+      redrawBuildingList(data);
 	  }, 'json');
 	  return false;
 	});
@@ -20,7 +21,7 @@ $(document).ready(function(){
 	  },
     stop: function(event, ui){
   	  $.post('/ajax/buildings/queue/reorder/', $(this).sortable('serialize') + '&planet_id=' + $("#planet_id").val(), function(data){
-        redrawBuildingMenu(data);
+        redrawBuildingQueue(data);
   	  }, 'json');
     }
 	});
@@ -28,7 +29,8 @@ $(document).ready(function(){
   $("#building-queue .remove a").live('click', function(e){
     e.preventDefault();
 	  $.post($(this).attr('href'), $(this).parents('form').serialize(), function(data){
-        redrawBuildingMenu(data);
+      redrawBuildingQueue(data);
+      redrawBuildingList(data);
 	  }, 'json');
     return false;
   });
@@ -43,7 +45,7 @@ $(document).ready(function(){
 
 
 
-  var redrawBuildingMenu = function(data){
+  var redrawBuildingQueue = function(data){
     $("#building-queue tbody").html('');
     $("#building-queue").css('display','block');
     $(".empty-queue").css('display','none');
@@ -65,6 +67,42 @@ $(document).ready(function(){
     }else{
       $("#building-queue").css('display','none');
       $(".empty-queue").css('display','block');
+    }
+  }
+
+  var redrawBuildingList = function(data){
+    $("#building-list tbody").html('');
+    $("#building-list").css('display','block');
+    if (data.available){
+      for (i in data.available){
+        var bld = data.available[i];
+        html = '<tr>';
+        html += '<td class="building-image"><img src="/images/buildings/'+bld.id+'.jpg" alt="'+bld.name+'" title="'+bld.name+'"></td>'
+        html += '<td class="building-name">'+bld.name+'</td>';
+        
+        
+        for (res in data.resources){
+          var rid = data.resources[res].id;
+          if (rid <= 2){
+            console.log('Appending '+data.resources[res].name);
+            html += '<td class="resource'+rid+'">'+(bld.resources[rid] ? bld.resources[rid].cost_str : '')+'</td>';
+          }
+          if (rid == 4){
+            console.log('Appending '+data.resources[res].name);
+            html += '<td class="resource'+rid+'">'+(bld.resources[rid] ?  bld.resources[rid].output_str : '')+'</td>';
+          }             
+          if (rid > 4 && rid < 8){
+            console.log('Appending '+data.resources[res].name);
+            html += '<td class="resource'+rid+'">'+(bld.resources[rid] ? bld.resources[rid].cost_str : '')+'</td>';
+          }
+        }
+        
+        
+        html += '<td>'+bld.turns+'</td>';
+        html += '<td><input type="radio" name="building_id" value="'+bld.id+'"></td>';
+        html += '</tr>';
+        $("#building-list tbody").append(html);
+      }
     }
   }
 
