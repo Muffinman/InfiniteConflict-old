@@ -19,7 +19,7 @@
   <!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
   <!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
-    <img id="background" alt="" src="/images/background2.jpg">
+    <img id="background" alt="" src="/images/background.jpg">
     <img id="ajax" alt="Loading... Please wait." src="/images/ajax.gif">
 
     <div id="logo">
@@ -60,7 +60,7 @@
           <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time}s.</p>
+            <p>Page generated in {$page_time}s ({$page_queries} queries in {$page_query_time}s).</p>
           </div>
         </div>
       </div>
