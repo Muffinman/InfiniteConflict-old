@@ -124,7 +124,8 @@ input{
   height:60px;
   top:20px;
   left:30px;
-  z-index:3;  
+  z-index:3; 
+  display:none; 
 }
 
 #logo h1{

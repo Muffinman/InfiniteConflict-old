@@ -5,10 +5,10 @@ $pagestart = time_tracker();
 
 # FirePHP and error reporting
 ob_start();
-ini_set('error_reporting', E_ERROR & ~E_NOTICE);
-ini_set("display_errors", true);
+ini_set('error_reporting', E_ALL & ~E_NOTICE);
+ini_set("display_errors", 'On');
 require_once 'classes/fb.php';
-set_error_handler("myErrorHandler");
+//set_error_handler("myErrorHandler");
 
 if (!session_id()) {
 	session_start();
@@ -66,7 +66,7 @@ $db = new mysql();
 $db->dbName = $db_name;
 $db->dbUser = $db_user;
 $db->dbPass = $db_pass;
-if ($db_host){
+if (isset($db_host)){
   $db->dbHost = $db_host;
 }
 $db->Connect();

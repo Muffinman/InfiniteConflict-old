@@ -101,32 +101,32 @@
   margin-left:10px;
 }
 
-.buildings{
+.built{
   width:356px;
   float:left;
 }
 
-.buildings td{
+.built td{
   padding:4px;
 }
 
-.buildings td img{
+.built td img{
   width:40px;
 }
 
-.buildings td.building-image{
+.built td.building-image{
   width:40px;
 }
 
-.buildings th.resource{
+.built th.resource{
   text-align:center;
 }
 
-.buildings tr:nth-child(2n) td{
+.built tr:nth-child(2n) td{
   background:#4E4E4E;
 }
 
-.buildings tr:nth-child(4n-1) td, .buildings tr:nth-child(4n) td{
+.built tr:nth-child(4n-1) td, .built tr:nth-child(4n) td{
   background: #454545;
 }
 

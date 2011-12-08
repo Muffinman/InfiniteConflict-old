@@ -1,0 +1,4 @@
+.research p{
+  margin-top:10px;
+  float:right;
+}
