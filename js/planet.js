@@ -60,7 +60,7 @@ $(document).ready(function(){
           +'<td class="status">'
           + (data.queue[i].started ? 'Started' : (data.queue[i].rank > 1 ? 'Queued' : 'Starting' ))
           +'</td>'
-          +'<td class="remove"><a href="/ajax/buildings/queue/remove/'+data.queue[i].hash+'/">Remove</a></td>'
+          +'<td class="remove"><a href="/ajax/buildings/queue/remove/'+data.queue[i].hash+'/">[x]</a></td>'
           +'</tr>'
         );
       }

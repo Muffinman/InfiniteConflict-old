@@ -1,11 +1,13 @@
 $(document).ready(function() {
 
-  $(document).ajaxStart(function(){
-    $("#ajax").css({'display':'block'});
-  }).ajaxStop(function(){
+  $(document).ajaxStop(function(){
     $("#ajax").css({'display':'none'});
   });
 
+  $(document).ajaxStart(function(){
+    $("#ajax").css({'display':'block'});
+    //setTimeout(checkAjax, 1000);
+  });
 	/*
 	 * Confirm certain actions
 	 */

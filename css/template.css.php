@@ -27,8 +27,20 @@ body {
 #ajax{
   display:none;
   position:fixed;
-  left:10px;
-  top:10px;
+  height:100%;
+  width:100%;
+  background:rgba(0,0,0,0.8);
+  z-index:999;
+  text-align:center;
+}
+
+#ajax img{
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  margin-top:-15px;
+  margin-left:-15px;
   z-index:999;
 }
 
@@ -124,8 +136,7 @@ input{
   height:60px;
   top:20px;
   left:30px;
-  z-index:3; 
-  display:none; 
+  z-index:3;
 }
 
 #logo h1{

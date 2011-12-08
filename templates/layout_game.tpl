@@ -20,7 +20,9 @@
   <!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
     <img id="background" alt="" src="/images/background.jpg">
-    <img id="ajax" alt="Loading... Please wait." src="/images/ajax.gif">
+    <div id="ajax">
+      <img alt="Loading... Please wait." src="/images/ajax.gif">
+    </div>
 
     <div id="logo">
       <h1>Infinite<span>Conflict</span></h1>

@@ -6,7 +6,6 @@
         <tr>
           <th>Name</th>
           <th>Turns</th>
-          <th>Cost</th>
           <th>Remove</th>
         </tr>
       </thead>
@@ -15,7 +14,6 @@
         <tr>
           <td>{$r.name}</td>
           <td>{$r.turns}</td>
-          <td>{$r.resources.10.cost}</td>
           <td><a href="/ajax/research/queue/remove/{$r.hash}/">[x]</a></td>
         </tr>
         {/foreach}

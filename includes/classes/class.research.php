@@ -23,7 +23,7 @@ class Research extends IC {
     return $this->db->Select($q);
   }
   
-  
+
   public function LoadResearchResources($research_id){
     $q = "SELECT * FROM research_has_resource
             WHERE research_id='" . $this->db->esc($research_id) . "'";
@@ -41,6 +41,7 @@ class Research extends IC {
   public function LoadAvailableResearch($ruler_id){
     $research = $this->LoadResearch();    
     $current = $this->LoadRulerResearch($ruler_id);
+    $queue = $this->LoadResearchQueue($ruler_id);
     $available = array();
 
     $currentIDs = array();
@@ -49,12 +50,17 @@ class Research extends IC {
         $currentIDs[] = $c['id'];
       }
     }
+    if ($queue){
+      foreach ($queue as $q){
+        $currentIDs[] = $q['id'];
+      }
+    }
   
     if ($research){
       foreach ($research as $r){
         if (!in_array($r['id'], $currentIDs)){
           $preReq = $this->LoadResearchPrereq($r['id']);
-          
+
           if ($preReq){
             if (!array_diff($preReq, $currentIDs)){
               $r['resources'] = $this->LoadResearchResources($r['id']);
@@ -71,7 +77,7 @@ class Research extends IC {
 
     return $available;
   }
-  
+
   
   
   public function LoadResearchPrereq($research_id){
@@ -88,7 +94,9 @@ class Research extends IC {
   
   
   public function LoadResearchQueue($ruler_id){
-    $q = "SELECT * FROM ruler_research_queue WHERE ruler_id='" . $this->db->esc($ruler_id) . "'";
+    $q = "SELECT r.*, rq.id AS queue_id, rq.turns AS turns_left, MD5(CONCAT(rq.id, '" . $ruler_id . "', rq.research_id)) AS hash FROM ruler_research_queue AS rq
+            LEFT JOIN research AS r ON rq.research_id = r.id
+            WHERE rq.ruler_id='" . $this->db->esc($ruler_id) . "'";
     return $this->db->Select($q);
   }
   

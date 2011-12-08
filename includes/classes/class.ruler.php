@@ -27,7 +27,7 @@ class Ruler extends IC {
     return false;
   }
 
-  private function CheckConfirmCode($code){
+  public function CheckConfirmCode($code){
     $q = "SELECT * FROM ruler WHERE hash='" . $this->db->esc($code) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
       return $r[0];
@@ -72,6 +72,7 @@ class Ruler extends IC {
       $this->db->QuickEdit('planet', $planet);
 
       $this->SetHomePlanetBuildings($planet['id']);
+      $this->SetStartingResearch($ruler['id']);
 
       return $ruler;
     }
@@ -87,6 +88,21 @@ class Ruler extends IC {
       $out[] = $b;
     }
     $this->db->MultiInsert('planet_has_building', $out);
+  }
+
+  private function SetStartingResearch($ruler){
+    $q = "SELECT * FROM research WHERE given=1";
+    if ($research = $this->db->Select($q)){
+      $array = array();
+      foreach ($research as $r){
+        $array[] = array(
+          'research_id' => $r['id'],
+          'ruler_id' => $ruler
+        );
+      }
+      $this->db->MultiInsert('ruler_has_research', $array);
+    }
+    return true;
   }
 
   public function LoadStartingResources(){
