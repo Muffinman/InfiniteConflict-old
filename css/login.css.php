@@ -22,8 +22,8 @@ body{
   width:480px;
   height:280px;
   margin:0px auto;
-  top:50%;
   margin-top:-150px;
+  top:50%;
   background:url(/images/login.png) top left no-repeat;
   padding:10px;
   z-index:2;

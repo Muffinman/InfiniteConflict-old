@@ -11,7 +11,7 @@ require_once 'template.css.php';
 
 
 
-if ($_GET['p'] == 'login' || $_GET['p'] == 'register' || $_GET['p'] == 'forgetten' || $_GET['p'] == 'confirm'){
+if ($_GET['p'] == 'login' || $_GET['p'] == 'register' || $_GET['p'] == 'forgotten' || $_GET['p'] == 'confirm' || $_GET['p'] == 'support'){
   require_once 'login.css.php';
 }
 

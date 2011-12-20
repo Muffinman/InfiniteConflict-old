@@ -20,7 +20,7 @@
         <input type="password" minlength="6" name="password2" required="required" {if $errors.password2} class="error"{/if}>  {if $errors.password2} <span class="error">{$errors.password2}</span>{/if}
       </p>
       <p class="submit"><input type="submit" value="Register"></p>
-      <p class="form-options"><a href="/login">Login</a> | <a href="/forgotten">Forgotten your login?</a> | <a href="/support">Support</a></p>
+      <p class="form-options"><a href="/login">Login</a> | <a href="/register">Register homeworld</a> | <a href="/forgotten">Forgotten?</a> | <a href="/support">Support</a></p>
 
     </div>
   </form>

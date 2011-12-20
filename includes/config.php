@@ -5,7 +5,7 @@ $pagestart = time_tracker();
 
 # FirePHP and error reporting
 ob_start();
-ini_set('error_reporting', E_ALL & ~E_NOTICE);
+ini_set('error_reporting', E_ALL & ~E_NOTICE & ~DEPRECATED);
 ini_set("display_errors", 'On');
 require_once 'classes/fb.php';
 //set_error_handler("myErrorHandler");
