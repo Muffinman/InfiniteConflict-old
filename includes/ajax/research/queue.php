@@ -16,12 +16,13 @@ switch($request[3]){
       }
     break;
 
-  /*
+
   case 'remove':
       $IC->Research->QueueResearchRemove($_SESSION['ruler']['id'], $request[4]);
       $db->SortRank('ruler_research_queue', 'rank', 'id', "WHERE ruler_id='" . $db->esc($_SESSION['ruler']['id']) . "' AND started IS NULL");
     break;
-  
+
+  /*
   case 'reorder':
       $IC->Research->QueueResearchReorder($_SESSION['ruler']['id'], $_POST['hash']);
     break;

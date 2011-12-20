@@ -13,7 +13,7 @@ class Research extends IC {
     $q = "SELECT * FROM research";
     return $this->db->Select($q);
   }
-  
+
   
   
   public function LoadRulerResearch($ruler_id){
@@ -110,7 +110,7 @@ class Research extends IC {
     }
     return false;
   }
-  
+
   public function QueueResearch($ruler_id, $research_id){
     if ($this->ResearchIsAvailable($ruler_id, $research_id)){
       $arr = array(
@@ -121,6 +121,15 @@ class Research extends IC {
     }
     return false;
   }
+
+  public function QueueResearchRemove($ruler_id, $hash){
+    $q = "SELECT * FROM ruler_research_queue WHERE MD5(CONCAT(id, '" . $ruler_id . "', research_id)) = '" . $this->db->esc($hash) . "' LIMIT 1";
+    if ($r = $this->db->Select($q)){
+      return $this->db->QuickDelete('ruler_research_queue', $r[0]['id']);
+    }
+    return false;
+  }
+
   
 }
 

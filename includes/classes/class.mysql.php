@@ -117,7 +117,7 @@ class mysql {
   function QuickSelect($table, $id){
     if (!$table || !is_numeric($id) || empty($id)){
       return false;
-    }    
+    }
 
     if ($this->ColExists($table, 'rank')){
       $orderBy = 'ORDER BY `rank` ASC';
@@ -323,6 +323,15 @@ class mysql {
   }
 
 
+  function QuickDelete($table, $id, $limit=1){
+    if (!$table || !is_numeric($id) || empty($id)){
+      return false;
+    }
+
+    $q = 'DELETE FROM `' . $this->esc($table) . '` WHERE `id`=\'' . $this->esc($id) . '\' LIMIT ' . $limit;
+    return $this->Edit($q);
+  }
+
   /*
   *  GENERIC QUERY
   *  -------------
@@ -463,7 +472,6 @@ class mysql {
   */
   function SortRank($table, $rankcolumn='rank', $PK='id', $whereclause='') {
     $q = "SELECT * FROM $table $whereclause ORDER BY $rankcolumn ASC";
-    FB::log($q);
     $i=1;
     if ($x = $this->Select($q, false, false, false)) {
       foreach ($x as $row){

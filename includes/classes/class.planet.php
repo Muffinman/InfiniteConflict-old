@@ -121,25 +121,29 @@ class Planet extends IC {
     $resources = $this->LoadPlanetResources($planet_id);
     $taxes = $this->LoadResourceTaxOutput($resource_id);
 
-    foreach ($resources as $r){
-      if ($r['resource_id'] == $resource_id){
-        $res = $r;
-        break;
+    if ($resources){
+      foreach ($resources as $r){
+        if ($r['resource_id'] == $resource_id){
+          $res = $r;
+          break;
+        }
       }
     }
 
     $extra = 0;
 
-    foreach($buildings as $b){
-      $build = $this->LoadBuildingResources($b['building_id']);
-      foreach ($build as $build_resource){
-        if ($resource_id == $build_resource['resource_id']){
-          if ($build_resource['output'] > 0){
-            $res['output'] += $build_resource['output'] * $b['qty'];
-          }
+    if ($buildings){
+      foreach($buildings as $b){
+        $build = $this->LoadBuildingResources($b['building_id']);
+        foreach ($build as $build_resource){
+          if ($resource_id == $build_resource['resource_id']){
+            if ($build_resource['output'] > 0){
+              $res['output'] += $build_resource['output'] * $b['qty'];
+            }
 
-          if ($build_resource['output'] < 0){
-            $extra += $build_resource['output'] * $b['qty'];
+            if ($build_resource['output'] < 0){
+              $extra += $build_resource['output'] * $b['qty'];
+            }
           }
         }
       }
@@ -171,13 +175,15 @@ class Planet extends IC {
     }
 
     $storage=0;
-
-    foreach($buildings as $b){
-      $build = $this->LoadBuildingResources($b['building_id']);
-      foreach ($build as $build_resource){
-        if ($resource_id == $build_resource['resource_id']){
-          if ($build_resource['stores'] > 0){
-            $storage += $build_resource['stores'];
+    
+    if ($buildings){
+      foreach($buildings as $b){
+        $build = $this->LoadBuildingResources($b['building_id']);
+        foreach ($build as $build_resource){
+          if ($resource_id == $build_resource['resource_id']){
+            if ($build_resource['stores'] > 0){
+              $storage += $build_resource['stores'];
+            }
           }
         }
       }
@@ -250,12 +256,14 @@ class Planet extends IC {
       }
     }
 
-    foreach($buildings as $b){
-      $build = $this->LoadBuildingResources($b['building_id']);
-      foreach ($build as $build_resource){
-        if ($resource_id == $build_resource['resource_id']){
-          if ($build_resource['abundance'] > 0){
-            $res['abundance'] += $build_resource['abundance'];
+    if ($buildings){
+      foreach($buildings as $b){
+        $build = $this->LoadBuildingResources($b['building_id']);
+        foreach ($build as $build_resource){
+          if ($resource_id == $build_resource['resource_id']){
+            if ($build_resource['abundance'] > 0){
+              $res['abundance'] += $build_resource['abundance'];
+            }
           }
         }
       }

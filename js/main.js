@@ -1,11 +1,11 @@
 $(document).ready(function() {
 
   $(document).ajaxStop(function(){
-    $("#ajax").css({'display':'none'});
+    $("#ajax").fadeOut(250);
   });
 
   $(document).ajaxStart(function(){
-    $("#ajax").css({'display':'block'});
+    $("#ajax").fadeIn(0);
     //setTimeout(checkAjax, 1000);
   });
 	/*

@@ -79,7 +79,7 @@ $(document).ready(function(){
         html = '<tr>';
         html += '<td class="building-image"><img src="/images/buildings/'+bld.id+'.jpg" alt="'+bld.name+'" title="'+bld.name+'"></td>'
         html += '<td class="building-name">'+bld.name+'</td>';
-        
+
         
         for (res in data.resources){
           var rid = data.resources[res].id;
@@ -96,7 +96,6 @@ $(document).ready(function(){
             html += '<td class="resource'+rid+'">'+(bld.resources[rid] ? bld.resources[rid].cost_str : '')+'</td>';
           }
         }
-        
         
         html += '<td>'+bld.turns+'</td>';
         html += '<td><input type="radio" name="building_id" value="'+bld.id+'"></td>';

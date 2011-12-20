@@ -125,7 +125,7 @@ if ($r = $db->Select($q)){
         'planet_id' => $row['id'],
         'resource_id' => $res['resource_id'],
         'stored' => rand($res['home_min_stored'], $res['home_max_stored']),
-        'abundance' => random_float($res['home_min_abundance'], $res['home_max_abundance'])
+        'abundance' => round(random_float($res['home_min_abundance'], $res['home_max_abundance']), 2)
       );
     }
   }
@@ -148,7 +148,7 @@ if ($r = $db->Select($q)){
         'planet_id' => $row['id'],
         'resource_id' => $res['resource_id'],
         'stored' => rand($res['free_min_stored'], $res['free_max_stored']),
-        'abundance' => random_float($res['free_min_abundance'], $res['free_max_abundance'])
+        'abundance' => round(random_float($res['free_min_abundance'], $res['free_max_abundance']), 2)
       );
     }
   }
