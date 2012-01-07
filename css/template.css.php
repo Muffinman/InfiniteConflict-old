@@ -164,6 +164,25 @@ input{
   float:right;
 }
 
+#userbox .messages{
+	float:left;
+	padding-left:35px;
+	margin-top:10px;
+	height:32px;
+	line-height:32px;
+	background:url(/images/icons/Email.png) top left no-repeat;
+}
+
+#userbox .news{
+	float:left;
+	padding-left:35px;
+	margin-top:10px;
+	margin-left:30px;
+	height:32px;
+	line-height:32px;
+	background:url(/images/icons/Modify.png) top left no-repeat;
+}
+
 #container{
   width:950px;
   margin:0px auto;
@@ -265,7 +284,8 @@ input{
 }
 
 .content{
-  background:#2C2C2C url(/images/head2back.gif) top left repeat-x;
+	background:#2c2c2c url(/images/head2back.gif) top left repeat-x;
+  background:rgba(50,50,50,0.9) url(/images/head2back.gif) top left repeat-x;
   padding:10px;
   border:1px solid black;
   margin-bottom:10px;

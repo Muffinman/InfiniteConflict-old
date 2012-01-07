@@ -84,15 +84,15 @@ $(document).ready(function(){
         for (res in data.resources){
           var rid = data.resources[res].id;
           if (rid <= 2){
-            console.log('Appending '+data.resources[res].name);
+            //console.log('Appending '+data.resources[res].name);
             html += '<td class="resource'+rid+'">'+(bld.resources[rid] ? bld.resources[rid].cost_str : '')+'</td>';
           }
           if (rid == 4){
-            console.log('Appending '+data.resources[res].name);
+            //console.log('Appending '+data.resources[res].name);
             html += '<td class="resource'+rid+'">'+(bld.resources[rid] ?  bld.resources[rid].output_str : '')+'</td>';
           }             
           if (rid > 4 && rid < 8){
-            console.log('Appending '+data.resources[res].name);
+            //console.log('Appending '+data.resources[res].name);
             html += '<td class="resource'+rid+'">'+(bld.resources[rid] ? bld.resources[rid].cost_str : '')+'</td>';
           }
         }

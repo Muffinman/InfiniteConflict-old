@@ -1,4 +1,9 @@
 <?
+
+/*
+ *  This class controls all planet related methods
+ *
+ */
 class Planet extends IC {
 
   var $db;
@@ -32,47 +37,60 @@ class Planet extends IC {
 
 
 
+	function RulerOwnsPlanet($ruler_id, $planet_id){
+		$planet = $this->LoadPlanet($planet_id);
+		
+		if($planet['ruler_id'] == $ruler_id){
+			return true;
+		}
+		return false;
+	}
+
+
   function CalcBuildingResources($planet_id){
     $resources = $this->LoadResources();
     $buildings = $this->LoadPlanetBuildings($planet_id);
 
     $out = array();
-    foreach ($buildings as $b){
 
-      $bld = $this->LoadBuilding($b['building_id']);
-      $bld['qty'] = $b['qty'];
-
-      $buildingRes = $this->LoadBuildingResources($b['building_id']);
-
-      foreach ($resources as $r){
-        $abundance = $this->CalcAbundance($planet_id, $r['id']);
-
-        foreach ($buildingRes as $res){
-          if (!$r['global']){
-            if ($r['id'] == $res['resource_id']){
-              $bld['resources'][$r['id']] = $res;
-              $bld['resources'][$r['id']]['name'] = $r['name'];
-
-
-              if ($bld['resources'][$r['id']]['output'] > 0){
-                $bld['resources'][$r['id']]['total_output'] = $bld['resources'][$r['id']]['output'] * $b['qty'] * $abundance;
-              }
-
-              # Buildings with negative output dont take into account abundance
-              if ($bld['resources'][$r['id']]['output'] < 0){
-                $bld['resources'][$r['id']]['total_output'] = $bld['resources'][$r['id']]['output'] * $b['qty'];
-              }
-
-              $bld['resources'][$r['id']]['total_stores'] = $bld['resources'][$r['id']]['stores'] * $b['qty'];
-              $bld['resources'][$r['id']]['total_cost'] = $bld['resources'][$r['id']]['cost'] * $b['qty'];
-
-              $bld['resources'][$r['id']]['total_output_str'] = ($bld['resources'][$r['id']]['total_output'] > 0 ? '+' : '') . number_format($bld['resources'][$r['id']]['total_output'], 0);
-              $bld['resources'][$r['id']]['total_stores_str'] = ($bld['resources'][$r['id']]['total_stores'] > 0 ? '+' : '') . number_format($bld['resources'][$r['id']]['total_stores'], 0);
-            }
-          }
-        }
-      }
-      $out[] = $bld;
+		if ($buildings){
+	    foreach ($buildings as $b){
+	
+	      $bld = $this->LoadBuilding($b['building_id']);
+	      $bld['qty'] = $b['qty'];
+	
+	      $buildingRes = $this->LoadBuildingResources($b['building_id']);
+	
+	      foreach ($resources as $r){
+	        $abundance = $this->CalcAbundance($planet_id, $r['id']);
+	
+	        foreach ($buildingRes as $res){
+	          if (!$r['global']){
+	            if ($r['id'] == $res['resource_id']){
+	              $bld['resources'][$r['id']] = $res;
+	              $bld['resources'][$r['id']]['name'] = $r['name'];
+	
+	
+	              if ($bld['resources'][$r['id']]['output'] > 0){
+	                $bld['resources'][$r['id']]['total_output'] = $bld['resources'][$r['id']]['output'] * $b['qty'] * $abundance;
+	              }
+	
+	              # Buildings with negative output dont take into account abundance
+	              if ($bld['resources'][$r['id']]['output'] < 0){
+	                $bld['resources'][$r['id']]['total_output'] = $bld['resources'][$r['id']]['output'] * $b['qty'];
+	              }
+	
+	              $bld['resources'][$r['id']]['total_stores'] = $bld['resources'][$r['id']]['stores'] * $b['qty'];
+	              $bld['resources'][$r['id']]['total_cost'] = $bld['resources'][$r['id']]['cost'] * $b['qty'];
+	
+	              $bld['resources'][$r['id']]['total_output_str'] = ($bld['resources'][$r['id']]['total_output'] > 0 ? '+' : '') . number_format($bld['resources'][$r['id']]['total_output'], 0);
+	              $bld['resources'][$r['id']]['total_stores_str'] = ($bld['resources'][$r['id']]['total_stores'] > 0 ? '+' : '') . number_format($bld['resources'][$r['id']]['total_stores'], 0);
+	            }
+	          }
+	        }
+	      }
+	      $out[] = $bld;
+	    }
     }
 
     return $out;
@@ -375,8 +393,10 @@ class Planet extends IC {
     
       # Load the current building from $b first in case it doesn't exist on planet
       $cur2 = array();
-      foreach($current as $cur){
-        $cur2[$cur['building_id']] = $cur;
+      if ($current){
+		    foreach($current as $cur){
+		      $cur2[$cur['building_id']] = $cur;
+		    }
       }
       $theCurrent['qty'] = $cur2[$b['id']]['qty'];
       $theCurrent['building_id'] = $theCurrent['id'];
@@ -386,10 +406,12 @@ class Planet extends IC {
       if ($prereq['building']){
         foreach($prereq['building'] as $id){
           $found = false;
-          foreach($current as $cur){
-            if ($cur['building_id'] == $id){
-              $found = true;
-            }
+          if ($current){
+          	foreach($current as $cur){
+            	if ($cur['building_id'] == $id){
+             	 	$found = true;
+            	}
+          	}
           }
           if ($found === false){
             continue 2;

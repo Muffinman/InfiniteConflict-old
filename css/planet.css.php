@@ -1,6 +1,7 @@
 .planet{
   background-image:none;
-  background:#2c2c2c;
+  background-color:#2c2c2c;
+  background-color:rgba(50,50,50,0.9);
 }
 
 .planet-image{

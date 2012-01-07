@@ -6,9 +6,12 @@ $res = $IC->LoadResources();
 if ($request[1]){
   if ($planet = $IC->LoadPlanet($request[1])){
     $error = false;
+    
+    if (!$IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $planet['id'])){
+    	$error = true;
+    }
   }
 }
-
 
 if (!$error){
   if ($_POST['building-list']){
@@ -18,7 +21,6 @@ if (!$error){
   $resources = $IC->Planet->CalcPlanetResources($planet['id']);
   $buildings = $IC->Planet->CalcBuildingResources($planet['id']);
   $template = 'planet.tpl';
-
 
   switch ($request[2]){
     case 'production':
