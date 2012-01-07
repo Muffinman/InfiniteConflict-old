@@ -9,10 +9,12 @@ class Ruler extends IC {
     $this->Planet = new Planet($db);
   }
 
+
   public function LoadRuler($id){
     $ruler = $this->db->QuickSelect('ruler', $id);
     return $ruler;
   }
+
 
   public function LoadRulerPlanets($id){
     $q = "SELECT * FROM planet WHERE ruler_id='" . $this->db->esc($id) . "'
@@ -27,6 +29,37 @@ class Ruler extends IC {
     return false;
   }
 
+
+	public function LoadRulerQL($ruler_id){
+		if (!$this->Research){
+			$this->Research = new Research($this->db);
+		}
+		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
+			foreach($research as $r){
+				if (preg_match('/Queue Length (?P<digit>\d+)/', $r['name'], $matches)){
+					return $matches['digit'];
+				}
+			}
+		}
+		return 1;
+	}
+
+
+	public function LoadRulerPL($ruler_id){
+		if (!$this->Research){
+			$this->Research = new Research($this->db);
+		}
+		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
+			foreach($research as $r){
+				if (preg_match('/Planet Limit (?P<digit>\d+)/', $r['name'], $matches)){
+					return $matches['digit'];
+				}
+			}
+		}
+		return 1;	
+	}
+
+
   public function CheckConfirmCode($code){
     $q = "SELECT * FROM ruler WHERE hash='" . $this->db->esc($code) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
@@ -34,6 +67,7 @@ class Ruler extends IC {
     }
     return false;
   }
+
 
   public function CheckEmail($email){
     $q = "SELECT * FROM ruler WHERE email='" . $this->db->esc($email) . "' LIMIT 1";
@@ -43,6 +77,7 @@ class Ruler extends IC {
     return true;
   }
 
+
   public function CheckRulerName($name){
     $q = "SELECT * FROM ruler WHERE name='" . $this->db->esc($name) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
@@ -51,12 +86,14 @@ class Ruler extends IC {
     return true;
   }
 
+
   public function CreateRuler($arr){
     $arr['hash'] = md5(rand(1,42323) . $arr['email'] . time());
     $id = $this->db->QuickInsert('ruler', $arr);
     $this->SendRegEmail($id);
     return $id;
   }
+
 
   public function SignupRuler($arr){
     if ($ruler = $this->CheckConfirmCode($arr['hash'])){
@@ -73,11 +110,13 @@ class Ruler extends IC {
 
       $this->SetHomePlanetBuildings($planet['id']);
       $this->SetStartingResearch($ruler['id']);
+      $this->SetStartingResources($ruler['id']);
 
       return $ruler;
     }
     return false;
   }
+
 
   private function SetHomePlanetBuildings($id){
     $planet = $this->LoadPlanet($id);
@@ -90,14 +129,15 @@ class Ruler extends IC {
     $this->db->MultiInsert('planet_has_building', $out);
   }
 
-  private function SetStartingResearch($ruler){
+
+  private function SetStartingResearch($ruler_id){
     $q = "SELECT * FROM research WHERE given=1";
     if ($research = $this->db->Select($q)){
       $array = array();
       foreach ($research as $r){
         $array[] = array(
           'research_id' => $r['id'],
-          'ruler_id' => $ruler
+          'ruler_id' => $ruler_id
         );
       }
       $this->db->MultiInsert('ruler_has_research', $array);
@@ -105,16 +145,47 @@ class Ruler extends IC {
     return true;
   }
 
-  public function LoadStartingResources(){
+
+	public function SetStartingResources($ruler_id){
+		if ($r = $this->LoadRulerStartingResources()){
+			foreach($r as $row){
+				$arr = array(
+					'ruler_id' => $ruler_id,
+					'resource_id' => $row['resource_id'],
+					'qty' => $row['qty']
+				);
+				$this->db->QuickInsert('ruler_has_resource', $arr);
+			}
+			return true;
+		}
+		return false;
+	}
+
+  public function LoadRulerStartingResources(){
+    $q = "SELECT * FROM ruler_starting_resource";
+    return $this->db->Select($q);
+  }
+
+
+  public function LoadPlanetStartingResources(){
     $q = "SELECT * FROM planet_starting_resource";
     return $this->db->Select($q);
   }
+  
 
   public function LoadStartingBuildings(){
     $q = "SELECT * FROM planet_starting_building";
     return $this->db->Select($q);
   }
-
+  
+  
+  public function LoadRulerResources($ruler_id){
+  	$q = "SELECT r.*, rr.qty FROM ruler_has_resource AS rr
+  					LEFT JOIN resource AS r ON rr.resource_id = r.id
+  					WHERE rr.ruler_id = '" . $this->db->esc($ruler_id) . "'
+  					AND r.global = 1";
+  	return $this->db->Select($q);
+  }
 
 
   public function CheckLogin($email, $password){

@@ -124,6 +124,16 @@ class Research extends IC {
 
 
   public function QueueResearch($ruler_id, $research_id){
+  	if ($queue = $this->LoadResearchQueue($ruler_id)){
+  		if (!$this->Ruler){
+  			$this->Ruler = new Ruler($this->db);
+  		}
+  		$QL = $this->Ruler->LoadRulerQL($ruler_id);
+  		if (sizeof($queue) >= $QL){
+  			return false;
+  		}
+  	}
+  
     if ($this->ResearchIsAvailable($ruler_id, $research_id)){
       $arr = array(
         'research_id' => $research_id,

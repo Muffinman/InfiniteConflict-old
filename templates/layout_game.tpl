@@ -34,6 +34,8 @@
       <p>{$ruler.name} <a href="/logout">[Logout]</a> - Turn : <a href="/turns">{$config.turn}</a> {$smarty.now|date_format:"%H:%M %Z"}</p>
       <p class="messages"><a href="/messages">Messages</a></p>
       <p class="news"><a href="/news">News</a></p>
+      <p class="ql" title="Researched Queue Length">QL: {$ruler.QL}</p>
+      <p class="pl" title="Researched Planet Limit">PL: {$ruler.PL}</p>
     </div>
 
 
@@ -42,7 +44,7 @@
 
         <ul id="menu">
           <li class="home"><a {if $request.0 == ''}class="active" {/if}href="/">Home</a></li>
-          <li class="planets"><a {if $request.0 == 'planets'}class="active" {/if}href="/planets">Planets</a></li>
+          <li class="planets"><a {if $request.0 == 'planets' || $request.0 == 'planet'}class="active" {/if}href="/planets">Planets</a></li>
           <li class="fleets"><a {if $request.0 == 'fleets'}class="active" {/if}href="/fleets">Fleets</a></li>
           <li class="navigation"><a {if $request.0 == 'navigation'}class="active" {/if}href="/navigation">Navigation</a></li>
           <li class="research"><a {if $request.0 == 'research'}class="active" {/if}href="/research">Research</a></li>

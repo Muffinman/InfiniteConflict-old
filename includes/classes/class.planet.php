@@ -488,6 +488,16 @@ class Planet extends IC {
   function QueueBuilding($ruler_id, $planet_id, $building_id){
     $queue = false;
 
+  	if ($q = $this->LoadBuildingsQueue($ruler_id, $planet_id)){
+  		if (!$this->Ruler){
+  			$this->Ruler = new Ruler($this->db);
+  		}
+  		$QL = $this->Ruler->LoadRulerQL($ruler_id);
+  		if (sizeof($q) >= $QL){
+  			return false;
+  		}
+  	}
+
     if ($building = $this->LoadBuilding($building_id)){
       if ($avail = $this->LoadAvailableBuildings($ruler_id, $planet_id)){
         foreach ($avail as $bld){

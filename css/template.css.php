@@ -166,8 +166,9 @@ input{
 
 #userbox .messages{
 	float:left;
-	padding-left:35px;
+	padding-left:32px;
 	margin-top:10px;
+	margin-right:10px;
 	height:32px;
 	line-height:32px;
 	background:url(/images/icons/Email.png) top left no-repeat;
@@ -175,12 +176,28 @@ input{
 
 #userbox .news{
 	float:left;
-	padding-left:35px;
+	padding-left:30px;
 	margin-top:10px;
-	margin-left:30px;
+	margin-right:20px;
 	height:32px;
 	line-height:32px;
 	background:url(/images/icons/Modify.png) top left no-repeat;
+}
+
+#userbox .pl{
+	margin-top:10px;
+	margin-right:10px;
+	height:32px;
+	line-height:32px;	
+	float:left;
+}
+
+#userbox .ql{
+	margin-top:10px;
+	margin-right:10px;
+	height:32px;
+	line-height:32px;	
+	float:left;
 }
 
 #container{

@@ -31,7 +31,16 @@ function template_data() {
   if ($sess = $IC->LoadSession($_COOKIE['ic_session'])){
     $_SESSION['ruler'] = $IC->LoadRuler($sess['ruler_id']);
     $_SESSION['ruler']['avatar'] = '/images/avatar.png';
+    $_SESSION['ruler']['resources'] = $IC->Ruler->LoadRulerResources($sess['ruler_id']);
+    
+    if (!$_SESSION['ruler']['QL']){
+    	$_SESSION['ruler']['QL'] = $IC->Ruler->LoadRulerQL($sess['ruler_id']);
+    }
+    if (!$_SESSION['ruler']['PL']){
+    	$_SESSION['ruler']['PL'] = $IC->Ruler->LoadRulerPL($sess['ruler_id']);
+    }
   }
+  
 
 	$smarty->assign('title', $config['meta_title']);
 	$smarty->assign('description', $config['meta_description']);
