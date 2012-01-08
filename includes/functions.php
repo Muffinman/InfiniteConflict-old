@@ -19,15 +19,6 @@ function template_data() {
 
 	$smarty->assign('site_url', SITE_LOCATION);
 
-	# Meta data
-  $q = "SELECT * FROM config";
-  if ($r = $db->Select($q)){
-    $config = array();
-    foreach ($r as $row){
-      $config[$row['key']] = $row['val'];
-    }
-  }
-
   if ($sess = $IC->LoadSession($_COOKIE['ic_session'])){
     $_SESSION['ruler'] = $IC->LoadRuler($sess['ruler_id']);
     $_SESSION['ruler']['avatar'] = '/images/avatar.png';

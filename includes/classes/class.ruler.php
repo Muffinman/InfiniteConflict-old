@@ -30,6 +30,17 @@ class Ruler extends IC {
   }
 
 
+	public function LoadResource($ruler_id, $resource_id){
+		$q = "SELECT * FROM ruler_has_resource
+						WHERE ruler_id='" . $this->db->esc($ruler_id) . "'
+						AND resource_id='" . $this->db->esc($resource_id) . "' LIMIT 1";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['qty'];
+		}
+		return false;
+	}
+
+
 	public function LoadRulerQL($ruler_id){
 		if (!$this->Research){
 			$this->Research = new Research($this->db);
@@ -220,6 +231,13 @@ class Ruler extends IC {
 
   public function CreatePassword($email, $pass){
     return md5(md5($email) . md5($pass));
+  }
+
+  function VaryResource($ruler_id, $resource_id, $qty){
+    $q = "UPDATE ruler_has_resource SET qty = qty + '" . $this->db->esc($qty) . "'
+            WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
+            AND resource_id = '" . $this->db->esc($resource_id) . "'";
+    return $this->db->Edit($q);
   }
 
 }

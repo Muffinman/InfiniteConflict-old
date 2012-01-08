@@ -25,7 +25,7 @@ if (!$_SESSION['ruler']
 template_data();
 
 $smarty->assign('ruler', $_SESSION['ruler']);
-$smarty->assign('config', $config);
+$smarty->assign('config', $IC->config);
 
 
 if ($request[0] == 'ajax'){

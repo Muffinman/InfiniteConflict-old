@@ -14,9 +14,9 @@
           {foreach from=$queue item=r name=queue}
             <tr>
               <td>{$r.name}</td>
-              <td>{$r.turns}</td>
+              <td>{if $r.turns_left}{$r.turns_left}{else}{$r.turns}{/if}</td>
               <td>{if $r.started == 1}Started{else}{if $smarty.foreach.queue.first}Starting{else}Queued{/if}{/if}</td>
-              <td class="remove"><a href="/ajax/research/queue/remove/{$r.hash}/">[x]</a></td>
+              <td class="remove">{if !$r.started}<a href="/ajax/research/queue/remove/{$r.hash}/">[x]</a>{/if}</td>
             </tr>
           {/foreach}
         {/if}

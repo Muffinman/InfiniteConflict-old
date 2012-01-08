@@ -24,29 +24,26 @@ define('SCRIPT', basename($_SERVER['SCRIPT_FILENAME']));
 define('COOKIE_NAME', 'ic_session');
 define('COOKIE_LIFETIME', 365*24*3600);
 
-$config = array();
-
 # Environment settings (abve definitions can moved here if necessary)
-if ($_SERVER['ENVIRONMENT'] == 'matt-netbook') {
-  FB::setEnabled(true);
-  $db_name = 'ic';
-  $db_user = 'orphans';
-  $db_pass = 'press';
-} else if ($_SERVER['ENVIRONMENT'] == 'beta') {
+if ($_SERVER['ENVIRONMENT'] == 'beta') {
   FB::setEnabled(true);
   $db_name = 'ic';
   $db_user = 'ic';
   $db_pass = 'matt15';
+  $db_host = 'localhost';
 } else {
   FB::setEnabled(false);
   $db_name = 'ic';
   $db_user = 'ic';
   $db_pass = 'matt15';
+  $db_host = 'localhost';
   
-  // If we're using the live server, then we need to force the main URL for the payment processing to work.
-  if ($_SERVER['HTTP_HOST'] != 'www.infiniteconflict.com'){
-    header('HTTP/1.1 301 Moved Permanently');
-    header('Location: http://www.infiniteconflict.com' . $_SERVER['REQUEST_URI']);
+  if ($_SERVER['REMOTE_ADDR']){
+	  // If we're using the live server, then we need to force the main URL for the payment processing to work.
+	  if ($_SERVER['HTTP_HOST'] != 'www.infiniteconflict.com'){
+	    header('HTTP/1.1 301 Moved Permanently');
+	    header('Location: http://www.infiniteconflict.com' . $_SERVER['REQUEST_URI']);
+	  }
   }
 }
 

@@ -37,10 +37,12 @@ class Research extends IC {
   }
   
   
-  public function LoadAvailableResearch($ruler_id){
+  public function LoadAvailableResearch($ruler_id, $useQueue=true){
     $research = $this->LoadResearch();    
     $current = $this->LoadRulerResearch($ruler_id);
-    $queue = $this->LoadResearchQueue($ruler_id);
+    if ($useQueue){
+    	$queue = $this->LoadResearchQueue($ruler_id);
+    }
     $available = array();
 
     $currentIDs = array();
@@ -104,15 +106,15 @@ class Research extends IC {
   }
   
   public function LoadResearchQueue($ruler_id){
-    $q = "SELECT r.*, rq.id AS queue_id, rq.turns AS turns_left, MD5(CONCAT(rq.id, '" . $ruler_id . "', rq.research_id)) AS hash FROM ruler_research_queue AS rq
+    $q = "SELECT r.*, rq.id AS queue_id, rq.turns AS turns_left, rq.started, MD5(CONCAT(rq.id, '" . $ruler_id . "', rq.research_id)) AS hash FROM ruler_research_queue AS rq
             LEFT JOIN research AS r ON rq.research_id = r.id
             WHERE rq.ruler_id='" . $this->db->esc($ruler_id) . "'";
     return $this->db->Select($q);
   }
 
 
-  public function ResearchIsAvailable($ruler_id, $research_id){
-    if ($available = $this->LoadAvailableResearch($ruler_id)){
+  public function ResearchIsAvailable($ruler_id, $research_id, $queue=true){
+    if ($available = $this->LoadAvailableResearch($ruler_id, $queue)){
       foreach ($available as $a){
         if ($a['id'] == $research_id){
           return true;
@@ -121,6 +123,7 @@ class Research extends IC {
     }
     return false;
   }
+
 
 
   public function QueueResearch($ruler_id, $research_id){
@@ -137,7 +140,8 @@ class Research extends IC {
     if ($this->ResearchIsAvailable($ruler_id, $research_id)){
       $arr = array(
         'research_id' => $research_id,
-        'ruler_id' => $ruler_id
+        'ruler_id' => $ruler_id,
+        'rank' => $this->db->NextRank('ruler_research_queue', 'rank', "WHERE ruler_id='" . $this->db->esc($ruler_id) . "'")
       );
       return $this->db->QuickInsert('ruler_research_queue', $arr);
     }

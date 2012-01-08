@@ -4,12 +4,15 @@ class IC {
 
   var $db;
   var $smarty;
+	var $config;
 
   function __construct($db){
     $this->db = $db;
     $this->Research = new Research($db);
     $this->Planet = new Planet($db);
     $this->Ruler = new Ruler($db);
+    
+    $this->config = $this->LoadConfig();
   }
 
   function LoadSession($id){
@@ -19,6 +22,18 @@ class IC {
     }
     return false;
   }
+
+	function LoadConfig(){
+		# Meta data
+	  $q = "SELECT * FROM config";
+	  if ($r = $this->db->Select($q)){
+	    $config = array();
+	    foreach ($r as $row){
+	      $config[$row['key']] = $row['val'];
+	    }
+	  }	
+	  return $config;
+	}
 
   function LoadResources(){
     $q = "SELECT * FROM resource";

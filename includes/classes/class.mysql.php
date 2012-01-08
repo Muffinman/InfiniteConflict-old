@@ -15,9 +15,8 @@
  *  @version     1.0a
  *  @author      Matt Jones <matt@azmatt.co.uk>
  *  @copyright   Matt Jones
- *  @package     KGL
+ *  @package     IC
  *  
- *  @requires    class.log.php
  */
 
 class mysql {
@@ -168,9 +167,22 @@ class mysql {
     }
 
     foreach ($data as $k => $v){
-      $cols[] = "`" . $this->esc($k) . "`";
-      $vals[] = "'" . $this->esc($v) . "'";
+      if ($v === NULL){
+	      $cols[] = "`" . $this->esc($k) . "`";
+	      $vals[] = "NULL";      
+      }
+      
+      else if ($v == 'NOW()'){
+	      $cols[] = "`" . $this->esc($k) . "`";
+	      $vals[] = "NOW()";
+      }
+      
+      else{
+	      $cols[] = "`" . $this->esc($k) . "`";
+	      $vals[] = "'" . $this->esc($v) . "'";
+      }
     }
+
 
     if ($this->ColExists($table, 'created')){
       $cols[]  = '`created`';
@@ -282,7 +294,13 @@ class mysql {
       foreach ($data as $k => $v){
         if ($v === NULL){
           $qs[] = '`' . $this->esc($k) . '` = NULL';
-        }else{
+        }
+        
+        else if ($v == 'NOW()'){
+        	$qs[] = '`' . $this->esc($k) . '` = NOW()';
+        }
+        
+        else{
           $qs[] = '`' . $this->esc($k) . '` = \'' . $this->esc($v) . '\'';
         }
       }
