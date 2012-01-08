@@ -71,7 +71,7 @@
 
 <div class="content available">
   <h1>Ships Available</h1>
-  <form id="building-list" action="/ajax/production/queue/add/" method="post">
+  <form id="production-list" action="/ajax/production/queue/add/" method="post">
     <table>
       <thead>
         <tr>

@@ -23,6 +23,7 @@
   line-height:20px;
   float:left;
   margin-right:20px;
+  min-width:120px;
 }
 
 .planet-info h1 a{
@@ -33,6 +34,33 @@
 .planet-info h1 a img{
 
 }
+
+
+.planet-list .planet-info{
+	width:805px;
+}
+
+.plantet-list .odd{
+  background:#454545;
+  background:rgba(50,50,50,0.9);	
+}
+
+.planet-list .even{
+  background:#555555;
+  background:rgba(70,70,70,0.9);	
+}
+
+.planet-list .building{
+	margin:0;
+	padding:0;
+}
+
+.planet-list .building li{
+	list-style:none;
+	float:left;
+	margin-right:40px;
+}
+
 
 .static-resources .resource{
   line-height:22px;
@@ -80,6 +108,7 @@
   margin:0;
   padding:0;
   list-style:none;
+  text-align:center;
 }
 
 .action{
@@ -87,15 +116,20 @@
   width:auto;
   margin-left:0;
   margin-right:2px;
-  padding:6px 20px;
+  padding:0;
 }
 
-.action h1{
-  margin:0;
-}
-
-.action h1 a{
+.action a{
   color:white;
+  font-family:play;
+  font-size:16px;
+  text-shadow:1px 1px 1px #000;
+  padding:6px 20px;
+  display:block;
+}
+
+.action a:hover{
+	background:#555;
 }
 
 .building{

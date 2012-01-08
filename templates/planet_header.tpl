@@ -68,16 +68,16 @@
 
   <ul class="planet-actions">
     <li class="planet-info action building">
-      <h1><a href="/planet/{$planet.id}">Building</a></h1>
+      <a href="/planet/{$planet.id}">Building</a>
     </li>
     <li class="planet-info action production">
-      <h1><a href="/planet/{$planet.id}/production">Production</a></h1>
+      <a href="/planet/{$planet.id}/production">Production</a>
     </li>
     <li class="planet-info action training">
-      <h1><a href="/planet/{$planet.id}/training">Training</a></h1>
+      <a href="/planet/{$planet.id}/training">Training</a>
     </li>
     <li class="planet-info action communications">
-      <h1><a href="/planet/{$planet.id}/comms">Communications</a></h1>
+      <a href="/planet/{$planet.id}/comms">Comms</a>
     </li>
   </ul>
 

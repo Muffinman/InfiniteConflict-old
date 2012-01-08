@@ -8,6 +8,15 @@ $(document).ready(function(){
 	  }, 'json');
 	  return false;
 	});
+	
+	$("#production-list").submit(function(e){
+	  e.preventDefault();
+	  $.post('/ajax/production/queue/add/', $(this).serialize(), function(data){
+      redrawProductionQueue(data);
+      redrawProductionList(data);
+	  }, 'json');
+	  return false;
+	});
 
 	$("#building-queue table tbody").sortable({
 	  items: 'tr',

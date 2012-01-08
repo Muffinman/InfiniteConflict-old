@@ -6,6 +6,7 @@ $rulerPlanets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id']);
 $planets = array();
 foreach ($rulerPlanets as $p){
   $p['resources'] = $IC->Planet->CalcPlanetResources($p['id']);
+  $p['building'] = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $p['id']);
   $planets[] = $p;
 }
 
