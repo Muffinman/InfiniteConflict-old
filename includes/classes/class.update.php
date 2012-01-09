@@ -22,17 +22,16 @@ class Update extends IC{
 		$this->ProductionQueues();
 		$this->TrainingQueues();
 		$this->FleetQueues();
-		$this->LocalOutputs();
-		$this->GlobalOutputs();
 		$this->LocalInterest();
 		$this->GlobalInterest();
+		$this->LocalOutputs();
+		$this->GlobalOutputs();		
 		$this->EndUpdate();
 		return true;
 	}
 	
 	
 	private function ResearchQueues(){
-		
 		
 		// Queues about to start
 		$q = "SELECT rq.id, rq.ruler_id, rq.research_id, r.turns FROM ruler_research_queue AS rq
@@ -92,12 +91,81 @@ class Update extends IC{
 			}
 		}		
 
-		
-		
 	}
 	
 	
 	private function BuildingQueues(){
+
+		// Queues about to start
+		$q = "SELECT * FROM planet_building_queue
+						WHERE started IS NULL
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+		
+			foreach ($r as $row){
+
+				$afford = true;
+				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
+					foreach ($resources as $res){
+						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id'])){
+							$afford = false;
+						}
+					}
+				}
+				
+				if ($afford === true){
+					foreach ($resources as $res){
+						if (!$res['refund']){
+							$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], -$res['cost']);
+							$newrow = array(
+								'id' => $row['id'],
+								'started' => 1,
+								'turns' => $row['turns']-1
+							);
+							$this->db->QuickEdit('planet_building_queue', $newrow);
+						}
+					}
+				}
+				
+			}
+		}		
+			
+		// Already Started Queues
+		$q = "UPDATE planet_building_queue SET turns = turns-1
+						WHERE started=1
+						AND turns IS NOT NULL";
+		$this->db->Edit($q);		
+
+
+		// Queues about to finish
+		$q = "SELECT * FROM planet_building_queue
+						WHERE started=1
+						AND turns=0
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				
+				$q = "SELECT * FROM planet_has_building
+								WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'
+								AND building_id='" . $this->db->esc($row['building_id']) . "'";
+				if ($r2 = $this->db->Select($q)){
+					$r2[0]['qty'] += 1;
+					$this->db->QuickEdit('planet_has_building', $r2[0]);
+				}else{
+					$arr = array(
+						'planet_id' => $row['planet_id'],
+						'building_id' => $row['building_id'],
+						'qty' => 1
+					);
+					$this->db->QuickInsert('planet_has_building', $arr);				
+				}
+				
+
+				$this->db->QuickDelete('planet_building_queue', $row['id']);
+				$this->db->SortRank('planet_building_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
+			}
+		}	
+		
 		
 	}
 	
@@ -116,26 +184,64 @@ class Update extends IC{
 		
 	}
 	
-	
-	private function LocalOutputs(){
-
-	}
-
-	
-	private function GlobalOutputs(){
-	
-	}
-
 
 	private function LocalInterest(){
-	
+		$res = $this->LoadResources();
+		foreach ($res as $r){
+			if ($r['interest'] != 0 && $r['global'] == 0){
+				$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
+				$this->db->Edit($q);
+			}
+		}
 	}
 
 	
 	private function GlobalInterest(){
-		
+		$res = $this->LoadResources();
+		foreach ($res as $r){
+			if ($r['interest'] != 0 && $r['global'] == 1){
+				$q = "UPDATE ruler_has_resource SET qty = qty * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
+				$this->db->Edit($q);			}
+		}		
 	}
+
+
+	private function LocalOutputs(){
+		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
+					foreach ($output as $res){
+						if (!$this->ResourceIsGlobal($res['id']) && $res['output'] != 0){
+							$this->Planet->VaryResource($row['id'], $res['id'], $res['output']);
+						}
+						if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
+							$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	
+	private function GlobalOutputs(){
+		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
+					foreach ($output as $res){
+						if ($this->ResourceIsGlobal($res['id']) && $res['output'] != 0){
+							$this->Ruler->VaryResource($row['ruler_id'], $res['id'], $res['output']);
+						}
+						if ($res['stored'] > $res['storage'] && $res['req_storage'] == 1){
+							$this->Ruler->SetResource($row['id'], $res['id'], $res['storage']);
+						}
+					}
+				}
+			}
+		}
+	}	
 	
 	private function SetUpdate(){
 		$this->config['update'] = 1;

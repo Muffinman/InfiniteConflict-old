@@ -11,7 +11,7 @@
 	
 	    <p class="static-resources">
 	      {foreach from=$planet.resources key=res item=r}
-	        {if !$r.output}
+	        {if !$r.net_output && !$r.global}
 	          <span class="resource">
 	            <img src="/images/resources/{$r.id}.gif" alt="{$res}" title="{$res}"> {$r.stored_str}
 	          </span>
@@ -25,7 +25,7 @@
 	      <tbody>
 	        <tr>
 	          {foreach from=$planet.resources key=res item=r}
-	            {if $r.output}
+	            {if $r.net_output}
 	              <td class="resource{$r.id} nopadding"><img src="/images/resources/{$r.id}.gif" alt="{$res}" title="{$res}"> {$r.stored_str} ({$r.output_str}) {$r.abundance_str}%</td>
 	            {/if}
 	          {/foreach}

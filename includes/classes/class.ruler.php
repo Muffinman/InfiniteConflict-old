@@ -42,30 +42,34 @@ class Ruler extends IC {
 
 
 	public function LoadRulerQL($ruler_id){
+		$QL=1;
 		if (!$this->Research){
 			$this->Research = new Research($this->db);
 		}
 		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
 			foreach($research as $r){
 				if (preg_match('/Queue Length (?P<digit>\d+)/', $r['name'], $matches)){
-					return $matches['digit'];
+					$QL = $matches['digit'] > $QL ? $matches['digit'] : $QL;
 				}
 			}
+			return $QL;
 		}
 		return 1;
 	}
 
 
 	public function LoadRulerPL($ruler_id){
+		$PL=1;
 		if (!$this->Research){
 			$this->Research = new Research($this->db);
 		}
 		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
 			foreach($research as $r){
 				if (preg_match('/Planet Limit (?P<digit>\d+)/', $r['name'], $matches)){
-					return $matches['digit'];
+					$PL = $matches['digit'] > $PL ? $matches['digit'] : $PL;
 				}
 			}
+			return $PL;
 		}
 		return 1;	
 	}
@@ -235,6 +239,13 @@ class Ruler extends IC {
 
   function VaryResource($ruler_id, $resource_id, $qty){
     $q = "UPDATE ruler_has_resource SET qty = qty + '" . $this->db->esc($qty) . "'
+            WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
+            AND resource_id = '" . $this->db->esc($resource_id) . "'";
+    return $this->db->Edit($q);
+  }
+
+  function SetResource($ruler_id, $resource_id, $qty){
+    $q = "UPDATE ruler_has_resource SET qty = '" . $this->db->esc($qty) . "'
             WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
             AND resource_id = '" . $this->db->esc($resource_id) . "'";
     return $this->db->Edit($q);

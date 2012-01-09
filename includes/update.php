@@ -18,6 +18,12 @@ FB::setEnabled(false);
 $Update = new Update($db);
 $Update->process();
 
+
+echo closedown($pagestart) . " Total time\n";
+echo number_format($db->totalQueryTime, 3) . " Query time\n"; 
+echo $db->numQueries . " Queries.\n";
+echo $db->usedCache . " From cache.\n";
+
 //echo "UPDATING";
 
 ?>

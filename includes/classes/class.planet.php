@@ -104,37 +104,41 @@ class Planet extends IC {
 
     $out = array();
     foreach ($resources as $r){
-      if (!$r['global']){
+      //if (!$r['global']){
         $out[$r['name']] = array(
           'id' => $r['id'],
           'interest' => $r['interest'],
           'req_storage' => $r['req_storage'],
           'stored' => 0,
-          'stored_str' => 0
+          'stored_str' => 0,
+          'global' => $r['global']
         );
 
         foreach ($planet as $res){
           if ($r['id'] == $res['resource_id']){
+          	$out[$r['name']]['id'] 						= $r['id'];
             $out[$r['name']]['stored']        = $res['stored'];
             $out[$r['name']]['stored_str']    = number_format($out[$r['name']]['stored'], 0);
             $out[$r['name']]['output']        = $this->CalcOutput($id, $r['id']);
-            $out[$r['name']]['output_str']    = ($out[$r['name']]['output'] > 0 ? '+' : '') . number_format($out[$r['name']]['output'], 0);
+            $out[$r['name']]['output_str']    = ($out[$r['name']]['output'] < 0 ? '-' : '+') . number_format($out[$r['name']]['output'], 0);
+            $out[$r['name']]['net_output']    = $this->CalcOutput($id, $r['id'], false);
+            $out[$r['name']]['net_output_str']= ($out[$r['name']]['net_output'] < 0 ? '-' : '+') . number_format($out[$r['name']]['net_output'], 0);
             $out[$r['name']]['storage']       = $this->CalcStorage($id, $r['id']);
             $out[$r['name']]['storage_str']   = number_format($out[$r['name']]['storage'], 0);
             $out[$r['name']]['abundance']     = $this->CalcAbundance($id, $r['id']);
             $out[$r['name']]['abundance_str'] = $out[$r['name']]['abundance'] * 100;
             $out[$r['name']]['busy']          = $this->CalcBusy($id, $r['id']);
-            $out[$r['name']]['busy_str']      = number_format($out[$r['name']]['busy'], 0);
+            $out[$r['name']]['busy_str']      = number_format($out[$r['name']]['busy'], 0);           
           }
         }
-      }
+      //}
     }
     return $out;
   }
 
 
 
-  function CalcOutput($planet_id, $resource_id){
+  function CalcOutput($planet_id, $resource_id, $tax=true){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
     $taxes = $this->LoadResourceTaxOutput($resource_id);
@@ -167,12 +171,14 @@ class Planet extends IC {
       }
     }
 
-
-    if ($taxes){
-      foreach ($taxes as $t){
-        $stored = $this->LoadPlanetResourcesStored($planet_id, $t['resource_id']);
-        $extra += $stored * $t['rate'];
-      }
+		
+		if ($tax){
+	    if ($taxes){
+	      foreach ($taxes as $t){
+	        $stored = $this->LoadPlanetResourcesStored($planet_id, $t['resource_id']);
+	        $extra += $stored * $t['rate'];
+	      }
+	    }
     }
 
     $output = $res['output'] * $this->CalcAbundance($planet_id, $resource_id);
@@ -222,11 +228,12 @@ class Planet extends IC {
     if ($bldQueue){
       foreach ($bldQueue as $b){
         if ($b['started'] == 1){
-          $res = $this->LoadBuildingResources($b['building_id']);
-          foreach ($res as $r){
-            if ($r['resource_id'] == $resource_id && $r['refund'] == 1){
-              $busy += $r['cost'];
-            }
+          if ($res = $this->LoadBuildingResources($b['building_id'])){
+	          foreach ($res as $r){
+	            if ($r['resource_id'] == $resource_id && $r['refund'] == 1){
+	              $busy += $r['cost'];
+	            }
+	          }
           }
         }
       }
@@ -235,11 +242,12 @@ class Planet extends IC {
     if ($shipQueue){
       foreach ($shipQueue as $s){
         if ($s['started'] == 1){
-          $res = $this->LoadShipResources($s['ship_id']);
-          foreach ($res as $r){
-            if ($r['resource_id'] == $resource_id && $r['refund'] == 1){
-              $busy += $r['cost'];
-            }
+          if ($res = $this->LoadShipResources($s['ship_id'])){
+	          foreach ($res as $r){
+	            if ($r['resource_id'] == $resource_id && $r['refund'] == 1){
+	              $busy += $r['cost'];
+	            }
+	          }
           }
         }
       }
@@ -248,11 +256,12 @@ class Planet extends IC {
     if ($conversionQueue){
       foreach ($conversionQueue as $c){
         if ($c['started'] == 1){
-          $res = $this->LoadConversionCost($c['resource_id']);
-          foreach ($res as $r){
-            if ($r['cost_resource'] == $resource_id && $r['refund'] == 1){
-              $busy += $r['qty'];
-            }
+          if ($res = $this->LoadConversionCost($c['resource_id'])){
+	          foreach ($res as $r){
+	            if ($r['cost_resource'] == $resource_id && $r['refund'] == 1){
+	              $busy += $r['qty'];
+	            }
+	          }
           }
         }
       }
@@ -569,7 +578,12 @@ class Planet extends IC {
   }
 
   
-
+  function SetResource($planet_id, $resource_id, $qty){
+    $q = "UPDATE planet_has_resource SET stored = '" . $this->db->esc($qty) . "'
+            WHERE planet_id = '" . $this->db->esc($planet_id) . "'
+            AND resource_id = '" . $this->db->esc($resource_id) . "'";
+    return $this->db->Edit($q);
+  }
   
   
   

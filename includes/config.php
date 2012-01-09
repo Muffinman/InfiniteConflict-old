@@ -98,7 +98,7 @@ function time_tracker($start=0, $note='') {
   	$t = number_format(($t - $start), 3);
 		FB::info($t.'s', $note);
 		$smarty->assign('page_time', $t);
-		return true;
+		return $t;
 	}
 }
 
@@ -107,7 +107,7 @@ function closedown($pagestart) {
 	FB::info($db->numQueries.' ('.number_format($db->totalQueryTime, 3).'s)', 'Database queries');
 	$smarty->assign('page_queries', $db->numQueries);
 	$smarty->assign('page_query_time', number_format($db->totalQueryTime, 3));
-	time_tracker($pagestart, 'Total page time');
+	return time_tracker($pagestart, 'Total page time');
 }
 
 function myErrorHandler($errno, $errstr, $errfile, $errline) {

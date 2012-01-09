@@ -28,11 +28,11 @@ $(document).ready(function(){
         $("#research-queue tbody").append(
           '<tr id="hash_'+data.queue[i].hash+'">'
           +'<td>'+data.queue[i].name+'</td>'
-          +'<td>'+data.queue[i].turns+'</td>'
+          +'<td>'+(data.queue[i].turns_left ? data.queue[i].turns_left : data.queue[i].turns)+'</td>'
           +'<td>'
           + (data.queue[i].started ? 'Started' : (j > 1 ? 'Queued' : 'Starting' ))
           +'</td>'
-          +'<td class="remove"><a href="/ajax/research/queue/remove/'+data.queue[i].hash+'/">[x]</a></td>'
+          +'<td class="remove">' + (!data.queue[i].started ? '<a href="/ajax/research/queue/remove/'+data.queue[i].hash+'/">[x]</a>' : '') + '</td>'
           +'</tr>'
         );
         j++;

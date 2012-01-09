@@ -39,6 +39,7 @@ class mysql {
   var $recordQueries = true;
   var $cacheQueries = true;
   var $queryCache = array();
+  var $usedCache=0;
 
   function mysql() {
     $this->dbHost = 'localhost';
@@ -94,6 +95,7 @@ class mysql {
         
         if ($cacheQuery === true && $this->cacheQueries === true){
           $this->queryCache[md5($q)] = $allRows;
+          $this->usedCache += 1;
         }
 
         return $allRows;

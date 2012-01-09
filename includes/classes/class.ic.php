@@ -6,7 +6,7 @@ class IC {
   var $smarty;
 	var $config;
 
-  function __construct($db){
+  public function __construct($db){
     $this->db = $db;
     $this->Research = new Research($db);
     $this->Planet = new Planet($db);
@@ -15,7 +15,7 @@ class IC {
     $this->config = $this->LoadConfig();
   }
 
-  function LoadSession($id){
+  public function LoadSession($id){
     $q = "SELECT * FROM session WHERE session_id='" . $this->db->esc($id) . "' LIMIT 1";
     if ($r = $this->db->Select($q)){
       return $r[0];
@@ -23,7 +23,7 @@ class IC {
     return false;
   }
 
-	function LoadConfig(){
+	public function LoadConfig(){
 		# Meta data
 	  $q = "SELECT * FROM config";
 	  if ($r = $this->db->Select($q)){
@@ -35,7 +35,7 @@ class IC {
 	  return $config;
 	}
 
-  function LoadResources(){
+  public function LoadResources(){
     $q = "SELECT * FROM resource";
     if ($r = $this->db->Select($q)){
       return $r;
@@ -43,31 +43,36 @@ class IC {
     return false;
   }
 
-  function LoadResource($id){
+  public function LoadResource($id){
     return $this->db->QuickSelect('resource', $id);
   }
+  
+  public function ResourceIsGlobal($id){
+  	$res = $this->LoadResource($id);
+  	return $res['global'];
+  }
 
-  function LoadBuilding($id){
+  public function LoadBuilding($id){
     return $this->db->QuickSelect('building', $id);
   }
 
-  function LoadRuler($id){
+  public function LoadRuler($id){
     return $this->db->QuickSelect('ruler', $id);
   }
 
-  function LoadPlanet($id){
+  public function LoadPlanet($id){
     return $this->db->QuickSelect('planet', $id);
   }
 
-  function LoadGalaxy($id){
+  public function LoadGalaxy($id){
     return $this->db->QuickSelect('galaxy', $id);
   }
 
-  function LoadSystem($id){
+  public function LoadSystem($id){
     return $this->db->QuickSelect('system', $id);
   }
 
-  function LoadGalaxies($ruler_id, $alliance_id=false){
+  public function LoadGalaxies($ruler_id, $alliance_id=false){
     $q = "SELECT * FROM galaxy";
     if ($r = $this->db->Select($q)){
       $gals = array();
@@ -109,14 +114,13 @@ class IC {
   }
 
 
-  function LoadSystems($gal_id, $ruler_id, $alliance_id=false){
-    global $config;
+  public function LoadSystems($gal_id, $ruler_id, $alliance_id=false){
   
     $galaxy = $this->LoadGalaxy($gal_id);
     if ($galaxy['home']){
-      $maxCols = $config['home_gal_cols'];
+      $maxCols = $this->config['home_gal_cols'];
     }else{
-      $maxCols = $config['free_gal_cols'];
+      $maxCols = $this->config['free_gal_cols'];
     }
   
     $q = "SELECT * FROM system WHERE galaxy_id='" . $this->db->esc($gal_id) . "'";
@@ -165,7 +169,7 @@ class IC {
 
 
 
-  function LoadPlanets($gal_id, $sys_id, $ruler_id, $alliance_id=false){
+  public function LoadPlanets($gal_id, $sys_id, $ruler_id, $alliance_id=false){
     global $config;
 
     $galaxy = $this->LoadGalaxy($gal_id);
@@ -208,7 +212,7 @@ class IC {
   }
 
 
-  function SendEmail($to, $subject, $template){
+  public function SendEmail($to, $subject, $template){
 
     $email_body = $this->smarty->fetch('email/' . $template);
     $this->smarty->assign('email_body', $email_body);
