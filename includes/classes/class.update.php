@@ -106,9 +106,18 @@ class Update extends IC{
 
 				$afford = true;
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
+					$output = $this->Planet->CalcPlanetResources($row['planet_id']);
 					foreach ($resources as $res){
 						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id'])){
 							$afford = false;
+						}
+						
+						if ($res['output'] < 1){
+							foreach ($output as $o){
+								if ($o['id'] == $res['resource_id'] && $o['output'] + $res['output'] < 0){
+									$afford = false;
+								}
+							}
 						}
 					}
 				}
@@ -120,7 +129,7 @@ class Update extends IC{
 							$newrow = array(
 								'id' => $row['id'],
 								'started' => 1,
-								'turns' => $row['turns']-1
+								'turns' => $row['turns']
 							);
 							$this->db->QuickEdit('planet_building_queue', $newrow);
 						}
@@ -129,7 +138,8 @@ class Update extends IC{
 				
 			}
 		}		
-			
+		
+				
 		// Already Started Queues
 		$q = "UPDATE planet_building_queue SET turns = turns-1
 						WHERE started=1
@@ -207,6 +217,7 @@ class Update extends IC{
 
 
 	private function LocalOutputs(){
+		$this->db->useCache = false;
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
@@ -222,10 +233,12 @@ class Update extends IC{
 				}
 			}
 		}
+		$this->db->useCache = true;
 	}
 
 	
 	private function GlobalOutputs(){
+		$this->db->useCache = false;
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
@@ -241,6 +254,7 @@ class Update extends IC{
 				}
 			}
 		}
+		$this->db->useCache = true;
 	}	
 	
 	private function SetUpdate(){

@@ -120,9 +120,9 @@ class Planet extends IC {
             $out[$r['name']]['stored']        = $res['stored'];
             $out[$r['name']]['stored_str']    = number_format($out[$r['name']]['stored'], 0);
             $out[$r['name']]['output']        = $this->CalcOutput($id, $r['id']);
-            $out[$r['name']]['output_str']    = ($out[$r['name']]['output'] < 0 ? '-' : '+') . number_format($out[$r['name']]['output'], 0);
+            $out[$r['name']]['output_str']    = ($out[$r['name']]['output'] < 0 ? '' : '+') . number_format($out[$r['name']]['output'], 0);
             $out[$r['name']]['net_output']    = $this->CalcOutput($id, $r['id'], false);
-            $out[$r['name']]['net_output_str']= ($out[$r['name']]['net_output'] < 0 ? '-' : '+') . number_format($out[$r['name']]['net_output'], 0);
+            $out[$r['name']]['net_output_str']= ($out[$r['name']]['net_output'] < 0 ? '' : '+') . number_format($out[$r['name']]['net_output'], 0);
             $out[$r['name']]['storage']       = $this->CalcStorage($id, $r['id']);
             $out[$r['name']]['storage_str']   = number_format($out[$r['name']]['storage'], 0);
             $out[$r['name']]['abundance']     = $this->CalcAbundance($id, $r['id']);
@@ -138,7 +138,7 @@ class Planet extends IC {
 
 
 
-  function CalcOutput($planet_id, $resource_id, $tax=true){
+  function CalcOutput($planet_id, $resource_id, $gross=true){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
     $taxes = $this->LoadResourceTaxOutput($resource_id);
@@ -163,8 +163,10 @@ class Planet extends IC {
               $res['output'] += $build_resource['output'] * $b['qty'];
             }
 
-            if ($build_resource['output'] < 0){
-              $extra += $build_resource['output'] * $b['qty'];
+						if ($gross){
+	            if ($build_resource['output'] < 0){
+	              $extra += $build_resource['output'] * $b['qty'];
+	            }
             }
           }
         }
@@ -172,7 +174,7 @@ class Planet extends IC {
     }
 
 		
-		if ($tax){
+		if ($gross){
 	    if ($taxes){
 	      foreach ($taxes as $t){
 	        $stored = $this->LoadPlanetResourcesStored($planet_id, $t['resource_id']);
@@ -554,6 +556,11 @@ class Planet extends IC {
   function QueueBuildingReorder($ruler_id, $planet_id, $hashes){
     $currentQueue = $this->LoadBuildingsQueue($ruler_id, $planet_id);
     $i=1;
+    
+    if ($currentQueue[0]['started']){
+    	$i=2;
+    }
+    
     foreach ($hashes as $hash){
       foreach ($currentQueue as $queue){
         if ($hash == $queue['hash']){

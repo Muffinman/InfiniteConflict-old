@@ -54,7 +54,7 @@
       <tbody>
         {if $buildingsQueue}
           {foreach from=$buildingsQueue item=b}
-            <tr id="hash_{$b.hash}">
+            <tr {if $b.started}class="nodrag" {/if}id="hash_{$b.hash}">
               <td class="rank">{$b.rank}</td>
               <td class="building-image"><img src="/images/buildings/{$b.building_id}.jpg" alt="{$b.name}" title="{$b.name}"></td>
               <td class="building-name">{$b.name}</td>
@@ -70,7 +70,7 @@
                 {/if}
               {/if}
               </td>
-              <td class="remove"><a href="/ajax/buildings/queue/remove/{$b.hash}/">[x]</a></td>
+              <td class="remove">{if !$b.started}<a href="/ajax/buildings/queue/remove/{$b.hash}/">[x]</a>{/if}</td>
             </tr>
           {/foreach}
         {/if}

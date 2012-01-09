@@ -19,7 +19,7 @@ $(document).ready(function(){
 	});
 
 	$("#building-queue table tbody").sortable({
-	  items: 'tr',
+	  items: 'tr:not(.nodrag)',
 	  start: function(event, ui){
 	    $(ui.item).find('img').animate({width: '60px', height: '60px'}, 250);
 	    $(ui.item).find('td').not('.building-image').css({display: 'none'});
@@ -61,7 +61,7 @@ $(document).ready(function(){
     if (data.queue){
       for (i in data.queue){
         $("#building-queue tbody").append(
-          '<tr id="hash_'+data.queue[i].hash+'">'
+          '<tr '+(data.queue[i].started==1 ? 'class="nodrag"' : '')+' id="hash_'+data.queue[i].hash+'">'
           +'<td class="rank">'+data.queue[i].rank+'</td>'
           +'<td class="building-image"><img src="/images/buildings/'+data.queue[i].building_id+'.jpg" alt="'+data.queue[i].name+'" title="'+data.queue[i].name+'"></td>'
           +'<td class="building-name">'+data.queue[i].name+'</td>'
@@ -69,7 +69,7 @@ $(document).ready(function(){
           +'<td class="status">'
           + (data.queue[i].started ? 'Started' : (data.queue[i].rank > 1 ? 'Queued' : 'Starting' ))
           +'</td>'
-          +'<td class="remove"><a href="/ajax/buildings/queue/remove/'+data.queue[i].hash+'/">[x]</a></td>'
+          +'<td class="remove">'+(data.queue[i].started==1 ? '' : '<a href="/ajax/buildings/queue/remove/'+data.queue[i].hash+'/">[x]</a>')+'</td>'
           +'</tr>'
         );
       }
