@@ -413,7 +413,7 @@ class Planet extends IC {
       $theCurrent['building_id'] = $theCurrent['id'];
       
       $prereq = $this->LoadBuildingPrereq($b['id']);
-      
+
       if ($prereq['building']){
         foreach($prereq['building'] as $id){
           $found = false;
@@ -483,7 +483,7 @@ class Planet extends IC {
     $q = "SELECT * FROM building_res_prereq WHERE building_id='" . $this->db->esc($building_id) . "'";
     if ($r = $this->db->Select($q)){
       foreach ($r as $row){
-        $prereq['building'][] = $row['research_id'];
+        $prereq['research'][] = $row['research_id'];
       }
     }
     
