@@ -238,6 +238,7 @@ class Update extends IC{
 
 	
 	private function GlobalOutputs(){
+		/*
 		$this->db->useCache = false;
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
@@ -255,6 +256,7 @@ class Update extends IC{
 			}
 		}
 		$this->db->useCache = true;
+		*/
 	}	
 	
 	private function SetUpdate(){

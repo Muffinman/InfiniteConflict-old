@@ -107,7 +107,7 @@ $(document).ready(function(){
         }
         
         html += '<td>'+bld.turns+'</td>';
-        html += '<td><input type="radio" name="building_id" value="'+bld.id+'"></td>';
+        html += '<td><label><input type="radio" name="building_id" value="'+bld.id+'"></label></td>';
         html += '</tr>';
         $("#building-list tbody").append(html);
       }

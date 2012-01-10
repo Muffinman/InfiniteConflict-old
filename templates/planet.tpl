@@ -121,7 +121,7 @@
               {/if}
             {/foreach}
             <td>{$b.turns}</td>
-            <td><input type="radio" name="building_id" value="{$b.id}"></td>
+            <td><label><input type="radio" name="building_id" value="{$b.id}"></label></td>
           </tr>
         {/foreach}
       </tbody>

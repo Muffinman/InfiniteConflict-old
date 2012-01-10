@@ -226,6 +226,11 @@
 }
 
 
+.available label{
+	display:block;
+	width:auto;
+}
+
 .planet-list .planet-image, .planet-list .planet-image img{
   width:100px;
   height:100px;
