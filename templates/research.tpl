@@ -31,7 +31,7 @@
 
 <div class="content research">
   <form id="research-list" action="/ajax/research/queue/add/" method="post">
-    <h1>Research</h1>
+    <h1>Research <span style="float:right;">{$ruler.resources.0.qty|number_format:0:"":","} {$ruler.resources.0.name}</span></h1>
     {if $research}
       <table class="reseach">
         <thead>

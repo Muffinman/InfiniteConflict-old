@@ -6,6 +6,7 @@ class Update extends IC{
 	
 	function __construct($db){
 		$this->db = $db;
+		$this->db->useCache = false;
 		$this->config = $this->LoadConfig();
 		
 		$this->Ruler = new Ruler($db);
@@ -155,9 +156,11 @@ class Update extends IC{
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
 				
-				$q = "SELECT * FROM planet_has_building
-								WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'
-								AND building_id='" . $this->db->esc($row['building_id']) . "'";
+				$q = "SELECT pb.*, r.ruler_id FROM planet_has_building AS pb
+								LEFT JOIN planet AS p ON pb.planet_id = p.id
+								LEFT JOIN ruler AS r ON p.ruler_id = p.ruler_id
+								WHERE pb.planet_id='" . $this->db->esc($row['planet_id']) . "'
+								AND pb.building_id='" . $this->db->esc($row['building_id']) . "'";
 				if ($r2 = $this->db->Select($q)){
 					$r2[0]['qty'] += 1;
 					$this->db->QuickEdit('planet_has_building', $r2[0]);
@@ -170,6 +173,17 @@ class Update extends IC{
 					$this->db->QuickInsert('planet_has_building', $arr);				
 				}
 				
+				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
+					foreach ($resources as $res){
+						if ($res['single_output']){
+							if ($this->ResourceIsGlobal($res['resource'])){
+								$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['single_output']);						
+							}else{
+								$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], $res['single_output']);
+							}
+						}
+					}
+				}
 
 				$this->db->QuickDelete('planet_building_queue', $row['id']);
 				$this->db->SortRank('planet_building_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
@@ -217,7 +231,6 @@ class Update extends IC{
 
 
 	private function LocalOutputs(){
-		$this->db->useCache = false;
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
@@ -229,11 +242,14 @@ class Update extends IC{
 						if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
 							$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
 						}
+						if ($res['stored'] < 0 || $res['stored'] + $res['output'] < 0){
+							$this->Planet->SetResource($row['id'], $res['id'], 0);
+						}
+						//echo "output:" . $res['output'] . " stored:" . $res['stored'] . "\n";
 					}
 				}
 			}
 		}
-		$this->db->useCache = true;
 	}
 
 	
