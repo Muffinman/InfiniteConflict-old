@@ -245,7 +245,6 @@ class Update extends IC{
 						if ($res['stored'] < 0 || $res['stored'] + $res['output'] < 0){
 							$this->Planet->SetResource($row['id'], $res['id'], 0);
 						}
-						//echo "output:" . $res['output'] . " stored:" . $res['stored'] . "\n";
 					}
 				}
 			}
@@ -254,26 +253,47 @@ class Update extends IC{
 
 	
 	private function GlobalOutputs(){
-		/*
-		$this->db->useCache = false;
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
 				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
 					foreach ($output as $res){
-						if ($this->ResourceIsGlobal($res['id']) && $res['output'] != 0){
+						if ($res['global']){
 							$this->Ruler->VaryResource($row['ruler_id'], $res['id'], $res['output']);
-						}
-						if ($res['stored'] > $res['storage'] && $res['req_storage'] == 1){
-							$this->Ruler->SetResource($row['id'], $res['id'], $res['storage']);
+						}	
+						if ($res['stored']){
+							if ($taxes = $this->LoadResourceTaxes($res['id'])){						
+								foreach ($taxes as $tax){
+									if ($this->ResourceIsGlobal($tax['output_resource'])){
+										$this->Ruler->VaryResource($row['ruler_id'], $tax['output_resource'], $res['stored'] * $tax['rate']);
+									}
+								}							
+							}
 						}
 					}
 				}
 			}
 		}
-		$this->db->useCache = true;
-		*/
+		
+		if ($rulers = $this->Ruler->LoadRulers()){
+			foreach($rulers as $ruler){
+				if ($resources = $this->Ruler->LoadRulerResources($ruler['id'])){
+					foreach($resources as $res){
+						if ($res['global']){
+							if ($taxes = $this->LoadResourceTaxes($res['id'])){
+								foreach ($taxes as $tax){
+									if ($this->ResourceIsGlobal($tax['output_resource'])){
+										$this->Ruler->VaryResource($ruler['id'], $tax['output_resource'], $res['stored'] * $tax['rate']);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}	
+	
 	
 	private function SetUpdate(){
 		$this->config['update'] = 1;

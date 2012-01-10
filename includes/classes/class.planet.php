@@ -547,7 +547,7 @@ class Planet extends IC {
 
   function QueueBuildingRemove($ruler_id, $planet_id, $hash){
     $q = "DELETE FROM planet_building_queue
-            WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' LIMIT 1";
+            WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
     return $this->db->Edit($q);
   }
 

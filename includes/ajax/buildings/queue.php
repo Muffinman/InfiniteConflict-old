@@ -18,8 +18,9 @@ if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id']))
 	    break;
 	
 	  case 'remove':
-	      $IC->Planet->QueueBuildingRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4]);
-	      $db->SortRank('planet_building_queue', 'rank', 'id', "WHERE planet_id='" . $db->esc($_POST['planet_id']) . "' AND started IS NULL");
+	      if ($IC->Planet->QueueBuildingRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4])){
+	      	$db->SortRank('planet_building_queue', 'rank', 'id', "WHERE planet_id='" . $db->esc($_POST['planet_id']) . "' AND started IS NULL");
+	      }
 	    break;
 	
 	  case 'reorder':

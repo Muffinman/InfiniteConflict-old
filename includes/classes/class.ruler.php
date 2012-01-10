@@ -15,6 +15,10 @@ class Ruler extends IC {
     return $ruler;
   }
 
+	public function LoadRulers(){
+		$q = "SELECT * FROM ruler";
+		return $this->db->Select($q);
+	}
 
   public function LoadRulerPlanets($id){
     $q = "SELECT * FROM planet WHERE ruler_id='" . $this->db->esc($id) . "'
@@ -238,17 +242,45 @@ class Ruler extends IC {
   }
 
   function VaryResource($ruler_id, $resource_id, $qty){
-    $q = "UPDATE ruler_has_resource SET qty = qty + '" . $this->db->esc($qty) . "'
+  
+  	$q = "SELECT * FROM ruler_has_resource 
             WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
             AND resource_id = '" . $this->db->esc($resource_id) . "'";
-    return $this->db->Edit($q);
+    if ($r = $this->db->Select($q)){  
+	    $q = "UPDATE ruler_has_resource SET qty = qty + '" . $this->db->esc($qty) . "'
+	            WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
+	            AND resource_id = '" . $this->db->esc($resource_id) . "'";
+	    return $this->db->Edit($q);
+    }
+    
+    else{
+	    $q = "INSERT INTO ruler_has_resource SET qty = '" . $this->db->esc($qty) . "',
+	            ruler_id = '" . $this->db->esc($ruler_id) . "',
+	            resource_id = '" . $this->db->esc($resource_id) . "'";
+	    return $this->db->Insert($q);    	
+    }
+    
   }
 
   function SetResource($ruler_id, $resource_id, $qty){
-    $q = "UPDATE ruler_has_resource SET qty = '" . $this->db->esc($qty) . "'
+
+  	$q = "SELECT * FROM ruler_has_resource 
             WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
             AND resource_id = '" . $this->db->esc($resource_id) . "'";
-    return $this->db->Edit($q);
+    if ($r = $this->db->Select($q)){  
+	    $q = "UPDATE ruler_has_resource SET qty = '" . $this->db->esc($qty) . "'
+            WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
+            AND resource_id = '" . $this->db->esc($resource_id) . "'";
+    	return $this->db->Edit($q);
+    }
+    
+    else{
+	    $q = "INSERT INTO ruler_has_resource SET qty = '" . $this->db->esc($qty) . "',
+	            ruler_id = '" . $this->db->esc($ruler_id) . "',
+	            resource_id = '" . $this->db->esc($resource_id) . "'";
+	    return $this->db->Insert($q);    	
+    }
+
   }
 
 }

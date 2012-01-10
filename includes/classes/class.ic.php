@@ -51,6 +51,11 @@ class IC {
   	$res = $this->LoadResource($id);
   	return $res['global'];
   }
+  
+  public function LoadResourceTaxes($resource_id){
+  	$q = "SELECT * FROM resource_tax WHERE resource_id='" . $this->db->esc($resource_id) . "'";
+  	return $this->db->Select($q);
+  }
 
   public function LoadBuilding($id){
     return $this->db->QuickSelect('building', $id);
