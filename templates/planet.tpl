@@ -18,7 +18,7 @@
       {foreach from=$buildings item=b}
         <tr>
           <td rowspan="2" class="building-image"><img src="/images/buildings/{$b.id}.jpg" alt="{$b.name}" title="{$b.name}"></td>
-          <td colspan="7" class="building-name">{$b.qty} {$b.name} {if $b.demolish}<a href="#">[x]</a>{/if}</td>
+          <td colspan="7" class="building-name">{$b.qty} {$b.name} {if $b.demolish}<a href="#" class="demolish" id="{$b.id}">[x]</a>{/if}</td>
         </tr>
         <tr>
           <td>&nbsp;</td>
@@ -57,7 +57,7 @@
             <tr {if $b.started}class="nodrag" {/if}id="hash_{$b.hash}">
               <td class="rank">{$b.rank}</td>
               <td class="building-image"><img src="/images/buildings/{$b.building_id}.jpg" alt="{$b.name}" title="{$b.name}"></td>
-              <td class="building-name">{$b.name}</td>
+              <td class="building-name">{$b.name}{if $b.demolish} (Demolish){/if}</td>
               <td class="turns">{$b.turns}</td>
               <td class="status">
               {if $b.started}

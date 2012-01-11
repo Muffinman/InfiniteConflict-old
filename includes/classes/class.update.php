@@ -109,32 +109,51 @@ class Update extends IC{
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
 					$output = $this->Planet->CalcPlanetResources($row['planet_id']);
 					foreach ($resources as $res){
-						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id'])){
+						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id']) && !$row['demolish']){
 							$afford = false;
 						}
 						
-						if ($res['output'] < 1){
+						if ($res['output'] != 0){
 							foreach ($output as $o){
-								if ($o['id'] == $res['resource_id'] && $o['output'] + $res['output'] < 0){
-									$afford = false;
+								if ($o['id'] == $res['resource_id']){
+									if ($o['output'] + $res['output'] < 0 && !$row['demolish']){
+										$afford = false;
+									}
+									if ($o['output'] - $res['output'] < 0 && $row['demolish']){
+										$afford = false;
+									}
 								}
 							}
 						}
+
+						
+						if ($res['stores'] > 0 && $row['demolish']){
+							foreach ($output as $o){
+								if ($o['id'] == $res['resource_id'] && $o['req_storage']){
+									if ($o['stored'] > $o['storage'] - $res['stores']){
+										$afford = false;
+									}
+								}
+							}
+						}
+						
 					}
 				}
 				
 				if ($afford === true){
 					foreach ($resources as $res){
-						if (!$res['refund']){
+						if (!$res['refund'] && !$row['demolish']){
 							$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], -$res['cost']);
-							$newrow = array(
-								'id' => $row['id'],
-								'started' => 1,
-								'turns' => $row['turns']
-							);
-							$this->db->QuickEdit('planet_building_queue', $newrow);
 						}
 					}
+					
+					$newrow = array(
+						'id' => $row['id'],
+						'started' => 1,
+					 	'turns' => $row['turns']
+					);
+					$this->db->QuickEdit('planet_building_queue', $newrow);
+					
 				}
 				
 			}
@@ -145,7 +164,7 @@ class Update extends IC{
 		$q = "UPDATE planet_building_queue SET turns = turns-1
 						WHERE started=1
 						AND turns IS NOT NULL";
-		$this->db->Edit($q);		
+		$this->db->Edit($q);
 
 
 		// Queues about to finish
@@ -156,32 +175,66 @@ class Update extends IC{
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
 				
-				$q = "SELECT pb.*, r.ruler_id FROM planet_has_building AS pb
+				$q = "SELECT pb.*, p.ruler_id FROM planet_has_building AS pb
 								LEFT JOIN planet AS p ON pb.planet_id = p.id
-								LEFT JOIN ruler AS r ON p.ruler_id = p.ruler_id
+								LEFT JOIN ruler AS r ON r.id = p.ruler_id
 								WHERE pb.planet_id='" . $this->db->esc($row['planet_id']) . "'
 								AND pb.building_id='" . $this->db->esc($row['building_id']) . "'";
 				if ($r2 = $this->db->Select($q)){
-					$r2[0]['qty'] += 1;
-					$this->db->QuickEdit('planet_has_building', $r2[0]);
+								
+					if ($row['demolish'] == 0){
+						$r2[0]['qty'] += 1;
+					}else{
+						$r2[0]['qty'] -= 1;
+					}
+					
+					$out = $r2[0];
+					unset($out['ruler_id']);
+										
+					$this->db->QuickEdit('planet_has_building', $out);
 				}else{
-					$arr = array(
-						'planet_id' => $row['planet_id'],
-						'building_id' => $row['building_id'],
-						'qty' => 1
-					);
-					$this->db->QuickInsert('planet_has_building', $arr);				
+					if ($row['demolish'] == 0){
+						$arr = array(
+							'planet_id' => $row['planet_id'],
+							'building_id' => $row['building_id'],
+							'qty' => 1
+						);
+						$this->db->QuickInsert('planet_has_building', $arr);	
+					}			
+				}
+				
+				if ($row['demolish'] == 1){
+					$q = "DELETE FROM planet_has_building WHERE qty<=0";
+					$this->db->Edit($q);
 				}
 				
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
 					foreach ($resources as $res){
 						if ($res['single_output']){
 							if ($this->ResourceIsGlobal($res['resource'])){
-								$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['single_output']);						
+								if ($row['demolish'] == 1){
+									$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], -$res['single_output']);
+								}else{
+									$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['single_output']);
+								}						
 							}else{
-								$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], $res['single_output']);
+								if ($row['demolish'] == 1){
+									$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], -$res['single_output']);
+								}else{
+									$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], $res['single_output']);
+								}
 							}
 						}
+						
+						if ($row['demolish'] && $res['cost']){
+							if ($this->ResourceIsGlobal($res['resource'])){
+								$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['cost']);
+							}else{
+								$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], $res['cost']);
+							}
+						}
+						
+						
 					}
 				}
 

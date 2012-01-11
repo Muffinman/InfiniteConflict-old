@@ -298,7 +298,7 @@ class mysql {
           $qs[] = '`' . $this->esc($k) . '` = NULL';
         }
         
-        else if ($v == 'NOW()'){
+        else if ($v == 'NOW()' && !is_numeric($v)){
         	$qs[] = '`' . $this->esc($k) . '` = NOW()';
         }
         
@@ -321,7 +321,7 @@ class mysql {
     if ($limit){
       $q .= " LIMIT " . $limit;
     }
-
+    
     if ($this->Edit($q)){
       return true;
     }

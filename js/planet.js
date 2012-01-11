@@ -44,6 +44,15 @@ $(document).ready(function(){
     return false;
   });
 
+	$(".built .demolish").click(function(e){
+		e.preventDefault();
+		$.post('/ajax/buildings/queue/demolish/', {planet_id: $("#planet_id").val(), building_id: $(this).attr('id')}, function(data){
+		  redrawBuildingQueue(data);
+		  redrawBuildingList(data);
+		}, 'json');
+    return false;		
+	});
+
 	/*
 	 * Display message
 	 */
@@ -64,7 +73,7 @@ $(document).ready(function(){
           '<tr '+(data.queue[i].started==1 ? 'class="nodrag"' : '')+' id="hash_'+data.queue[i].hash+'">'
           +'<td class="rank">'+data.queue[i].rank+'</td>'
           +'<td class="building-image"><img src="/images/buildings/'+data.queue[i].building_id+'.jpg" alt="'+data.queue[i].name+'" title="'+data.queue[i].name+'"></td>'
-          +'<td class="building-name">'+data.queue[i].name+'</td>'
+          +'<td class="building-name">'+data.queue[i].name+(data.queue[i].demolish > 0 ? ' (Demolish)' : '')+'</td>'
           +'<td class="turns">'+data.queue[i].turns+'</td>'
           +'<td class="status">'
           + (data.queue[i].started ? 'Started' : (data.queue[i].rank > 1 ? 'Queued' : 'Starting' ))

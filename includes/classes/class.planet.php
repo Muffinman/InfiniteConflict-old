@@ -496,7 +496,7 @@ class Planet extends IC {
   
   
   
-  function QueueBuilding($ruler_id, $planet_id, $building_id){
+  function QueueBuilding($ruler_id, $planet_id, $building_id, $demolish=false){
     $queue = false;
 
   	if ($q = $this->LoadBuildingsQueue($ruler_id, $planet_id)){
@@ -519,6 +519,10 @@ class Planet extends IC {
           }
         } 
       }
+      
+      if ($demolish === true && $building['demolish'] < 1){
+      	$queue = false;
+      }
     }
     
     if ($queue === true){
@@ -537,6 +541,12 @@ class Planet extends IC {
         'turns' => $building['turns'],
         'rank' => $this->db->NextRank('planet_building_queue', 'rank', "WHERE planet_id='" . $this->db->esc($planet_id) . "'")
       );
+      
+      if ($demolish === true){
+      	$arr['demolish'] = 1;
+      	$arr['turns'] = $building['demolish'];
+      }
+      
       return $this->db->QuickInsert('planet_building_queue', $arr);
     }
 
