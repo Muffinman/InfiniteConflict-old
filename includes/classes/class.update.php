@@ -130,13 +130,12 @@ class Update extends IC{
 						if ($res['stores'] > 0 && $row['demolish']){
 							foreach ($output as $o){
 								if ($o['id'] == $res['resource_id'] && $o['req_storage']){
-									if ($o['stored'] > $o['storage'] - $res['stores']){
+									if ($o['stored'] > $o['storage'] - $res['stores'] && $o['stored'] > 0){
 										$afford = false;
 									}
 								}
 							}
 						}
-						
 					}
 				}
 				

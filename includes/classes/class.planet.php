@@ -518,14 +518,28 @@ class Planet extends IC {
   	}
 
     if ($building = $this->LoadBuilding($building_id)){
-      if ($avail = $this->LoadAvailableBuildings($ruler_id, $planet_id)){
-        foreach ($avail as $bld){
-          if ($bld['id'] == $building['id']){
-            $queue = true;
-            $details = $bld;
-            break;
-          }
-        } 
+    	if ($demolish){
+				if ($avail = $this->LoadPlanetBuildings($planet_id)){
+	        foreach ($avail as $bld){
+	          if ($bld['building_id'] == $building['id']){
+	            $queue = true;
+	            $details = $bld;
+	            break;
+	          }
+	        } 
+	      }				    	
+    	}
+    	
+    	else{
+	      if ($avail = $this->LoadAvailableBuildings($ruler_id, $planet_id)){
+	        foreach ($avail as $bld){
+	          if ($bld['id'] == $building['id']){
+	            $queue = true;
+	            $details = $bld;
+	            break;
+	          }
+	        } 
+	      }
       }
       
       if ($demolish === true && $building['demolish'] < 1){
@@ -549,7 +563,7 @@ class Planet extends IC {
       
       return $this->db->QuickInsert('planet_building_queue', $arr);
     }
-
+    
     return false;
   }
 
@@ -605,9 +619,10 @@ class Planet extends IC {
       $prereq = $this->LoadConversionPrereq($res['id']);
 
       if ($prereq['building']){
+				$found = false;
         foreach($prereq['building'] as $id){
-          foreach($building as $r){
-            if ($r['id'] == $id){
+          foreach($buildings as $r){
+            if ($r['building_id'] == $id){
               $found = true;
             }
           }
@@ -619,6 +634,7 @@ class Planet extends IC {
       
       
       if ($prereq['research']){
+				$found = false;
         foreach($prereq['research'] as $id){
           $found = false;
           foreach($research as $r){
@@ -675,6 +691,11 @@ class Planet extends IC {
 
 
 	function QueueConversion($ruler_id, $planet_id, $resource_id, $qty){
+
+		if ((int)$qty < 1){
+			return false;
+		}
+	
 
   	if ($q = $this->LoadConversionQueue($ruler_id, $planet_id)){
   		if (!$this->Ruler){

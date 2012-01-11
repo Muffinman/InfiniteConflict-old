@@ -32,7 +32,6 @@ if (!$error){
         $trainingQueue = $IC->Planet->LoadConversionQueue($_SESSION['ruler']['id'], $planet['id']); 
         $smarty->assign('availableTraining', $availableTraining);
         $smarty->assign('trainingQueue', $trainingQueue);
-        FB::log($trainingQueue);
         $template = 'training.tpl';
       break;
 
