@@ -27,7 +27,6 @@ class Update extends IC{
 		$this->GlobalInterest();
 		$this->LocalOutputs();
 		$this->GlobalOutputs();	
-		$this->FixLocalStorage();	
 		$this->EndUpdate();
 		return true;
 	}
@@ -290,8 +289,17 @@ class Update extends IC{
 			foreach ($r as $row){
 				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
 					foreach ($output as $res){
-						if (!$this->ResourceIsGlobal($res['id']) && $res['output'] != 0){
-							$this->Planet->VaryResource($row['id'], $res['id'], $res['output']);
+						if (!$this->ResourceIsGlobal($res['id'])){
+							if ($res['output'] != 0){
+								$this->Planet->VaryResource($row['id'], $res['id'], $res['output']);
+							}
+
+							if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
+								$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
+							}
+							if ($res['stored'] < 0){
+								$this->Planet->SetResource($row['id'], $res['id'], 0);
+							}
 						}
 					}
 				}
