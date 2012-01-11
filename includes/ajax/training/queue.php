@@ -9,31 +9,33 @@ if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id']))
 	switch($request[3]){
 	
 	  case 'add':
-	      if ($id = $IC->Planet->QueueTraining($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['training_id'])){
-	        $data['response'] = 'success';
-	        $data['id'] = $id;
-	      }else{
-	        $data['response'] = 'failure';
-	        $data['id'] = $db->err_str;
-	      }
+	  	
+	  	foreach ($_POST['training_id'] as $resource_id => $qty){
+	  		if ($qty){
+	  			$IC->Planet->QueueConversion($_SESSION['ruler']['id'], $_POST['planet_id'], $resource_id, $qty);
+	  		}
+	  	}
+
+	    $data['response'] = 'success';
+	    $data['id'] = $id;
+
 	    break;
 	
 	  case 'remove':
-	      $IC->Planet->QueueTrainingRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4]);
-	      $db->SortRank('planet_training_queue', 'rank', 'id', "WHERE planet_id='" . $db->esc($_POST['planet_id']) . "' AND started IS NULL");
+	      $IC->Planet->QueueConversionRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4]);
 	    break;
 	
 	  case 'reorder':
-	      $IC->Planet->QueueTrainingReorder($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['hash']);
+	      $IC->Planet->QueueConversionReorder($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['hash']);
 	    break;
 	
 	}
 	
 	
-	if ($queue = $IC->Planet->LoadTrainingQueue($_SESSION['ruler']['id'], $_POST['planet_id'])){
+	if ($queue = $IC->Planet->LoadConversionQueue($_SESSION['ruler']['id'], $_POST['planet_id'])){
 	  $data['queue'] = $queue;
 	}
-	$data['available'] = $IC->Planet->LoadAvailableTraining($_SESSION['ruler']['id'], $_POST['planet_id']);
+	$data['available'] = $IC->Planet->LoadAvailableConversions($_SESSION['ruler']['id'], $_POST['planet_id']);
 	$data['resources'] = $IC->LoadResources();
 	
 }else{

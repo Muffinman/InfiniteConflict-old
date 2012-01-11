@@ -212,6 +212,13 @@
   height:28px;
 }
 
+.available td.training-image img, #training-queue td.training-image img{
+	width:auto;
+	height:auto;
+	margin-top:5px;
+	margin-left:5px;
+}
+
 .available td{
   line-height:28px;
 }
@@ -219,6 +226,16 @@
 .available p{
   float:right;
   margin:10px 0;
+}
+
+.available input.qty{
+	width:50px;
+	height:20px;
+	text-align:center;
+}
+
+.available td.qty{
+	width:60px;
 }
 
 .disabled{

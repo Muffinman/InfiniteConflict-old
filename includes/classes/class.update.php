@@ -170,7 +170,7 @@ class Update extends IC{
 		// Queues about to finish
 		$q = "SELECT * FROM planet_building_queue
 						WHERE started=1
-						AND turns=0
+						AND turns<=0
 						AND rank=1";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){

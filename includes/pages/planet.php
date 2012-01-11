@@ -26,6 +26,19 @@ if (!$error){
     case 'production':
         $template = 'production.tpl';
       break;
+
+    case 'training':
+        $availableTraining = $IC->Planet->LoadAvailableConversions($_SESSION['ruler']['id'], $planet['id']);
+        $trainingQueue = $IC->Planet->LoadConversionQueue($_SESSION['ruler']['id'], $planet['id']); 
+        $smarty->assign('availableTraining', $availableTraining);
+        $smarty->assign('trainingQueue', $trainingQueue);
+        FB::log($trainingQueue);
+        $template = 'training.tpl';
+      break;
+
+    case 'comms':
+        $template = 'comms.tpl';
+      break;
   
     default:
         $availableBuildings = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $planet['id']);

@@ -53,7 +53,7 @@
                 {/if}
               {/if}
               </td>
-              <td class="remove"><a href="/ajax/ships/queue/remove/{$p.hash}/">Remove</a></td>
+              <td class="remove"><a href="/ajax/production/queue/remove/{$p.hash}/">Remove</a></td>
             </tr>
           {/foreach}
         {/if}

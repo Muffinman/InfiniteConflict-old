@@ -117,7 +117,11 @@
                 <td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
               {/if}
               {if $rid > 4 && $rid < 8}
-                <td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
+              	{if $b.resources.$rid.output && !$b.resources.$rid.cost}
+              		<td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
+              	{else}
+                	<td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
+                {/if}
               {/if}
             {/foreach}
             <td>{$b.turns}</td>
