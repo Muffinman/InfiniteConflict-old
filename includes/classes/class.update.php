@@ -26,7 +26,8 @@ class Update extends IC{
 		$this->LocalInterest();
 		$this->GlobalInterest();
 		$this->LocalOutputs();
-		$this->GlobalOutputs();		
+		$this->GlobalOutputs();	
+		$this->FixLocalStorage();	
 		$this->EndUpdate();
 		return true;
 	}
@@ -291,12 +292,6 @@ class Update extends IC{
 						if (!$this->ResourceIsGlobal($res['id']) && $res['output'] != 0){
 							$this->Planet->VaryResource($row['id'], $res['id'], $res['output']);
 						}
-						if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
-							$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
-						}
-						if ($res['stored'] < 0 || $res['stored'] + $res['output'] < 0){
-							$this->Planet->SetResource($row['id'], $res['id'], 0);
-						}
 					}
 				}
 			}
@@ -346,6 +341,23 @@ class Update extends IC{
 		}
 	}	
 	
+	private function FixLocalStorage(){
+		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
+					foreach ($output as $res){
+						if ($res['stored'] > $res['storage'] && $res['req_storage'] == 1){
+							$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
+						}
+						if ($res['stored'] < 0){
+							$this->Planet->SetResource($row['id'], $res['id'], 0);
+						}
+					}
+				}
+			}
+		}	
+	}
 	
 	private function SetUpdate(){
 		$this->config['update'] = 1;
