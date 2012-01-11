@@ -21,7 +21,7 @@ class Update extends IC{
 		$this->ResearchQueues();
 		$this->BuildingQueues();
 		$this->ProductionQueues();
-		$this->TrainingQueues();
+		$this->ConversionQueues();
 		$this->FleetQueues();
 		$this->LocalInterest();
 		$this->GlobalInterest();
@@ -252,7 +252,7 @@ class Update extends IC{
 	}
 	
 	
-	private function TrainingQueues(){
+	private function ConversionQueues(){
 		
 	}
 	
@@ -278,7 +278,8 @@ class Update extends IC{
 		foreach ($res as $r){
 			if ($r['interest'] != 0 && $r['global'] == 1){
 				$q = "UPDATE ruler_has_resource SET qty = qty * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
-				$this->db->Edit($q);			}
+				$this->db->Edit($q);
+			}
 		}		
 	}
 
