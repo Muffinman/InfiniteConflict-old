@@ -50,6 +50,7 @@ if (!$error){
 
   $smarty->assign('resList', $res);
   $smarty->assign('resources', $resources);
+  FB::log($resources);
   $smarty->assign('buildings', $buildings);
   $smarty->assign('planet', $planet);
   $smarty->assign('content', $smarty->fetch($template));

@@ -10,11 +10,13 @@
       </tr>
     </thead>
     <tbody>
-      {foreach from=$training item=t}
-        <tr>
-          <td class="training-image"><img src="/images/resources/{$t.id}.jpg" alt="{$t.name}" title="{$t.name}"></td>
-          <td class="training-name">{$t.qty} {$t.name}</td>
-        </tr>
+      {foreach from=$resources key=res item=t}
+      	{if $t.creatable && $t.stored > 0}
+	        <tr>
+	          <td class="training-image"><img src="/images/resources/{$t.id}.gif" alt="{$t.name}" title="{$t.name}"></td>
+	          <td class="training-name">{$t.stored_str} {$res}</td>
+	        </tr>
+        {/if}
       {/foreach}
     </tbody>
   </table>
@@ -37,7 +39,7 @@
       <tbody>
         {if $trainingQueue}
           {foreach from=$trainingQueue item=t}
-            <tr id="hash_{$t.hash}">
+            <tr id="hash_{$t.hash}"{if $t.started} class="nodrag"{/if}>
               <td class="rank">{$t.rank}</td>
               <td class="training-image"><img src="/images/resources/{$t.resource_id}.gif" alt="{$t.name}" title="{$t.name}"></td>
               <td class="training-name">{$t.name} ({$t.qty})</td>
@@ -53,7 +55,7 @@
                 {/if}
               {/if}
               </td>
-              <td class="remove"><a href="/ajax/training/queue/remove/{$t.hash}/">[x]</a></td>
+              <td class="remove">{if !$t.started}<a href="/ajax/training/queue/remove/{$t.hash}/">[x]</a>{/if}</td>
             </tr>
           {/foreach}
         {/if}
@@ -78,7 +80,7 @@
           <th></th>
           <th>Name</th>
           {foreach from=$resList item=r}
-            {if !$r.global && $r.id==1 || $r.id==2 || $r.id==7}
+            {if !$r.global && $r.id==1 || $r.id==2 || $r.id==3 || $r.id==7}
               <th class="resource"><img src="/images/resources/{$r.id}.gif" alt="{$r.name}" title="{$r.name}"></th>
             {/if}
           {/foreach}
@@ -93,7 +95,7 @@
             <td class="training-name">{$t.name}</td>
             {foreach from=$resList item=r}
               {assign var=rid value=$r.id}
-              {if !$r.global && $r.id==1 || $r.id==2 || $r.id==7}
+              {if !$r.global && $r.id==1 || $r.id==2 || $r.id==3 || $r.id==7}
                 <td class="resource{$rid}">{$t.resources.$rid.cost_str}</td>
               {/if}
             {/foreach}

@@ -109,6 +109,7 @@ class Planet extends IC {
           'id' => $r['id'],
           'interest' => $r['interest'],
           'req_storage' => $r['req_storage'],
+          'creatable' => $r['creatable'],
           'stored' => 0,
           'stored_str' => 0,
           'global' => $r['global']
@@ -258,10 +259,11 @@ class Planet extends IC {
     if ($conversionQueue){
       foreach ($conversionQueue as $c){
         if ($c['started'] == 1){
-          if ($res = $this->LoadConversionCost($c['resource_id'])){
+          if ($res = $this->LoadConversionResources($c['resource_id'])){
+          	FB::log($res);
 	          foreach ($res as $r){
 	            if ($r['cost_resource'] == $resource_id && $r['refund'] == 1){
-	              $busy += $r['qty'];
+	              $busy += $r['cost'] * $c['qty'];
 	            }
 	          }
           }

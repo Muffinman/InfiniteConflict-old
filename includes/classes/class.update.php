@@ -102,7 +102,6 @@ class Update extends IC{
 						WHERE started IS NULL
 						AND rank=1";
 		if ($r = $this->db->Select($q)){
-		
 			foreach ($r as $row){
 
 				$afford = true;
@@ -252,6 +251,95 @@ class Update extends IC{
 	
 	
 	private function ConversionQueues(){
+
+  	// Queues about to start
+		$q = "SELECT * FROM planet_conversion_queue
+						WHERE started IS NULL
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				// Work out max
+				
+				$max = $row['qty'];
+				
+				if ($conversionResources = $this->Planet->LoadConversionResources($row['resource_id'])){
+					if ($planetResources = $this->Planet->CalcPlanetResources($row['planet_id'])){
+						
+						foreach ($conversionResources as $res1){
+							foreach ($planetResources as $k => $res2){
+								if ($res1['cost_resource'] == $res2['id']){
+
+									$newmax = floor(($res2['stored'] - $res2['busy']) / $res1['cost']);
+									if ($newmax < 0){
+										$newmax = 0;
+									}
+									
+									if ($newmax < $max){
+										$max = $newmax;
+									}
+								}
+								
+								if ($res1['resource_id'] == $res2['id']){
+									if ($max > 0 && $res2['req_storage']){
+										$space = $res2['storage'] - $res2['stored'];
+										if ($space < $max){
+											$max = $space;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				if ($max > 0){
+					foreach ($conversionResources as $res1){
+						if (!$res1['refund']){
+							$this->Planet->VaryResource($row['planet_id'], $res1['cost_resource'], -$max * $res1['cost']);
+						}
+					}
+					$row['started'] = 1;
+					$row['qty'] = $max;
+					$this->db->QuickEdit('planet_conversion_queue', $row);
+				}				
+			}
+		}	
+
+		// Already Started Queues
+		$q = "UPDATE planet_conversion_queue SET turns = turns-1
+						WHERE started=1
+						AND turns IS NOT NULL";
+		$this->db->Edit($q);
+
+		// Queues about to finish
+		$q = "SELECT * FROM planet_conversion_queue
+						WHERE started=1
+						AND turns<=0
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				
+				$q = "SELECT * FROM planet_has_resource WHERE resource_id='" . $this->db->esc($row['resource_id']) . "' AND planet_id='" . $row['planet_id'] . "'";
+				if ($res = $this->db->Select($q)){
+					$q = "UPDATE planet_has_resource SET stored = stored + " . $this->db->esc($row['qty']) . "
+									WHERE resource_id='" . $this->db->esc($row['resource_id']) . "'
+									AND planet_id='" . $row['planet_id'] . "'";
+					$this->db->Edit($q);	
+				}else{
+					$res = array(
+						'planet_id' => $row['planet_id'],
+						'resource_id' => $row['resource_id'],
+						'stored' => $row['qty'],
+						'abundance' => 0
+					);
+										
+					$this->db->QuickInsert('planet_has_resource', $res);
+				}
+				
+				$this->db->QuickDelete('planet_conversion_queue', $row['id']);
+				
+			}
+		}
 		
 	}
 	
@@ -297,7 +385,7 @@ class Update extends IC{
 							if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
 								$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
 							}
-							if ($res['stored'] < 0){
+							if ($res['stored'] + $res['output'] < 0){
 								$this->Planet->SetResource($row['id'], $res['id'], 0);
 							}
 						}

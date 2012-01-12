@@ -174,11 +174,6 @@ class mysql {
 	      $vals[] = "NULL";      
       }
       
-      else if ($v == 'NOW()'){
-	      $cols[] = "`" . $this->esc($k) . "`";
-	      $vals[] = "NOW()";
-      }
-      
       else{
 	      $cols[] = "`" . $this->esc($k) . "`";
 	      $vals[] = "'" . $this->esc($v) . "'";
@@ -296,10 +291,6 @@ class mysql {
       foreach ($data as $k => $v){
         if ($v === NULL){
           $qs[] = '`' . $this->esc($k) . '` = NULL';
-        }
-        
-        else if ($v == 'NOW()' && !is_numeric($v)){
-        	$qs[] = '`' . $this->esc($k) . '` = NOW()';
         }
         
         else{
