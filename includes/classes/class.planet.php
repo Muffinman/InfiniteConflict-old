@@ -193,6 +193,7 @@ class Planet extends IC {
 
   function CalcStorage($planet_id, $resource_id){
     $buildings = $this->LoadPlanetBuildings($planet_id);
+    /*
     $resources = $this->LoadPlanetResources($planet_id);
 
     foreach ($resources as $r){
@@ -201,6 +202,9 @@ class Planet extends IC {
         break;
       }
     }
+    */
+    
+    $res = $this->LoadResource($resource_id);
 
     $storage=0;
     
@@ -210,7 +214,7 @@ class Planet extends IC {
         foreach ($build as $build_resource){
           if ($resource_id == $build_resource['resource_id']){
             if ($build_resource['stores'] > 0){
-              $storage += $build_resource['stores'];
+              $storage += $build_resource['stores'] * $b['qty'];
             }
           }
         }
