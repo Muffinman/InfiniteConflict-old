@@ -18,7 +18,8 @@ class Planet extends IC {
 
 
   function LoadPlanetResources($id){
-    $q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($id) . "'";
+    $q = "SELECT * FROM  planet_has_resource
+    				 WHERE planet_id='" . $this->db->esc($id) . "'";
     return $this->db->Select($q);
   }
 
@@ -112,7 +113,9 @@ class Planet extends IC {
           'creatable' => $r['creatable'],
           'stored' => 0,
           'stored_str' => 0,
-          'global' => $r['global']
+          'global' => $r['global'],
+          'storage' => $this->CalcStorage($id, $r['id']),
+          'storage_str' => number_format($this->CalcStorage($id, $r['id']), 0)
         );
 
         foreach ($planet as $res){
@@ -124,8 +127,6 @@ class Planet extends IC {
             $out[$r['name']]['output_str']    = ($out[$r['name']]['output'] < 0 ? '' : '+') . number_format($out[$r['name']]['output'], 0);
             $out[$r['name']]['net_output']    = $this->CalcOutput($id, $r['id'], false);
             $out[$r['name']]['net_output_str']= ($out[$r['name']]['net_output'] < 0 ? '' : '+') . number_format($out[$r['name']]['net_output'], 0);
-            $out[$r['name']]['storage']       = $this->CalcStorage($id, $r['id']);
-            $out[$r['name']]['storage_str']   = number_format($out[$r['name']]['storage'], 0);
             $out[$r['name']]['abundance']     = $this->CalcAbundance($id, $r['id']);
             $out[$r['name']]['abundance_str'] = $out[$r['name']]['abundance'] * 100;
             $out[$r['name']]['busy']          = $this->CalcBusy($id, $r['id']);

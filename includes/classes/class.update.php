@@ -265,6 +265,8 @@ class Update extends IC{
 				if ($conversionResources = $this->Planet->LoadConversionResources($row['resource_id'])){
 					if ($planetResources = $this->Planet->CalcPlanetResources($row['planet_id'])){
 						
+						print_r($planetResources);
+						
 						foreach ($conversionResources as $res1){
 							foreach ($planetResources as $k => $res2){
 								if ($res1['cost_resource'] == $res2['id']){
@@ -280,6 +282,8 @@ class Update extends IC{
 								}
 								
 								if ($res1['resource_id'] == $res2['id']){
+									//print_r($res1);
+									//print_r($res2);
 									if ($max > 0 && $res2['req_storage']){
 										$space = $res2['storage'] - $res2['stored'];
 										if ($space < $max){
