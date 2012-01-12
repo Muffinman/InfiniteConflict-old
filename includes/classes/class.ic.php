@@ -6,8 +6,8 @@ class IC {
   var $smarty;
 	var $config;
 
-  public function __construct($db){
-    $this->db = $db;
+  public function __construct(&$db){
+    $this->db = &$db;
     $this->Research = new Research($db);
     $this->Planet = new Planet($db);
     $this->Ruler = new Ruler($db);

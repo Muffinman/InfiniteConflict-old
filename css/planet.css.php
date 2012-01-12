@@ -141,6 +141,10 @@
   float:left;
 }
 
+.built table{
+	width:356px;
+}
+
 .built td{
   padding:4px;
 }

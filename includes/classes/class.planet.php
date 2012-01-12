@@ -6,39 +6,36 @@
  */
 class Planet extends IC {
 
-  var $db;
 
-
-
-  function __construct($db){
-    $this->db = $db;
+  public function __construct(&$db){
+    $this->db = &$db;
     $this->Research = new Research($db);
   }
 
 
 
-  function LoadPlanetResources($id){
+  public function LoadPlanetResources($id, $cache=true){
     $q = "SELECT * FROM  planet_has_resource
     				 WHERE planet_id='" . $this->db->esc($id) . "'";
-    return $this->db->Select($q);
+    return $this->db->Select($q, false, true, $cache);
   }
 
 
 
-  function LoadBuildings(){
+  public function LoadBuildings(){
     $q = "SELECT * FROM building";
     return $this->db->Select($q);
   }
 
 
 
-  function LoadBuilding($id){
+  public function LoadBuilding($id){
     return $this->db->QuickSelect('building', $id);
   }
 
 
 
-	function RulerOwnsPlanet($ruler_id, $planet_id){
+	public function RulerOwnsPlanet($ruler_id, $planet_id){
 		$planet = $this->LoadPlanet($planet_id);
 		
 		if($planet['ruler_id'] == $ruler_id){
@@ -48,7 +45,7 @@ class Planet extends IC {
 	}
 
 
-  function CalcBuildingResources($planet_id){
+  public function CalcBuildingResources($planet_id){
     $resources = $this->LoadResources();
     $buildings = $this->LoadPlanetBuildings($planet_id);
 
@@ -99,9 +96,9 @@ class Planet extends IC {
 
 
 
-  function CalcPlanetResources($id){
+  public function CalcPlanetResources($id, $cache=true){
     $resources = $this->LoadResources();
-    $planet = $this->LoadPlanetResources($id);
+    $planet = $this->LoadPlanetResources($id, $cache);
 
     $out = array();
     foreach ($resources as $r){
@@ -129,7 +126,7 @@ class Planet extends IC {
             $out[$r['name']]['net_output_str']= ($out[$r['name']]['net_output'] < 0 ? '' : '+') . number_format($out[$r['name']]['net_output'], 0);
             $out[$r['name']]['abundance']     = $this->CalcAbundance($id, $r['id']);
             $out[$r['name']]['abundance_str'] = $out[$r['name']]['abundance'] * 100;
-            $out[$r['name']]['busy']          = $this->CalcBusy($id, $r['id']);
+            $out[$r['name']]['busy']          = $this->CalcBusy($id, $r['id'], $cache);
             $out[$r['name']]['busy_str']      = number_format($out[$r['name']]['busy'], 0);           
           }
         }
@@ -140,7 +137,7 @@ class Planet extends IC {
 
 
 
-  function CalcOutput($planet_id, $resource_id, $gross=true){
+  public function CalcOutput($planet_id, $resource_id, $gross=true){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
     $taxes = $this->LoadResourceTaxOutput($resource_id);
@@ -191,18 +188,8 @@ class Planet extends IC {
 
 
 
-  function CalcStorage($planet_id, $resource_id){
+  public function CalcStorage($planet_id, $resource_id){
     $buildings = $this->LoadPlanetBuildings($planet_id);
-    /*
-    $resources = $this->LoadPlanetResources($planet_id);
-
-    foreach ($resources as $r){
-      if ($r['resource_id'] == $resource_id){
-        $res = $r;
-        break;
-      }
-    }
-    */
     
     $res = $this->LoadResource($resource_id);
 
@@ -226,10 +213,10 @@ class Planet extends IC {
 
 
   
-  function CalcBusy($planet_id, $resource_id){
-    $bldQueue = $this->LoadBuildingsQueue(NULL, $planet_id);
-    $shipQueue = $this->LoadProductionQueue(NULL, $planet_id);
-    $conversionQueue = $this->LoadConversionQueue(NULL, $planet_id);
+  public function CalcBusy($planet_id, $resource_id, $cache=true){
+    $bldQueue = $this->LoadBuildingsQueue(NULL, $planet_id, $cache);
+    $shipQueue = $this->LoadProductionQueue(NULL, $planet_id, $cache);
+    $conversionQueue = $this->LoadConversionQueue(NULL, $planet_id, $cache);
 
     $busy = 0;
 
@@ -280,7 +267,7 @@ class Planet extends IC {
 
 
 
-  function CalcAbundance($planet_id, $resource_id){
+  public function CalcAbundance($planet_id, $resource_id){
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $resources = $this->LoadPlanetResources($planet_id);
 
@@ -309,7 +296,7 @@ class Planet extends IC {
 
 
 
-  function LoadPlanetResourcesStored($planet_id, $resource_id){
+  public function LoadPlanetResourcesStored($planet_id, $resource_id){
     $res = $this->LoadPlanetResources($planet_id);
     foreach ($res as $r){
       if ($r['resource_id'] == $resource_id){
@@ -321,35 +308,35 @@ class Planet extends IC {
 
 
 
-  function LoadResourceTax($resource_id){
+  public function LoadResourceTax($resource_id){
     $q = "SELECT * FROM resource_tax WHERE resource_id='" . $this->db->esc($resource_id) . "'";
     return $this->db->Select($q);
   }
 
 
 
-  function LoadResourceTaxOutput($resource_id){
+  public function LoadResourceTaxOutput($resource_id){
     $q = "SELECT * FROM resource_tax WHERE output_resource='" . $this->db->esc($resource_id) . "'";
     return $this->db->Select($q);
   }
 
 
 
-  function LoadPlanetBuildings($id){
+  public function LoadPlanetBuildings($id){
     $q = "SELECT * FROM planet_has_building WHERE planet_id='" . $this->db->esc($id) . "' ORDER BY id ASC";
     return $this->db->Select($q);
   }
 
 
 
-  function LoadBuildingResources($id){
+  public function LoadBuildingResources($id){
     $q = "SELECT * FROM building_has_resource WHERE building_id='" . $this->db->esc($id) . "' ORDER BY resource_id ASC";
     return $this->db->Select($q);
   }
 
 
 
-  function LoadBuildingResource($id, $resource_id){
+  public function LoadBuildingResource($id, $resource_id){
     $q = "SELECT * FROM building_has_resource
             WHERE building_id='" . $this->db->esc($id) . "'
             AND resource_id='" . $this->db->esc($resource_id) . "'";
@@ -358,31 +345,31 @@ class Planet extends IC {
 
   
   
-  function LoadConversionResources($resource_id){
+  public function LoadConversionResources($resource_id){
     $q = "SELECT * FROM conversion_cost WHERE resource_id='" . $this->db->esc($resource_id) . "'";
     return $this->db->Select($q);  
   }
   
 
   
-  function LoadBuildingsQueue($ruler_id, $planet_id){
+  public function LoadBuildingsQueue($ruler_id, $planet_id, $cache=true){
     $q = "SELECT planet_building_queue.*, building.name, MD5(CONCAT(planet_building_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_building_queue
           LEFT JOIN building ON planet_building_queue.building_id = building.id
           WHERE planet_id='" . $this->db->esc($planet_id) . "'
           ORDER BY rank ASC";
-    if ($r = $this->db->Select($q)){
+    if ($r = $this->db->Select($q, false, true, $cache)){
       return $r;
     }
     return false;
   }
 
   
-  function LoadProductionQueue($ruler_id, $planet_id){
+  public function LoadProductionQueue($ruler_id, $planet_id, $cache=true){
     $q = "SELECT planet_ship_queue.*, ship.name, MD5(CONCAT(planet_ship_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_ship_queue
           LEFT JOIN ship ON planet_ship_queue.ship_id = ship.id
           WHERE planet_id='" . $this->db->esc($planet_id) . "'
           ORDER BY rank ASC";
-    if ($r = $this->db->Select($q)){
+    if ($r = $this->db->Select($q, false, true, $cache)){
       return $r;
     }
     return false;
@@ -390,12 +377,12 @@ class Planet extends IC {
 
   
   
-  function LoadConversionQueue($ruler_id, $planet_id){
+  public function LoadConversionQueue($ruler_id, $planet_id){
     $q = "SELECT planet_conversion_queue.*, resource.name, MD5(CONCAT(planet_conversion_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_conversion_queue
           LEFT JOIN resource ON planet_conversion_queue.resource_id = resource.id
           WHERE planet_id='" . $this->db->esc($planet_id) . "'
           ORDER BY rank ASC";
-    if ($r = $this->db->Select($q)){
+    if ($r = $this->db->Select($q, false, true, $cache)){
       return $r;
     }
     return false;
@@ -403,7 +390,7 @@ class Planet extends IC {
   
 
   
-  function LoadAvailableBuildings($ruler_id, $planet_id){
+  public function LoadAvailableBuildings($ruler_id, $planet_id){
     $buildings = $this->LoadBuildings();
     $research = $this->Research->LoadRulerResearch($ruler_id);
     $current = $this->LoadPlanetBuildings($planet_id);
@@ -484,7 +471,7 @@ class Planet extends IC {
   
   
   
-  function LoadBuildingPrereq($building_id){
+  public function LoadBuildingPrereq($building_id){
     $prereq = array();
     
     $q = "SELECT * FROM building_prereq WHERE building_id='" . $this->db->esc($building_id) . "'";
@@ -510,7 +497,7 @@ class Planet extends IC {
   
   
   
-  function QueueBuilding($ruler_id, $planet_id, $building_id, $demolish=false){
+  public function QueueBuilding($ruler_id, $planet_id, $building_id, $demolish=false){
     $queue = false;
 
   	if ($q = $this->LoadBuildingsQueue($ruler_id, $planet_id)){
@@ -575,7 +562,7 @@ class Planet extends IC {
 
 
 
-  function QueueBuildingRemove($ruler_id, $planet_id, $hash){
+  public function QueueBuildingRemove($ruler_id, $planet_id, $hash){
     $q = "DELETE FROM planet_building_queue
             WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
     $this->db->Edit($q);
@@ -585,7 +572,7 @@ class Planet extends IC {
 
 
 
-  function QueueBuildingReorder($ruler_id, $planet_id, $hashes){
+  public function QueueBuildingReorder($ruler_id, $planet_id, $hashes){
     $currentQueue = $this->LoadBuildingsQueue($ruler_id, $planet_id);
     $i=1;
     
@@ -610,7 +597,7 @@ class Planet extends IC {
 
 
 
-	function LoadAvailableConversions($ruler_id, $planet_id){
+	public function LoadAvailableConversions($ruler_id, $planet_id){
     $resources = $this->LoadResources();
     $buildings = $this->LoadPlanetBuildings($planet_id);
     $research = $this->Research->LoadRulerResearch($ruler_id);
@@ -671,7 +658,7 @@ class Planet extends IC {
 
 
 
-	function LoadConversionPrereq($resource_id){
+	public function LoadConversionPrereq($resource_id){
     $prereq = array();
     
     $q = "SELECT * FROM conversion_bld_prereq WHERE resource_id='" . $this->db->esc($resource_id) . "'";
@@ -742,7 +729,7 @@ class Planet extends IC {
 	}
 
 
-  function QueueConversionRemove($ruler_id, $planet_id, $hash){
+  public function QueueConversionRemove($ruler_id, $planet_id, $hash){
     $q = "DELETE FROM planet_conversion_queue
             WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
     $this->db->Edit($q);
@@ -752,7 +739,7 @@ class Planet extends IC {
 
 
 
-  function QueueConversionReorder($ruler_id, $planet_id, $hashes){
+  public function QueueConversionReorder($ruler_id, $planet_id, $hashes){
     $currentQueue = $this->LoadConversionQueue($ruler_id, $planet_id);
     $i=1;
     
@@ -775,7 +762,7 @@ class Planet extends IC {
   }
 
 
-  function VaryResource($planet_id, $resource_id, $qty){
+  public function VaryResource($planet_id, $resource_id, $qty){
     $q = "UPDATE planet_has_resource SET stored = stored + '" . $this->db->esc($qty) . "'
             WHERE planet_id = '" . $this->db->esc($planet_id) . "'
             AND resource_id = '" . $this->db->esc($resource_id) . "'";
@@ -783,7 +770,7 @@ class Planet extends IC {
   }
 
   
-  function SetResource($planet_id, $resource_id, $qty){
+  public function SetResource($planet_id, $resource_id, $qty){
     $q = "UPDATE planet_has_resource SET stored = '" . $this->db->esc($qty) . "'
             WHERE planet_id = '" . $this->db->esc($planet_id) . "'
             AND resource_id = '" . $this->db->esc($resource_id) . "'";

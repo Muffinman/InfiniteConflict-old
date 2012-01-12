@@ -2,10 +2,8 @@
 
 class Ruler extends IC {
 
-  var $db;
-
-  public function __construct($db){
-    $this->db = $db;
+  public function __construct(&$db){
+    $this->db = &$db;
     $this->Planet = new Planet($db);
   }
 
@@ -241,7 +239,7 @@ class Ruler extends IC {
     return md5(md5($email) . md5($pass));
   }
 
-  function VaryResource($ruler_id, $resource_id, $qty){
+  public function VaryResource($ruler_id, $resource_id, $qty){
   
   	$q = "SELECT * FROM ruler_has_resource 
             WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
@@ -262,7 +260,7 @@ class Ruler extends IC {
     
   }
 
-  function SetResource($ruler_id, $resource_id, $qty){
+  public function SetResource($ruler_id, $resource_id, $qty){
 
   	$q = "SELECT * FROM ruler_has_resource 
             WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'

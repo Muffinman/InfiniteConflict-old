@@ -4,9 +4,10 @@ class Update extends IC{
 	var $config;
 	var $resources = array();
 	
-	function __construct($db){
+	function __construct(&$db){
 		$this->db = $db;
-		$this->db->useCache = false;
+		#$this->db->useCache = false;
+		#$this->db->cacheQueries = false;
 		$this->config = $this->LoadConfig();
 		
 		$this->Ruler = new Ruler($db);
@@ -106,7 +107,7 @@ class Update extends IC{
 
 				$afford = true;
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
-					$output = $this->Planet->CalcPlanetResources($row['planet_id']);
+					$output = $this->Planet->CalcPlanetResources($row['planet_id'], false);
 					foreach ($resources as $res){
 						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id']) && !$row['demolish']){
 							$afford = false;
@@ -263,10 +264,8 @@ class Update extends IC{
 				$max = $row['qty'];
 				
 				if ($conversionResources = $this->Planet->LoadConversionResources($row['resource_id'])){
-					if ($planetResources = $this->Planet->CalcPlanetResources($row['planet_id'])){
-						
-						print_r($planetResources);
-						
+					if ($planetResources = $this->Planet->CalcPlanetResources($row['planet_id'], false)){
+												
 						foreach ($conversionResources as $res1){
 							foreach ($planetResources as $k => $res2){
 								if ($res1['cost_resource'] == $res2['id']){
@@ -282,8 +281,6 @@ class Update extends IC{
 								}
 								
 								if ($res1['resource_id'] == $res2['id']){
-									//print_r($res1);
-									//print_r($res2);
 									if ($max > 0 && $res2['req_storage']){
 										$space = $res2['storage'] - $res2['stored'];
 										if ($space < $max){
@@ -355,31 +352,35 @@ class Update extends IC{
 	
 
 	private function LocalInterest(){
-		$res = $this->LoadResources();
-		foreach ($res as $r){
-			if ($r['interest'] != 0 && $r['global'] == 0){
-				$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
-				$this->db->Edit($q);
+		if ($res = $this->LoadResources()){
+			foreach ($res as $r){
+				if ($r['interest'] != 0 && $r['global'] == 0){
+					$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
+					$this->db->Edit($q);
+				}
 			}
-		}
-		
-		$q = "SELECT br.resource_id, SUM(br.stores * pb.qty) as total_storage, pr.stored, pr.planet_id FROM `building_has_resource` AS br
-						LEFT JOIN building AS b ON br.building_id = b.id
-						LEFT JOIN planet_has_building AS pb ON b.id = pb.building_id
-						LEFT JOIN planet_has_resource AS pr ON pb.planet_id = pr.planet_id AND br.resource_id = pr.resource_id
-						LEFT JOIN resource AS r ON pr.resource_id = r.id
-						WHERE pb.planet_id = 1
-						AND r.req_storage=1
-						GROUP by br.resource_id
-						HAVING  stored > total_storage";
-		if ($r = $this->db->Select($q)){
-			foreach ($r as $row){
-				if (!$this->ResourceIsGlobal($row['resource_id'])){
-					$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['total_storage']);
+			
+			$q = "SELECT table1.*, SUM(total_stores) as total, pr.stored FROM
+							(
+								SELECT planet_id, pb.building_id, pb.qty, br.resource_id, stores, pb.qty * stores AS total_stores FROM planet_has_building AS pb
+								LEFT JOIN building AS b ON pb.building_id = b.id
+								JOIN building_has_resource AS br ON b.id = br.building_id
+								WHERE stores > 0
+							) AS table1
+							
+							LEFT JOIN planet_has_resource AS pr ON table1.planet_id = pr.planet_id AND table1.resource_id = pr.resource_id
+							
+							GROUP BY table1.planet_id, table1.resource_id
+							HAVING stored > total";
+			if ($r = $this->db->Select($q)){
+				foreach ($r as $row){
+					if (!$this->ResourceIsGlobal($row['resource_id'])){
+						$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['total']);
+						echo "Setting resource ".$row['resource_id']." from ".$row['stored']." to ".$row['total']." on PID: " . $row['planet_id'] . "\n";
+					}
 				}
 			}
 		}
-		
 	}
 
 	
@@ -398,7 +399,7 @@ class Update extends IC{
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
-				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
+				if ($output = $this->Planet->CalcPlanetResources($row['id'], false)){
 					foreach ($output as $res){
 						if (!$this->ResourceIsGlobal($res['id'])){
 							if ($res['output'] != 0){
@@ -423,7 +424,7 @@ class Update extends IC{
 		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
-				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
+				if ($output = $this->Planet->CalcPlanetResources($row['id'], false)){
 					foreach ($output as $res){
 						if ($res['global']){
 							$this->Ruler->VaryResource($row['ruler_id'], $res['id'], $res['output']);
