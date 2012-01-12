@@ -375,7 +375,7 @@ class Update extends IC{
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
 				if (!$this->ResourceIsGlobal($row['resource_id'])){
-					$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['storage']);
+					$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['total_storage']);
 				}
 			}
 		}
