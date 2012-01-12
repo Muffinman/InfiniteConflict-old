@@ -363,7 +363,7 @@ class Update extends IC{
 			}
 		}
 		
-		$q = "SELECT br.resource_id, SUM(br.stores * pb.qty) as total_storage, pr.stored pr.planet_id FROM `building_has_resource` AS br
+		$q = "SELECT br.resource_id, SUM(br.stores * pb.qty) as total_storage, pr.stored, pr.planet_id FROM `building_has_resource` AS br
 						LEFT JOIN building AS b ON br.building_id = b.id
 						LEFT JOIN planet_has_building AS pb ON b.id = pb.building_id
 						LEFT JOIN planet_has_resource AS pr ON pb.planet_id = pr.planet_id AND br.resource_id = pr.resource_id
@@ -457,24 +457,7 @@ class Update extends IC{
 			}
 		}
 	}	
-	
-	private function FixLocalStorage(){
-		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
-		if ($r = $this->db->Select($q)){
-			foreach ($r as $row){
-				if ($output = $this->Planet->CalcPlanetResources($row['id'])){
-					foreach ($output as $res){
-						if ($res['stored'] > $res['storage'] && $res['req_storage'] == 1){
-							$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
-						}
-						if ($res['stored'] < 0){
-							$this->Planet->SetResource($row['id'], $res['id'], 0);
-						}
-					}
-				}
-			}
-		}	
-	}
+
 	
 	private function SetUpdate(){
 		$this->config['update'] = 1;
