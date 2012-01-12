@@ -260,7 +260,6 @@ class Planet extends IC {
       foreach ($conversionQueue as $c){
         if ($c['started'] == 1){
           if ($res = $this->LoadConversionResources($c['resource_id'])){
-          	FB::log($res);
 	          foreach ($res as $r){
 	            if ($r['cost_resource'] == $resource_id && $r['refund'] == 1){
 	              $busy += $r['cost'] * $c['qty'];

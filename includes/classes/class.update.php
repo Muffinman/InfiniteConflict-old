@@ -337,6 +337,7 @@ class Update extends IC{
 				}
 				
 				$this->db->QuickDelete('planet_conversion_queue', $row['id']);
+			  $this->db->SortRank('planet_conversion_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
 				
 			}
 		}
