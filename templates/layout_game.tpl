@@ -64,7 +64,7 @@
           <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time}s ({$page_queries} queries in {$page_query_time}s).</p>
+            <p>Page generated in {$page_time}s ({$page_query_time}s database).</p>
           </div>
         </div>
       </div>
