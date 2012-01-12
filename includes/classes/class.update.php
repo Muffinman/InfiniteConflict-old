@@ -362,6 +362,21 @@ class Update extends IC{
 				$this->db->Edit($q);
 			}
 		}
+		
+		$q = "SELECT br.resource_id, SUM(br.stores * pb.qty) as total_storage, pr.stored pr.planet_id FROM `building_has_resource` AS br
+						LEFT JOIN building AS b ON br.building_id = b.id
+						LEFT JOIN planet_has_building AS pb ON b.id = pb.building_id
+						LEFT JOIN planet_has_resource AS pr ON pb.planet_id = pr.planet_id AND br.resource_id = pr.resource_id
+						WHERE pb.planet_id = 1 GROUP by br.resource_id
+						HAVING  stored > total_storage";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				if ($this->ResourceIsGlobal($row['resource_id'])){
+					$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['storage']);
+				}
+			}
+		}
+		
 	}
 
 	
