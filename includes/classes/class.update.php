@@ -367,11 +367,14 @@ class Update extends IC{
 						LEFT JOIN building AS b ON br.building_id = b.id
 						LEFT JOIN planet_has_building AS pb ON b.id = pb.building_id
 						LEFT JOIN planet_has_resource AS pr ON pb.planet_id = pr.planet_id AND br.resource_id = pr.resource_id
-						WHERE pb.planet_id = 1 GROUP by br.resource_id
+						LEFT JOIN resource AS r ON pr.resource_id = r.id
+						WHERE pb.planet_id = 1
+						AND r.req_storage=1
+						GROUP by br.resource_id
 						HAVING  stored > total_storage";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
-				if ($this->ResourceIsGlobal($row['resource_id'])){
+				if (!$this->ResourceIsGlobal($row['resource_id'])){
 					$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['storage']);
 				}
 			}
