@@ -54,14 +54,16 @@ class Update extends IC{
 					}
 					
 					if ($afford === true){
-						foreach ($resources as $res){
-							$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], -$res['cost']);
-							$newrow = array(
-								'id' => $row['id'],
-								'started' => 1,
-								'turns' => $row['turns']
-							);
-							$this->db->QuickEdit('ruler_research_queue', $newrow);
+						if ($resources){
+							foreach ($resources as $res){
+								$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], -$res['cost']);
+								$newrow = array(
+									'id' => $row['id'],
+									'started' => 1,
+									'turns' => $row['turns']
+								);
+								$this->db->QuickEdit('ruler_research_queue', $newrow);
+							}
 						}
 					}
 				}
@@ -376,7 +378,7 @@ class Update extends IC{
 				foreach ($r as $row){
 					if (!$this->ResourceIsGlobal($row['resource_id'])){
 						$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['total']);
-						echo "Setting resource ".$row['resource_id']." from ".$row['stored']." to ".$row['total']." on PID: " . $row['planet_id'] . "\n";
+						//echo "Setting resource ".$row['resource_id']." from ".$row['stored']." to ".$row['total']." on PID: " . $row['planet_id'] . "\n";
 					}
 				}
 			}
