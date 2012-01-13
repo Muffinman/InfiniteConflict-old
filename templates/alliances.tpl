@@ -1,4 +1,4 @@
 <div class="content">
-	<h1>Comms</h1>
+	<h1>Alliances</h1>
 	<p>Coming soon…</p>
 </div>
