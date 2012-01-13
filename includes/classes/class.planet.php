@@ -28,12 +28,19 @@ class Planet extends IC {
   }
 
 
-
   public function LoadBuilding($id){
     return $this->db->QuickSelect('building', $id);
   }
 
 
+  public function LoadProduction(){
+    $q = "SELECT * FROM production";
+    return $this->db->Select($q);
+  }
+
+  public function LoadProd($id){
+    return $this->db->QuickSelect('production', $id);
+  }
 
 	public function RulerOwnsPlanet($ruler_id, $planet_id){
 		$planet = $this->LoadPlanet($planet_id);
@@ -350,6 +357,11 @@ class Planet extends IC {
     return $this->db->Select($q);  
   }
   
+  
+  public function LoadProductionResources($production_id){
+    $q = "SELECT * FROM production_has_resource WHERE production_id='" . $this->db->esc($production_id) . "'";
+    return $this->db->Select($q);  
+  }  
 
   
   public function LoadBuildingsQueue($ruler_id, $planet_id, $cache=true){
@@ -365,8 +377,8 @@ class Planet extends IC {
 
   
   public function LoadProductionQueue($ruler_id, $planet_id, $cache=true){
-    $q = "SELECT planet_ship_queue.*, ship.name, MD5(CONCAT(planet_ship_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_ship_queue
-          LEFT JOIN ship ON planet_ship_queue.ship_id = ship.id
+    $q = "SELECT planet_production_queue.*, production.name, MD5(CONCAT(planet_production_queue.id, '" . $ruler_id . "', '" . $planet_id . "')) AS hash FROM planet_production_queue
+          LEFT JOIN production ON planet_production_queue.production_id = production.id
           WHERE planet_id='" . $this->db->esc($planet_id) . "'
           ORDER BY rank ASC";
     if ($r = $this->db->Select($q, false, true, $cache)){
@@ -752,6 +764,169 @@ class Planet extends IC {
         if ($hash == $queue['hash']){
           $queue['rank'] = $i;
           $q = "UPDATE planet_conversion_queue SET rank='" . $this->db->esc($queue['rank']) . "' WHERE id='" . $queue['id'] . "' LIMIT 1";
+          $this->db->Edit($q);
+          $i++;
+          continue 2;
+        }
+      }
+
+    }
+  }
+
+
+	public function LoadAvailableProduction($ruler_id, $planet_id){
+    $production = $this->LoadProduction();
+    $buildings = $this->LoadPlanetBuildings($planet_id);
+    $research = $this->Research->LoadRulerResearch($ruler_id);
+    $queue = $this->LoadProductionQueue($ruler_id, $planet_id);  
+       
+    $canBuild = array();
+    
+    # First check for building prereq
+    foreach($production as $prod){      
+      $prereq = $this->LoadProductionPrereq($prod['id']);
+
+      if ($prereq['building']){
+				$found = false;
+        foreach($prereq['building'] as $id){
+          foreach($buildings as $r){
+            if ($r['building_id'] == $id){
+              $found = true;
+            }
+          }
+          if ($found === false){
+            continue 2;
+          }
+        }
+      }
+      
+      
+      if ($prereq['research']){
+				$found = false;
+        foreach($prereq['research'] as $id){
+          $found = false;
+          foreach($research as $r){
+            if ($r['id'] == $id){
+              $found = true;
+            }
+          }
+          if ($found === false){
+            continue 2;
+          }
+        }
+      }     
+      
+      
+
+      if ($resources = $this->LoadProductionResources($prod['id'])){
+	      foreach ($resources as $r){
+	        $r['cost_str'] = number_format($r['cost'], 0);        
+	        $prod['resources'][$r['resource_id']] = $r;
+	      }
+	      $canBuild[] = $prod;
+      }
+      
+    }
+    
+    return $canBuild;
+  }
+
+
+
+	public function LoadProductionPrereq($production_id){
+    $prereq = array();
+    
+    $q = "SELECT * FROM production_bld_prereq WHERE production_id='" . $this->db->esc($production_id) . "'";
+    if ($r = $this->db->Select($q)){
+      foreach ($r as $row){
+        $prereq['building'][] = $row['building_id'];
+      }
+    }
+
+    $q = "SELECT * FROM  production_res_prereq WHERE production_id='" . $this->db->esc($production_id) . "'";
+    if ($r = $this->db->Select($q)){
+      foreach ($r as $row){
+        $prereq['research'][] = $row['research_id'];
+      }
+    }
+    
+    if (empty($prereq)){
+      return false;
+    }
+    
+    return $prereq;
+  }
+
+
+	function QueueProduction($ruler_id, $planet_id, $production_id, $qty){
+
+		if ((int)$qty < 1){
+			return false;
+		}
+	
+
+  	if ($q = $this->LoadProductionQueue($ruler_id, $planet_id)){
+  		if (!$this->Ruler){
+  			$this->Ruler = new Ruler($this->db);
+  		}
+  		$QL = $this->Ruler->LoadRulerQL($ruler_id);
+  		if (sizeof($q) >= $QL){
+  			return false;
+  		}
+  	}
+
+		$queue = false;
+
+    if ($avail = $this->LoadAvailableProduction($ruler_id, $planet_id)){
+      foreach ($avail as $prod){
+        if ($prod['id'] == $production_id){
+          $queue = true;
+          break;
+        }
+      } 
+    }
+
+    
+    if ($queue === true){
+      
+      $arr = array(
+        'planet_id' => $planet_id,
+        'production_id' => $prod['id'],
+        'qty' => $qty,
+        'turns' => $prod['turns'],
+        'rank' => $this->db->NextRank('planet_production_queue', 'rank', "WHERE planet_id='" . $this->db->esc($planet_id) . "'")
+      );
+                        
+      return $this->db->QuickInsert('planet_production_queue', $arr);
+		}
+
+		return true;
+	}
+
+
+  public function QueueProductionRemove($ruler_id, $planet_id, $hash){
+    $q = "DELETE FROM planet_production_queue
+            WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
+    $this->db->Edit($q);
+    
+    $this->db->SortRank('planet_production_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($planet_id) . "'");
+  }
+
+
+
+  public function QueueProductionReorder($ruler_id, $planet_id, $hashes){
+    $currentQueue = $this->LoadProductionQueue($ruler_id, $planet_id);
+    $i=1;
+    
+    if ($currentQueue[0]['started']){
+    	$i=2;
+    }
+    
+    foreach ($hashes as $hash){
+      foreach ($currentQueue as $queue){
+        if ($hash == $queue['hash']){
+          $queue['rank'] = $i;
+          $q = "UPDATE planet_production_queue SET rank='" . $this->db->esc($queue['rank']) . "' WHERE id='" . $queue['id'] . "' LIMIT 1";
           $this->db->Edit($q);
           $i++;
           continue 2;

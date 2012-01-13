@@ -24,6 +24,11 @@ if (!$error){
 
   switch ($request[2]){
     case 'production':
+				$availableProduction = $IC->Planet->LoadAvailableProduction($_SESSION['ruler']['id'], $planet['id']);
+				FB::log($availableProduction);
+        $productionQueue = $IC->Planet->LoadProductionQueue($_SESSION['ruler']['id'], $planet['id']); 
+        $smarty->assign('availableProduction', $availableProduction);
+        $smarty->assign('productionQueue', $productionQueue);
         $template = 'production.tpl';
       break;
 
