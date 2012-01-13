@@ -4,7 +4,7 @@
   padding:3px;
   border:1px solid #888;
   margin:0px auto;
-  display:table;
+  width:870px;
 }
 
 ul.nav{
@@ -93,4 +93,8 @@ ul.planet .allied .planet-ruler{
 
 ul.planet .owned .planet-ruler{
   color:green;
+}
+
+ul.planet .planet-alliance{
+	color:white;
 }

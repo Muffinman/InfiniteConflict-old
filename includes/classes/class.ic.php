@@ -185,8 +185,9 @@ class IC {
       $maxCols = $config['free_sys_cols'];
     }
   
-    $q = "SELECT p.*, r.name AS ruler FROM planet AS p
+    $q = "SELECT p.*, r.name AS ruler, a.name AS alliance FROM planet AS p
             LEFT JOIN ruler AS r ON p.ruler_id = r.id
+            LEFT JOIN alliance AS a ON r.alliance_id = a.id
             WHERE p.system_id='" . $this->db->esc($sys_id) . "'";
     if ($r = $this->db->Select($q)){
       $col=1;

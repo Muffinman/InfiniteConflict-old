@@ -8,6 +8,9 @@
             <img src="/images/planets/{$p.type}.jpg" width="100" height="100">
             <span class="planet-id">{$p.id} {$p.name}</span>
             <span class="planet-ruler">{$p.ruler}</span>
+            {if $p.alliance}
+            	 <span class="planet-alliance">{$p.alliance}</span>
+            {/if}
           {if $p.status == 'owned'}</a>{/if}
         </li>
       {/foreach}
