@@ -58,7 +58,7 @@
 .planet-list .building li{
 	list-style:none;
 	float:left;
-	margin-right:40px;
+	margin-right:25px;
 }
 
 
