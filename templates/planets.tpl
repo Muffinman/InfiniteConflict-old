@@ -35,8 +35,8 @@
 	    
 	    <ul class="building">
 	    	<li><a href="/planet/{$planet.id}">Building:</a> {if $planet.building.0}{$planet.building.0.name} ({$planet.building.0.turns} turns){else}None{/if}</li>
-	    	<li><a href="/planet/{$planet.id}/production">Production:</a> {if $planet.production.0}{$planet.production.0.qty}x {$planet.production.0.name} ({$planet.production.0.turns} turns){else}None{/if}</li>
-	    	<li><a href="/planet/{$planet.id}/training">Training:</a> {if $planet.training.0}{$planet.training.0.qty} {$planet.training.0.name} ({$planet.training.0.turns} turns){else}None{/if}</li>	    
+	    	<li><a href="/planet/{$planet.id}/production">Production:</a> {if $planet.production.0}{$planet.production.0.qty} {$planet.production.0.name}{if $planet.production.0.qty > 1}s{/if} ({$planet.production.0.turns} turns){else}None{/if}</li>
+	    	<li><a href="/planet/{$planet.id}/training">Training:</a> {if $planet.training.0}{$planet.training.0.qty} {$planet.training.0.name}{if $planet.training.0.qty > 1}s{/if} ({$planet.training.0.turns} turns){else}None{/if}</li>	    
 	    </ul>
 	    
 	    {if $planet.fleets}
