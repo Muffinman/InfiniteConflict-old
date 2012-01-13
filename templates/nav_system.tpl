@@ -1,6 +1,6 @@
-<div class="content">
+<div class="content" id="nav">
   <h1>Navigation: <a href="/navigation">Universe</a> / <a href="/navigation/{$galaxy.id}">Galaxy {$galaxy.id}</a> / System {$system.id}</h1>
-  <div id="nav">
+  <div class="system">
     <ul class="nav planet">
       {foreach from=$planets item=p}
         <li class="planet{$p.type} {$p.status} col{$p.col}">

@@ -9,7 +9,9 @@
 		<meta name="author" content="Matt Jones">
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
 		<link rel="shortcut icon" href="/favicon.ico">
-		<link rel="stylesheet" href="/css/styles.css.php?p={$request.0}">
+		<link rel="stylesheet" href="/css/reset.css">
+		<link rel="stylesheet" href="/css/template.css">
+		<link rel="stylesheet" href="/css/login.css">
 	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	  <script src="/js/modernizr-1.5.min.js"></script>
 	  <script src="/js/scripts.js"></script>

@@ -3,6 +3,14 @@
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 
+if (!file_exists('templates_c/styles.css')){
+	require_once('css/styles.css.php');
+}
+
+if (!file_exists('templates_c/scripts.js')){
+	require_once('js/scripts.js.php');
+}
+
 $IC = new IC($db);
 $IC->smarty = $smarty;
 

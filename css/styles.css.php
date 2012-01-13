@@ -5,32 +5,28 @@
 * reduced to a single HTTP request.
 */
 
+
 ob_start();
-require_once 'reset.css.php';
-require_once 'template.css.php';
+require_once 'reset.css';
+require_once 'template.css';
+//require_once 'login.css.php';
+require_once 'planet.css';
+require_once 'research.css';
+require_once 'navigation.css';
 
-
-
-if ($_GET['p'] == 'login' || $_GET['p'] == 'register' || $_GET['p'] == 'forgotten' || $_GET['p'] == 'confirm' || $_GET['p'] == 'support'){
-  require_once 'login.css.php';
-}
-
-if ($_GET['p'] == 'planets'){
-  require_once 'planet.css.php';
-}
-
-if (file_exists($_GET['p'] . '.css.php')){
-  require_once $_GET['p'] . '.css.php';
-}
 
 $css = ob_get_contents();
 ob_end_clean();
 
 # output minified CSS only if live (to aid devleopment)
-#require_once '../includes/classes/cssmin.php';
-#$css = CssMin::minify($css);
+require_once 'includes/classes/cssmin.php';
+$css = CssMin::minify($css);
 
-header('Content-type: text/css'); 
-echo $css;
+$f = fopen('templates_c/styles.css', 'w+');
+fwrite($f, $css);
+fclose($f)
+
+//header('Content-type: text/css'); 
+//echo $css;
 
 ?>

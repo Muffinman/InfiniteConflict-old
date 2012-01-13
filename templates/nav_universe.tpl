@@ -1,6 +1,6 @@
-<div class="content">
+<div class="content" id="nav">
   <h1>Navigation: Universe</h1>
-  <div id="nav">
+  <div id="nav" class="universe">
     <ul class="nav gal">
       {foreach from=$galaxies item=g}
         <li class="gal{$g.type} {$g.status}">

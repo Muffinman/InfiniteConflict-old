@@ -1,4 +1,22 @@
-#nav{
+#nav .universe{
+  background:black;
+  width:auto;
+  padding:3px;
+  border:1px solid #888;
+  margin:0px auto;
+  width:648px;
+}
+
+#nav .galaxy{
+  background:black;
+  width:auto;
+  padding:3px;
+  border:1px solid #888;
+  margin:0px auto;
+  width:800px;
+}
+
+#nav .system{
   background:black;
   width:auto;
   padding:3px;

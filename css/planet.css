@@ -31,87 +31,87 @@
   font-weight:normal;
 }
 
-.planet-info h1 a img{
+#planet .planet-info h1 a img{
 
 }
 
 
-.planet-list .planet-info{
+#planet .planet-list .planet-info{
 	width:805px;
 }
 
-.plantet-list .odd{
+#planet .plantet-list .odd{
   background:#454545;
   background:rgba(50,50,50,0.9);	
 }
 
-.planet-list .even{
+#planet .planet-list .even{
   background:#555555;
   background:rgba(70,70,70,0.9);	
 }
 
-.planet-list .building{
+#planet .planet-list .building{
 	margin:0;
 	padding:0;
 }
 
-.planet-list .building li{
+#planet .planet-list .building li{
 	list-style:none;
 	float:left;
 	margin-right:25px;
 }
 
 
-.static-resources .resource{
+#planet .static-resources .resource{
   line-height:22px;
   margin-right:15px;
 }
 
-.static-resources .resource img{
+#planet .static-resources .resource img{
   vertical-align:middle;
 }
 
-.variable-resources th, .variable-resources td{
+#planet .variable-resources th, #planet .variable-resources td{
   background:none;
   border:none;
   font-weight:normal;
   padding:3px;
 }
 
-.variable-resources th{
+#planet .variable-resources th{
   color:white;
   vertical-align:middle;
   line-height:20px;
 }
 
-.variable-resources th img{
+#planet .variable-resources th img{
   vertical-align:middle;
 }
 
-.resource2{
+#planet .resource2{
   color:#e94021;
 }
 
-.resource3{
+#planet .resource3{
   color:#73aa35;
 }
 
-.resource4{
+#planet .resource4{
   color:#4884d8;
 }
 
-.resource7{
+#planet .resource7{
   color:#FDD473;
 }
 
-.planet-actions{
+#planet .planet-actions{
   margin:0;
   padding:0;
   list-style:none;
   text-align:center;
 }
 
-.action{
+#planet .action{
   float:left;
   width:auto;
   margin-left:0;
@@ -119,7 +119,7 @@
   padding:0;
 }
 
-.action a{
+#planet .action a{
   color:white;
   font-family:play;
   font-size:16px;
@@ -128,144 +128,144 @@
   display:block;
 }
 
-.action a:hover{
+#planet .action a:hover{
 	background:#555;
 }
 
-.building{
+#planet .building{
   margin-left:10px;
 }
 
-.built{
+#planet .built{
   width:356px;
   float:left;
 }
 
-.built table{
+#planet .built table{
 	width:356px;
 }
 
-.built td{
+#planet .built td{
   padding:4px;
 }
 
-.built td img{
+#planet .built td img{
   width:40px;
 }
 
-.built td.building-image{
+#planet .built td.building-image{
   width:40px;
 }
 
-.built th.resource{
+#planet .built th.resource{
   text-align:center;
 }
 
-.built tr:nth-child(2n) td{
+#planet .built tr:nth-child(2n) td{
   background:#4E4E4E;
 }
 
-.built tr:nth-child(4n-1) td, .built tr:nth-child(4n) td{
+#planet .built tr:nth-child(4n-1) td, #planet .built tr:nth-child(4n) td{
   background: #454545;
 }
 
-.built .production-image{
+#planet .built .production-image{
 	width:50px;
 }
 
-.queue{
+#planet .queue{
   float:left;
   margin-left:10px;
   width:540px;
 }
 
-.queue .planet-info{
+#planet .queue .planet-info{
   width:auto;
   margin:0;
   float:none;
   margin-top:12px;
 }
 
-.queue td{
+#planet .queue td{
   line-height:28px;
   cursor:move;
 }
 
-.queue td img{
+#planet .queue td img{
   width:28px;
   height:28px;
 }
 
-.queue .rank, .queue .image{
+#planet .queue .rank, #planet .queue .image{
   width:28px;
   text-align:center;
 } 
 
-.queue .turns{
+#planet .queue .turns{
   text-align:center;
 }
 
-.queue .remove{
+#planet .queue .remove{
   width:50px;
 }
 
-.available{
+#planet .available{
   float:right;
   margin-left:10px;
   width:540px;  
 }
 
-.available td img{
+#planet .available td img{
   width:28px;
   height:28px;
 }
 
-.available td.training-image img, #training-queue td.training-image img{
+#planet .available td.training-image img, #training-queue td.training-image img{
 	width:auto;
 	height:auto;
 	margin-top:5px;
 	margin-left:5px;
 }
 
-.available td{
+#planet .available td{
   line-height:28px;
 }
 
-.available p{
+#planet .available p{
   float:right;
   margin:10px 0;
 }
 
-.available input.qty{
+#planet .available input.qty{
 	width:50px;
 	height:20px;
 	text-align:center;
 }
 
-.available td.qty{
+#planet .available td.qty{
 	width:60px;
 }
 
-.disabled{
+#planet .disabled{
   opacity:0.5;
 }
 
 
-.available label{
+#planet .available label{
 	display:block;
 	width:auto;
 }
 
-.planet-list .planet-image, .planet-list .planet-image img{
+#planet .planet-list .planet-image, #planet .planet-list .planet-image img{
   width:100px;
   height:100px;
 }
 
-.planet-list .planet-info{
+#planet .planet-list .planet-info{
   border:none;
   background:none;
 }
 
-td.nopadding{
+#planet td.nopadding{
   padding:0;
 }
