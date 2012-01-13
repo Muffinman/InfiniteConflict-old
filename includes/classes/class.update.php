@@ -110,9 +110,19 @@ class Update extends IC{
 				$afford = true;
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
 					$output = $this->Planet->CalcPlanetResources($row['planet_id'], false);
+					
 					foreach ($resources as $res){
-						if ($res['cost'] > $this->Planet->LoadPlanetResourcesStored($row['planet_id'], $res['resource_id']) && !$row['demolish']){
-							$afford = false;
+					
+						foreach($output as $k => $res2){
+							if ($res['resource_id'] == $res2['id']){
+								if ($res['cost'] > $res2['stored'] && !$row['demolish']){
+									$afford = false;
+								}
+								
+								if ($res['cost'] > $res2['stored'] - $res2['busy'] && !$row['demolish']){
+									$afford = false;
+								}
+							}
 						}
 						
 						if ($res['output'] != 0){
@@ -127,7 +137,9 @@ class Update extends IC{
 								}
 							}
 						}
-
+						
+						
+						
 						
 						if ($res['stores'] > 0 && $row['demolish']){
 							foreach ($output as $o){
