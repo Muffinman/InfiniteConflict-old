@@ -265,7 +265,7 @@ class Update extends IC{
 						
 						foreach ($productionResources as $res1){
 							foreach ($planetResources as $k => $res2){
-								if ($res1['resource_id'] == $res2['id']){
+								if ($res1['resource_id'] == $res2['id'] && $res1['cost']){
 
 									$newmax = floor(($res2['stored'] - $res2['busy']) / $res1['cost']);
 									if ($newmax < 0){
@@ -350,7 +350,7 @@ class Update extends IC{
 												
 						foreach ($conversionResources as $res1){
 							foreach ($planetResources as $k => $res2){
-								if ($res1['cost_resource'] == $res2['id']){
+								if ($res1['cost_resource'] == $res2['id'] && $res1['cost']){
 
 									$newmax = floor(($res2['stored'] - $res2['busy']) / $res1['cost']);
 									if ($newmax < 0){
