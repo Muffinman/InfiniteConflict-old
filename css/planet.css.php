@@ -169,6 +169,10 @@
   background: #454545;
 }
 
+.built .production-image{
+	width:50px;
+}
+
 .queue{
   float:left;
   margin-left:10px;

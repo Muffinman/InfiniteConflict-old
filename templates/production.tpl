@@ -10,10 +10,10 @@
       </tr>
     </thead>
     <tbody>
-      {foreach from=$ships item=s}
+      {foreach from=$produced item=p}
         <tr>
-          <td class="ship-image"><img src="/images/ships/{$s.id}.jpg" alt="{$s.name}" title="{$s.name}"></td>
-          <td class="ship-name">{$s.qty} {$s.name}</td>
+          <td class="production-image"><img src="/images/ships/{$p.id}.jpg" alt="{$p.name}" title="{$p.name}"></td>
+          <td class="production-name">{$p.qty} {$p.name}</td>
         </tr>
       {/foreach}
     </tbody>

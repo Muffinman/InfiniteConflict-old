@@ -42,6 +42,13 @@ class Planet extends IC {
     return $this->db->QuickSelect('production', $id);
   }
 
+  public function LoadProduced($ruler_id, $planet_id){
+    $q = "SELECT p.*, pp.qty FROM planet_has_production AS pp
+    				LEFT JOIN production AS p ON pp.production_id = p.id
+    				WHERE planet_id='" . $this->db->esc($planet_id) . "'";
+    return $this->db->Select($q);
+  }
+
 	public function RulerOwnsPlanet($ruler_id, $planet_id){
 		$planet = $this->LoadPlanet($planet_id);
 		
@@ -222,7 +229,7 @@ class Planet extends IC {
   
   public function CalcBusy($planet_id, $resource_id, $cache=true){
     $bldQueue = $this->LoadBuildingsQueue(NULL, $planet_id, $cache);
-    $shipQueue = $this->LoadProductionQueue(NULL, $planet_id, $cache);
+    $productionQueue = $this->LoadProductionQueue(NULL, $planet_id, $cache);
     $conversionQueue = $this->LoadConversionQueue(NULL, $planet_id, $cache);
 
     $busy = 0;
@@ -241,13 +248,13 @@ class Planet extends IC {
       }
     }
 
-    if ($shipQueue){
-      foreach ($shipQueue as $s){
-        if ($s['started'] == 1){
-          if ($res = $this->LoadShipResources($s['ship_id'])){
+    if ($productionQueue){
+      foreach ($productionQueue as $p){
+        if ($p['started'] == 1){
+          if ($res = $this->LoadProductionResources($p['production_id'])){
 	          foreach ($res as $r){
 	            if ($r['resource_id'] == $resource_id && $r['refund'] == 1){
-	              $busy += $r['cost'];
+	              $busy += $r['cost'] * $p['qty'];
 	            }
 	          }
           }

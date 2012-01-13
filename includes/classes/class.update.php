@@ -249,6 +249,86 @@ class Update extends IC{
 	
 	
 	private function ProductionQueues(){
+
+  	// Queues about to start
+		$q = "SELECT * FROM planet_production_queue
+						WHERE started IS NULL
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				// Work out max
+				
+				$max = $row['qty'];
+				
+				if ($productionResources = $this->Planet->LoadProductionResources($row['production_id'])){				
+					if ($planetResources = $this->Planet->CalcPlanetResources($row['planet_id'], false)){
+						
+						foreach ($productionResources as $res1){
+							foreach ($planetResources as $k => $res2){
+								if ($res1['resource_id'] == $res2['id']){
+
+									$newmax = floor(($res2['stored'] - $res2['busy']) / $res1['cost']);
+									if ($newmax < 0){
+										$newmax = 0;
+									}
+									
+									if ($newmax < $max){
+										$max = $newmax;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				if ($max > 0){
+					foreach ($productionResources as $res1){
+						if (!$res1['refund']){
+							$this->Planet->VaryResource($row['planet_id'], $res1['resource_id'], -$max * $res1['cost']);
+						}
+					}
+					$row['started'] = 1;
+					$row['qty'] = $max;
+					$this->db->QuickEdit('planet_production_queue', $row);
+				}				
+			}
+		}	
+
+		// Already Started Queues
+		$q = "UPDATE planet_production_queue SET turns = turns-1
+						WHERE started=1
+						AND turns IS NOT NULL";
+		$this->db->Edit($q);
+
+		// Queues about to finish
+		$q = "SELECT * FROM planet_production_queue
+						WHERE started=1
+						AND turns<=0
+						AND rank=1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				
+				$q = "SELECT * FROM planet_has_production WHERE production_id='" . $this->db->esc($row['production_id']) . "' AND planet_id='" . $row['planet_id'] . "'";
+				if ($res = $this->db->Select($q)){
+					$q = "UPDATE planet_has_production SET qty = qty + " . $this->db->esc($row['qty']) . "
+									WHERE production_id='" . $this->db->esc($row['production_id']) . "'
+									AND planet_id='" . $row['planet_id'] . "'";
+					$this->db->Edit($q);	
+				}else{
+					$res = array(
+						'planet_id' => $row['planet_id'],
+						'production_id' => $row['production_id'],
+						'qty' => $row['qty']
+					);
+										
+					$this->db->QuickInsert('planet_has_production', $res);
+				}
+				
+				$this->db->QuickDelete('planet_production_queue', $row['id']);
+			  $this->db->SortRank('planet_production_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
+				
+			}
+		}
 		
 	}
 	

@@ -19,14 +19,14 @@ if (!$error){
   }
 
   $resources = $IC->Planet->CalcPlanetResources($planet['id']);
-  $buildings = $IC->Planet->CalcBuildingResources($planet['id']);
   $template = 'planet.tpl';
 
   switch ($request[2]){
     case 'production':
 				$availableProduction = $IC->Planet->LoadAvailableProduction($_SESSION['ruler']['id'], $planet['id']);
-				FB::log($availableProduction);
         $productionQueue = $IC->Planet->LoadProductionQueue($_SESSION['ruler']['id'], $planet['id']); 
+        $produced = $IC->Planet->LoadProduced($_SESSION['ruler']['id'], $planet['id']);
+        $smarty->assign('produced', $produced);
         $smarty->assign('availableProduction', $availableProduction);
         $smarty->assign('productionQueue', $productionQueue);
         $template = 'production.tpl';
@@ -47,6 +47,8 @@ if (!$error){
     default:
         $availableBuildings = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $planet['id']);
         $buildingsQueue = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $planet['id']);    
+        $buildings = $IC->Planet->CalcBuildingResources($planet['id']);
+  			$smarty->assign('buildings', $buildings);
         $smarty->assign('availableBuildings', $availableBuildings);
         $smarty->assign('buildingsQueue', $buildingsQueue);
       break;
@@ -55,7 +57,6 @@ if (!$error){
 
   $smarty->assign('resList', $res);
   $smarty->assign('resources', $resources);
-  $smarty->assign('buildings', $buildings);
   $smarty->assign('planet', $planet);
   $smarty->assign('content', $smarty->fetch($template));
 }
