@@ -449,7 +449,24 @@ class Update extends IC{
 		if ($res = $this->LoadResources()){
 			foreach ($res as $r){
 				if ($r['interest'] != 0 && $r['global'] == 0){
-					$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
+					//$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
+					
+					$q = "SELECT pb.planet_id, ROUND(SUM(interest),3) AS interest FROM planet_has_resource AS pr
+						LEFT JOIN planet_has_building AS pb ON pr.planet_id = pb.planet_id
+						LEFT JOIN building_has_resource AS br ON pr.resource_id = br.resource_id AND br.building_id = pb.building_id
+						WHERE pr.resource_id='".$this->db->esc($r['id'])."'
+						AND interest > 0
+						GROUP BY pb.planet_id";
+					if ($r2 = $this->db->Select($q)){
+						foreach ($r2 as $row){
+							$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($row['interest']) . ")
+											WHERE resource_id='" . $this->db->esc($r['id']) . "'
+											AND planet_id='".$row['planet_id']."'";
+							$this->db->Edit($q);
+
+						}
+					}
+					
 					$this->db->Edit($q);
 				}
 			}
