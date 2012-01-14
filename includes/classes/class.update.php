@@ -128,10 +128,10 @@ class Update extends IC{
 						if ($res['output'] != 0){
 							foreach ($output as $o){
 								if ($o['id'] == $res['resource_id']){
-									if ($o['output'] + $res['output'] < 0 && !$row['demolish']){
+									if ($o['output'] + $res['output'] < 0 && $res['output'] < 0 && !$row['demolish']){
 										$afford = false;
 									}
-									if ($o['output'] - $res['output'] < 0 && $row['demolish']){
+									if ($o['output'] - $res['output'] < 0 && $res['output'] > 0 $row['demolish']){
 										$afford = false;
 									}
 								}
