@@ -131,7 +131,7 @@ class Update extends IC{
 									if ($o['output'] + $res['output'] < 0 && $res['output'] < 0 && !$row['demolish']){
 										$afford = false;
 									}
-									if ($o['output'] - $res['output'] < 0 && $res['output'] > 0 $row['demolish']){
+									if ($o['output'] - $res['output'] < 0 && $res['output'] > 0 && $row['demolish']){
 										$afford = false;
 									}
 								}
