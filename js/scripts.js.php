@@ -6,6 +6,8 @@ $scripts[] = 'jquery-ui-1.8.14.custom.min.js';
 $scripts[] = 'main.js';
 $scripts[] = 'research.js';
 $scripts[] = 'planet.js';
+$scripts[] = 'fleet.js';
+
 
 $js = '';
 foreach ($scripts as $script){

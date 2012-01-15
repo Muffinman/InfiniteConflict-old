@@ -169,7 +169,7 @@
   background: #454545;
 }
 
-#planet .built .production-image{
+#planet .built .production-image, #planet .built .training-image{
 	width:50px;
 }
 
@@ -268,4 +268,32 @@
 
 #planet td.nopadding{
   padding:0;
+}
+
+#planet .ships tr:nth-child(2n) td, #planet .trained tr:nth-child(2n) td{
+  background: #454545;
+}
+
+#planet .ships tr:nth-child(2n-1) td, #planet .trained tr:nth-child(2n-1) td{
+  background: #4E4E4E;
+}
+
+#planet .newfleet{
+	clear:left;
+}
+
+.newfleet label{
+	width:auto;
+	line-height: 20px;
+}
+
+.newfleet input[type=text]{
+	width:150px;
+	height:18px;
+	padding:2px;
+}
+
+#planet input[type=submit]{
+	width:auto;
+	height:24px;
 }

@@ -11,6 +11,10 @@ if (!file_exists('templates_c/scripts.js')){
 	require_once('js/scripts.js.php');
 }
 
+
+$smarty->assign('title', 'Infinite Conflict - The Second Best Tick Based Strategy Game.');
+$smarty->assign('keywords', 'Online game, strategy game, online strategy game');
+
 $IC = new IC($db);
 $IC->smarty = $smarty;
 

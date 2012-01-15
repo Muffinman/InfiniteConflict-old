@@ -2,7 +2,7 @@
 	
 	{include file='planet_header.tpl'}
 	
-	<div class="content built">
+	<div class="content built trained">
 	  <h1>Completed Units</h1>
 	  <table>
 	    <thead>

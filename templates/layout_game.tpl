@@ -3,7 +3,7 @@
 	<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{$meta_title}</title>
+    <title>{$title}</title>
     <meta name="description" content="{$description}">
     <meta name="keywords" content="{$keywords}">
     <meta name="author" content="Matt Jones">

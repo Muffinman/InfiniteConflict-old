@@ -12,7 +12,7 @@
           <span class="resource">
             <img src="/images/resources/{$r.id}.gif" alt="{$res}" title="{$res}"> {$r.stored_str}
             {if $r.req_storage && $r.storage}
-              ({$r.storage_str} capacity)
+              ({$r.storage_str} storage)
             {/if}
             {if $r.id == 7}
               ({$r.busy_str} busy)

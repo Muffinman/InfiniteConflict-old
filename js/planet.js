@@ -235,5 +235,17 @@ $(document).ready(function(){
       $(".empty-queue").css('display','block');
     } 	
   }
+  
+  
+  $('.newfleet form').submit(function(e){
+	  e.preventDefault();
+	  $.post('/ajax/fleets/create/', $(this).serialize(), function(data){
+      if (data.id){
+      	window.location = '/fleet/' + data.id;
+      }
+	  }, 'json');
+	  return false;
+	});
+  
 
 });

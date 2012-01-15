@@ -2,7 +2,7 @@
 	
 	{include file='planet_header.tpl'}
 	
-	<div class="content built">
+	<div class="content built ships">
 	  <h1>Completed Ships</h1>
 	  <table>
 	    <thead>
@@ -12,18 +12,20 @@
 	      </tr>
 	    </thead>
 	    <tbody>
-	      {foreach from=$produced item=p}
-	        <tr>
-	          <td class="production-image"><img src="/images/ships/{$p.id}.jpg" alt="{$p.name}" title="{$p.name}"></td>
-	          <td class="production-name">{$p.qty} {$p.name}</td>
-	        </tr>
-	      {/foreach}
+	    	{if $produced}
+		      {foreach from=$produced item=p}
+		        <tr>
+		          <td class="production-image"><img src="/images/ships/{$p.id}.jpg" alt="{$p.name}" title="{$p.name}"></td>
+		          <td class="production-name">{$p.qty} {$p.name}</td>
+		        </tr>
+		      {/foreach}
+	      {/if}
 	    </tbody>
 	  </table>
 	</div>
 	
 	
-	<div class="content queue">
+	<div class="content queue production">
 	  <h1>Production Queue</h1>
 	  <form id="production-queue" action="/ajax/production/queue/reorder/" method="post"{if !$productionQueue} style="display:none;"{/if}>
 	    <table>
@@ -72,7 +74,6 @@
 	
 	</div>
 	
-	
 	<div class="content available">
 	  <h1>Ships Available</h1>
 	  <form id="production-list" action="/ajax/production/queue/add/" method="post">
@@ -110,6 +111,18 @@
 	    <p><input type="hidden" name="planet_id" value="{$planet.id}"><input type="submit" value="Queue Production"></p>
 	  </form>
 	</div>
+
+	<div class="content built newfleet">
+		<h1>Create new fleet</h1>
+		<form action="/ajax/fleets/create/">
+			<p>
+				<label for="newfleet">Fleet name:</label>
+				<input type="text" required="true" name="newfleet" />
+				<input type="hidden" name="planet_id" value="{$planet.id}">
+				<input type="submit" value="Create" />
+			</p>
+		</form>
+	</div>	
 	
 	<div class="clear"></div>
 

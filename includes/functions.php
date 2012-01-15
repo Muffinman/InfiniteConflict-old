@@ -33,9 +33,9 @@ function template_data() {
   }
   
 
-	$smarty->assign('title', $config['meta_title']);
-	$smarty->assign('description', $config['meta_description']);
-	$smarty->assign('keywords', $config['meta_keywords']);
+	//$smarty->assign('title', $config['meta_title']);
+	//$smarty->assign('description', $config['meta_description']);
+	//$smarty->assign('keywords', $config['meta_keywords']);
 	
   # Breadcrumbs
   if (is_array($request) && !empty($request) && $request[0]){

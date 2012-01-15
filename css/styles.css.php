@@ -13,6 +13,7 @@ require_once 'template.css';
 require_once 'planet.css';
 require_once 'research.css';
 require_once 'navigation.css';
+require_once 'fleets.css';
 
 
 $css = ob_get_contents();
