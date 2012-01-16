@@ -78,8 +78,8 @@ if ($_POST['from-current-fleet'] && $dest_type=='planet'){
 			}
 		}
 	}
-	//header('Location: /fleet/' . $fleet['id']);
-	//die;
+	header('Location: /fleet/' . $fleet['id']);
+	die;
 }
 
 // Transfer from current fleet to other fleet
