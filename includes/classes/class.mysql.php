@@ -289,12 +289,14 @@ class mysql {
       }
 
       foreach ($data as $k => $v){
-        if ($v === NULL){
-          $qs[] = '`' . $this->esc($k) . '` = NULL';
-        }
-        
-        else{
-          $qs[] = '`' . $this->esc($k) . '` = \'' . $this->esc($v) . '\'';
+      	if ($k != $PK){
+	        if ($v === NULL){
+	          $qs[] = '`' . $this->esc($k) . '` = NULL';
+	        }
+	        
+	        else{
+	          $qs[] = '`' . $this->esc($k) . '` = \'' . $this->esc($v) . '\'';
+	        }
         }
       }
 

@@ -25,7 +25,7 @@ if (!$error){
     case 'production':
 				$availableProduction = $IC->Planet->LoadAvailableProduction($_SESSION['ruler']['id'], $planet['id']);
         $productionQueue = $IC->Planet->LoadProductionQueue($_SESSION['ruler']['id'], $planet['id']); 
-        $produced = $IC->Planet->LoadProduced($_SESSION['ruler']['id'], $planet['id']);
+        $produced = $IC->Planet->LoadProduced($planet['id']);
         $smarty->assign('produced', $produced);
         $smarty->assign('availableProduction', $availableProduction);
         $smarty->assign('productionQueue', $productionQueue);

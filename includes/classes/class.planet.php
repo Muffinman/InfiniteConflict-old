@@ -15,7 +15,8 @@ class Planet extends IC {
 
 
   public function LoadPlanetResources($id, $cache=true){
-    $q = "SELECT * FROM  planet_has_resource
+    $q = "SELECT pr.*, r.creatable, r.transferable, r.name FROM  planet_has_resource AS pr
+    				 LEFT JOIN resource AS r ON pr.resource_id = r.id
     				 WHERE planet_id='" . $this->db->esc($id) . "'";
     return $this->db->Select($q, false, true, $cache);
   }
@@ -42,7 +43,7 @@ class Planet extends IC {
     return $this->db->QuickSelect('production', $id);
   }
 
-  public function LoadProduced($ruler_id, $planet_id){
+  public function LoadProduced($planet_id){
     $q = "SELECT p.*, pp.qty FROM planet_has_production AS pp
     				LEFT JOIN production AS p ON pp.production_id = p.id
     				WHERE planet_id='" . $this->db->esc($planet_id) . "'";
@@ -945,18 +946,36 @@ class Planet extends IC {
 
 
   public function VaryResource($planet_id, $resource_id, $qty){
-    $q = "UPDATE planet_has_resource SET stored = stored + '" . $this->db->esc($qty) . "'
-            WHERE planet_id = '" . $this->db->esc($planet_id) . "'
-            AND resource_id = '" . $this->db->esc($resource_id) . "'";
-    return $this->db->Edit($q);
+ 		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+ 						AND resource_id='" . $this->db->esc($resource_id) . "'";
+ 		if ($r = $this->db->Select($q, false, false, false)){
+	    $r[0]['stored'] += $qty;
+	    return $this->db->QuickEdit('planet_has_resource', $r[0]);
+    }else{
+    	$arr = array(
+    		'planet_id' => $planet_id,
+    		'resource_id' => $resource_id,
+    		'stored' => $qty
+    	);
+    	return $this->db->QuickInsert('planet_has_resource', $arr);
+    }
   }
 
   
   public function SetResource($planet_id, $resource_id, $qty){
-    $q = "UPDATE planet_has_resource SET stored = '" . $this->db->esc($qty) . "'
-            WHERE planet_id = '" . $this->db->esc($planet_id) . "'
-            AND resource_id = '" . $this->db->esc($resource_id) . "'";
-    return $this->db->Edit($q);
+ 		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+ 						AND resource_id='" . $this->db->esc($resource_id) . "'";
+ 		if ($r = $this->db->Select($q, false, false, false)){
+	    $r[0]['stored'] = $qty;
+	    return $this->db->QuickEdit('planet_has_resource', $r[0]);
+    }else{
+    	$arr = array(
+    		'planet_id' => $planet_id,
+    		'resource_id' => $resource_id,
+    		'stored' => $qty
+    	);
+    	return $this->db->QuickInsert('planet_has_resource', $arr);
+    }
   }
   
   

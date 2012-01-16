@@ -3,3 +3,47 @@
   border:1px solid #5f5f5f;
   background:#454545;
 }
+
+.fleet-queue{
+	width:356px;
+	float:left;
+}
+
+.fleet-transfer{
+	float:right;
+	width:540px;
+}
+
+.fleet-transfer select{
+	height:24px;
+	padding:4px;
+}
+
+.fleet-transfer option{
+	height:18px;
+}
+
+.fleet-transfer h2{
+	margin-top:20px;
+	margin-bottom:10px;
+}
+
+.fleet-transfer .amount{
+	width:120px;
+}
+
+.fleet-transfer .amount input{
+	width:60px;
+	padding:2px;
+	height:16px;
+}
+
+.fleet-transfer td img{
+	width:17px;
+	height:17px;
+}
+
+.fleet-transfer input[type=submit]{
+	width:auto;
+	height:24px;
+}

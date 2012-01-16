@@ -20,9 +20,9 @@
 							<td><a href="/fleet/{$f.id}">{$f.name}</a></td>
 							<td>
 								{if $f.moving}
-									Moving to <a href="{if $f.queue.0.planet_ruler == $ruler.id}/planets/{$f.queue.0.planet_id}{else}/navigation/{$f.queue.0.galaxy_id}/{$f.queue.0.system_id}{/if}">{$f.queue.0.planet_name} ({$f.queue.0.planet_id}) ({$f.queue.0.turns} turns)</a>
+									Moving to <a href="{if $f.queue.0.planet_ruler == $ruler.id}/planet/{$f.queue.0.planet_id}{else}/navigation/{$f.queue.0.galaxy_id}/{$f.queue.0.system_id}{/if}">{$f.queue.0.planet_name} ({$f.queue.0.planet_id}) ({$f.queue.0.turns} turns)</a>
 								{else}
-									Waiting at <a href="{if $f.planet_ruler == $ruler.id}/planets/{$f.planet_id}{else}/navigation/{$f.galaxy_id}/{$f.system_id}{/if}">{$f.planet_name} ({$f.planet_id})</a>
+									Waiting at <a href="{if $f.planet_ruler == $ruler.id}/planet/{$f.planet_id}{else}/navigation/{$f.galaxy_id}/{$f.system_id}{/if}">{$f.planet_name} ({$f.planet_id})</a>
 								{/if}
 							</td>
 							{foreach from=$resources item=r}
