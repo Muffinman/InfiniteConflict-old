@@ -130,7 +130,8 @@ if ($fleet){
 		if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $fleet['planet_id'])){
 			$planet = $IC->LoadPlanet($fleet['planet_id']);
 			$planet['produced'] = $IC->Planet->LoadProduced($fleet['planet_id']);
-			$planet['resources'] = $IC->Planet->LoadPlanetResources($_SESSION['ruler']['id'], $fleet['planet_id']);
+			$planet['resources'] = $IC->Planet->LoadPlanetResources($fleet['planet_id']);
+			FB::log($planet);
 			$smarty->assign('planet', $planet);
 			
 			if (!$dest_type || !$dest_id){
