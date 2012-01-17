@@ -11,8 +11,9 @@
 .planet-info{
   float:left;
   padding:6px;
-  border:1px solid #5f5f5f;
+  border:1px solid #505050;
   background:#454545;
+  background:rgba(80,80,80,0.8);
   width:715px;
   margin-left:10px;
   margin-bottom:7px;
@@ -115,7 +116,7 @@
   float:left;
   width:auto;
   margin-left:0;
-  margin-right:2px;
+  margin-right:6px;
   padding:0;
 }
 

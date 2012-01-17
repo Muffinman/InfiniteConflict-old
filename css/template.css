@@ -301,10 +301,10 @@ input{
 }
 
 .content{
-	background:#2c2c2c url(/images/head2back.gif) top left repeat-x;
-  background:rgba(50,50,50,0.9) url(/images/head2back.gif) top left repeat-x;
+	background:#2c2c2c url(/images/head2back.png) top left repeat-x;
+  background:rgba(50,50,50,0.9) url(/images/head2back.png) top left repeat-x;
   padding:10px;
-  border:1px solid black;
+  border:1px solid #404040;
   margin-bottom:10px;
 }
 
@@ -323,6 +323,7 @@ input{
 .headbar{
   height:24px;
   padding:5px 10px;
+  border-top:0px;
 }
 
 .headbar p{
