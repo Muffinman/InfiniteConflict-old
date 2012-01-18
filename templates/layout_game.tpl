@@ -20,6 +20,7 @@
   <!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
 
     <img id="background" alt="" src="/images/background.jpg">
+    
     <div id="ajax">
       <img alt="Loading... Please wait." src="/images/ajax.gif">
     </div>
@@ -45,7 +46,7 @@
         <ul id="menu">
           <li class="home"><a {if $request.0 == ''}class="active" {/if}href="/">Home</a></li>
           <li class="planets"><a {if $request.0 == 'planets' || $request.0 == 'planet'}class="active" {/if}href="/planets">Planets</a></li>
-          <li class="fleets"><a {if $request.0 == 'fleets'}class="active" {/if}href="/fleets">Fleets</a></li>
+          <li class="fleets"><a {if $request.0 == 'fleets' || $request.0 == 'fleet'}class="active" {/if}href="/fleets">Fleets</a></li>
           <li class="navigation"><a {if $request.0 == 'navigation'}class="active" {/if}href="/navigation">Navigation</a></li>
           <li class="research"><a {if $request.0 == 'research'}class="active" {/if}href="/research">Research</a></li>
           <li class="alliances"><a {if $request.0 == 'alliances'}class="active" {/if}href="/alliances">Alliances</a></li>
