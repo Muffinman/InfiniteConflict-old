@@ -7,8 +7,7 @@
 	  <table>
 	    <thead>
 	      <tr>
-	        <th></th>
-	        <th>Name</th>
+	        <th colspan="2">Name</th>
 	        {foreach from=$resList item=r}
 	          {if $r.id <= 6}
 	            <th class="resource"><img src="/images/resources/{$r.id}.gif" alt="{$r.name}" title="{$r.name}"></th>

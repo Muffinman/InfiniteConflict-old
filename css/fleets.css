@@ -5,21 +5,36 @@
 }
 
 .fleet-queue{
-	width:356px;
+	width:448px;
 	float:left;
+	clear:left;
 }
+
+.fleet-queue .margin{
+	margin-top:10px;
+}
+
+.fleet-queue h2{
+	margin-top:15px;
+	margin-bottom:10px;
+}
+
+.fleet-queue form p{
+	margin-bottom:5px;
+}
+
 
 .fleet-transfer{
 	float:right;
-	width:540px;
+	width:448px;
 }
 
-.fleet-transfer select{
+.fleet-transfer select, .fleet-queue select{
 	height:24px;
 	padding:4px;
 }
 
-.fleet-transfer option{
+.fleet-transfer option, .fleet-queue option{
 	height:18px;
 }
 
@@ -28,22 +43,40 @@
 	margin-bottom:10px;
 }
 
-.fleet-transfer .amount{
+.fleet-transfer .amount, .fleet-queue .amount{
 	width:120px;
 }
 
-.fleet-transfer .amount input{
+.fleet-transfer .amount input, .fleet-queue input{
 	width:60px;
 	padding:2px;
-	height:16px;
+	height:14px;
 }
 
-.fleet-transfer td img{
+.fleet-queue input[type=checkbox]{
+	width: auto;
+	padding: 0px;
+	height: auto;
+}
+
+.fleet-queue label{
+	width: auto;
+}
+
+.fleet-transfer td, .fleet-queue td{
+	line-height: 17px;
+}
+
+.fleet-transfer td img, .fleet-queue td img{
 	width:17px;
 	height:17px;
 }
 
-.fleet-transfer input[type=submit]{
+.fleet-transfer input[type=submit], .fleet-queue input[type=submit]{
 	width:auto;
-	height:24px;
+	height:22px;
+}
+
+#fleet-queue td{
+	cursor:move;
 }

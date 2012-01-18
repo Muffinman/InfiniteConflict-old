@@ -232,56 +232,56 @@ input{
 }
 
 #menu li.home{
-  width:128px;
+  width:130px;
 }
 
 #menu li.planets{
-  width:152px;
+  width:154px;
 }
 
 #menu li.fleets{
-  width:152px;
+  width:154px;
 }
 
 #menu li.navigation{
-  width:152px;
+  width:154px;
 }
 
 #menu li.research{
-  width:152px;
+  width:154px;
 }
 
 #menu li.alliances{
-  width:152px;
+  width:154px;
 }
 
 
 #menu li.home a{
-  width:128px;
+  width:130px;
 }
 
 #menu li.planets a{
-  width:152px;
+  width:154px;
   background:url(/images/planets.gif) top left no-repeat;
 }
 
 #menu li.fleets a{
-  width:152px;
+  width:154px;
   background:url(/images/fleets.gif) top left no-repeat;
 }
 
 #menu li.navigation a{
-  width:152px;
+  width:154px;
   background:url(/images/navigation.gif) top left no-repeat;
 }
 
 #menu li.research a{
-  width:152px;
+  width:154px;
   background:url(/images/research.gif) top left no-repeat;
 }
 
 #menu li.alliances a{
-  width:152px;
+  width:154px;
   background:url(/images/alliances.gif) top left no-repeat;
 }
 
@@ -301,8 +301,8 @@ input{
 }
 
 .content{
-	background:#2c2c2c url(/images/head2back.png) top left repeat-x;
-  background:rgba(50,50,50,0.9) url(/images/head2back.png) top left repeat-x;
+	background:#2c2c2c url(/images/head2back.png) -1px 0 repeat-x;
+  background:rgba(50,50,50,0.9) url(/images/head2back.png) -1px 0 repeat-x;
   padding:10px;
   border:1px solid #404040;
   margin-bottom:10px;
@@ -312,7 +312,7 @@ input{
   font-family:Play, 'Arial Black', sans-serif;
   text-transform:uppercase;
   text-shadow:1px 1px 0px black;
-  margin-bottom:12px;
+  margin-bottom:14px;
   height:20px;
 }
 

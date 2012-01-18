@@ -8,7 +8,7 @@
 						<th>Fleet Nane</th>
 						<th>Status</th>
 						{foreach from=$resources item=r}
-							{if $r.transferable}
+							{if $r.transferable && $r.id != 9}
 								<th><img src="/images/resources/{$r.id}.gif" alt="{$r.name}" /></th>
 							{/if}
 						{/foreach}
@@ -26,7 +26,7 @@
 								{/if}
 							</td>
 							{foreach from=$resources item=r}
-								{if $r.transferable}
+								{if $r.transferable && $r.id != 9}
 									{assign var=rid value=$r.id}
 									<td>{$f.resources.$rid.stored}</td>
 								{/if}

@@ -53,9 +53,9 @@ class Fleet extends IC {
 		if ($r = $this->db->Select($q)){
 			$fleets = array();
 			foreach ($r as $row){
-				if ($resources = $this->LoadResources($row['fleet_id'])){
+				if ($resources = $this->LoadResources($row['id'])){
 					foreach ($resources as $res){
-						$row['resources'][$res['id']] = $res;
+						$row['resources'][$res['resource_id']] = $res;
 					}
 				}
 				
@@ -134,33 +134,38 @@ class Fleet extends IC {
 
 
 	public function LoadQueue($fleet_id){
-		$q = "SELECT * FROM fleet_queue WHERE fleet_id='" . $this->db->esc($fleet_id) . "' ORDER BY rank ASC";
+		$q = "SELECT q.*, r.name AS resource_name, p.name AS production_name, pl.name AS planet_name, MD5(CONCAT(q.id,q.fleet_id,'".$this->config['salt']."')) AS hash
+				FROM fleet_queue AS q
+				LEFT JOIN resource AS r ON q.resource_id = r.id
+				LEFT JOIN production AS p ON q.production_id = p.id
+				LEFT JOIN planet AS pl ON q.planet_id = pl.id
+				WHERE fleet_id='" . $this->db->esc($fleet_id) . "' ORDER BY rank ASC";
 		return $this->db->Select($q);
 	}	
 
 
-  public function LoadProduced($fleet_id){
-    $q = "SELECT p.*, fp.qty FROM fleet_has_production AS fp
-    				LEFT JOIN production AS p ON fp.production_id = p.id
-    				WHERE fleet_id='" . $this->db->esc($fleet_id) . "'";
-    return $this->db->Select($q);
-  }
+	public function LoadProduced($fleet_id){
+		$q = "SELECT p.*, fp.qty FROM fleet_has_production AS fp
+						LEFT JOIN production AS p ON fp.production_id = p.id
+						WHERE fleet_id='" . $this->db->esc($fleet_id) . "'";
+		return $this->db->Select($q);
+	}
   
   
-  public function PlanetToFleetResource($planet_id, $fleet_id, $resource_id, $qty){
+	public function PlanetToFleetResource($planet_id, $fleet_id, $resource_id, $qty){
     	
-  	$max = $qty;
-  	if ($resources = $this->Planet->CalcPlanetResources($planet_id, false)){
-  		foreach ($resources as $res){
-  			if ($res['id'] == $resource_id){
-  				if ($res['stored'] - $res['busy'] < $max){
-  					$max = $res['stored'] - $res['busy'];
-  				}
-  			}
-  		}
-  	}
+		$max = $qty;
+		if ($resources = $this->Planet->CalcPlanetResources($planet_id, false)){
+			foreach ($resources as $res){
+				if ($res['id'] == $resource_id){
+					if ($res['stored'] - $res['busy'] < $max){
+						$max = $res['stored'] - $res['busy'];
+					}
+				}
+			}
+		}
   	  	
-  	$storage = $this->LoadStorage($fleet_id, $resource_id);
+		$storage = $this->LoadStorage($fleet_id, $resource_id);
 		$stored = $this->LoadStored($fleet_id, $resource_id);
 		
 		$free = $storage - $stored;
@@ -173,87 +178,87 @@ class Fleet extends IC {
 			$this->VaryResource($fleet_id, $resource_id, $max);
 		}
 		return true; 	
-  }
+	}
 
 
-  public function PlanetToFleetProduction($planet_id, $fleet_id, $production_id, $qty){
-  	if ($produced = $this->Planet->LoadProduced($planet_id)){
-  		foreach ($produced as $p){
-  			if ($p['id']==$production_id){
-  				if ($p['qty'] <= $qty){
-  					$qty = $p['qty'];
-  					$q = "DELETE FROM planet_has_production
-  									WHERE planet_id='" . $this->db->esc($planet_id) . "'
-  									AND production_id='" . $this->db->esc($production_id) . "'";
-  					$this->db->Edit($q);
-  				}else{
-  					$q = "UPDATE planet_has_production
-  									SET qty = qty - '" . $this->db->esc($qty) . "'
-  									WHERE planet_id='" . $this->db->esc($planet_id) . "'
-  									AND production_id='" . $this->db->esc($production_id) . "'";
-  					$this->db->Edit($q);
-  				}
-  				
-  				if ($qty > 0){
-  					$q = "SELECT * FROM fleet_has_production
-  									WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
-  									AND production_id='" . $this->db->esc($production_id) . "'";
-  					if ($r = $this->db->Select($q)){
-  						$r[0]['qty'] += $qty;
-  						$this->db->QuickEdit('fleet_has_production', $r[0]);
-  					}else{
-  						$arr = array(
-  							'fleet_id' => $fleet_id,
-  							'production_id' => $production_id,
-  							'qty' => $qty
-  						);
-  						$this->db->QuickInsert('fleet_has_production', $arr);
-  					}
-  				}	
-  			}  			
-  		}
-  	}
-  }
-
-
-
-  public function FleetToPlanetResource($fleet_id, $planet_id, $resource_id, $qty){
-  	$stored = $this->LoadStored($fleet_id, $resource_id);
-  	if ($stored < $qty){
-  		$qty = $stored;
-  	}
-  	  	
-  	if ($qty){
-	  	if ($resources = $this->Planet->CalcPlanetResources($planet_id, false)){
-	  		foreach ($resources as $res){
-	  			if ($res['id'] == $resource_id){
-	  				if ($qty > $res['storage'] - $res['stored'] && $res['req_storage']){
-	  					$qty = $res['storage'] - $res['stored'];
+	public function PlanetToFleetProduction($planet_id, $fleet_id, $production_id, $qty){
+	  	if ($produced = $this->Planet->LoadProduced($planet_id)){
+	  		foreach ($produced as $p){
+	  			if ($p['id']==$production_id){
+	  				if ($p['qty'] <= $qty){
+	  					$qty = $p['qty'];
+	  					$q = "DELETE FROM planet_has_production
+	  							WHERE planet_id='" . $this->db->esc($planet_id) . "'
+	  							AND production_id='" . $this->db->esc($production_id) . "'";
+	  					$this->db->Edit($q);
+	  				}else{
+	  					$q = "UPDATE planet_has_production
+	  							SET qty = qty - '" . $this->db->esc($qty) . "'
+	  							WHERE planet_id='" . $this->db->esc($planet_id) . "'
+	  							AND production_id='" . $this->db->esc($production_id) . "'";
+	  					$this->db->Edit($q);
 	  				}
+	  				
 	  				if ($qty > 0){
-	  					$this->Planet->VaryResource($planet_id, $resource_id, $qty);
-	  					$this->VaryResource($fleet_id, $resource_id, -$qty);
+	  					$q = "SELECT * FROM fleet_has_production
+	  							WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+	  							AND production_id='" . $this->db->esc($production_id) . "'";
+	  					if ($r = $this->db->Select($q)){
+	  						$r[0]['qty'] += $qty;
+	  						$this->db->QuickEdit('fleet_has_production', $r[0]);
+	  					}else{
+	  						$arr = array(
+	  							'fleet_id' => $fleet_id,
+	  							'production_id' => $production_id,
+	  							'qty' => $qty
+	  						);
+	  						$this->db->QuickInsert('fleet_has_production', $arr);
+	  					}
+	  				}	
+	  			}  			
+	  		}
+	  	}
+	}
+
+
+
+	public function FleetToPlanetResource($fleet_id, $planet_id, $resource_id, $qty){
+		$stored = $this->LoadStored($fleet_id, $resource_id);
+		if ($stored < $qty){
+			$qty = $stored;
+		}
+		  	
+		if ($qty){
+		  	if ($resources = $this->Planet->CalcPlanetResources($planet_id, false)){
+		  		foreach ($resources as $res){
+		  			if ($res['id'] == $resource_id){
+		  				if ($qty > $res['storage'] - $res['stored'] && $res['req_storage']){
+		  					$qty = $res['storage'] - $res['stored'];
+		  				}
+		  				if ($qty > 0){
+		  					$this->Planet->VaryResource($planet_id, $resource_id, $qty);
+		  					$this->VaryResource($fleet_id, $resource_id, -$qty);
+		  				}
+		  			}
+		  		}
+		  	}
+		}
+	}
+
+
+	public function FleetToPlanetProduction($fleet_id, $planet_id, $production_id, $qty){
+	  	if ($produced = $this->LoadProduced($fleet_id)){
+	  		foreach ($produced as $p){
+	  			if ($p['id'] == $production_id){
+	  				if ($qty > $p['qty']){
+	  					$qty = $p['qty'];
+	  					break;
 	  				}
 	  			}
 	  		}
+	  	}else{
+	  		return false;
 	  	}
-  	}
-  }
-
-
-  public function FleetToPlanetProduction($fleet_id, $planet_id, $production_id, $qty){
-  	if ($produced = $this->LoadProduced($fleet_id)){
-  		foreach ($produced as $p){
-  			if ($p['id'] == $production_id){
-  				if ($qty > $p['qty']){
-  					$qty = $p['qty'];
-  					break;
-  				}
-  			}
-  		}
-  	}else{
-  		return false;
-  	}
   
 		if ($res = $this->Planet->LoadProductionResources($production_id)){
 			foreach ($res as $r){
@@ -274,24 +279,24 @@ class Fleet extends IC {
 		
 		if ($qty > 0){
 			$q = "SELECT * FROM fleet_has_production
-							WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
-							AND production_id='" . $this->db->esc($production_id) . "'";
+					WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+					AND production_id='" . $this->db->esc($production_id) . "'";
 			if ($r = $this->db->Select($q)){
 				if ($r[0]['qty'] > $qty){
 					$r[0]['qty'] -= $qty;
 					$this->db->QuickEdit('fleet_has_production', $r[0]);
 				}else{
 					$q = "DELETE FROM fleet_has_production
-									WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
-									AND production_id='" . $this->db->esc($production_id) . "'";
+							WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+							AND production_id='" . $this->db->esc($production_id) . "'";
 					$this->db->Edit($q);
 				}
 			}
 			
 			
 			$q = "SELECT * FROM planet_has_production
-							WHERE planet_id='" . $this->db->esc($planet_id) . "'
-							AND production_id='" . $this->db->esc($production_id) . "'";
+					WHERE planet_id='" . $this->db->esc($planet_id) . "'
+					AND production_id='" . $this->db->esc($production_id) . "'";
 			if ($r = $this->db->Select($q)){
 				$r[0]['qty'] += $qty;
 				$this->db->QuickEdit('planet_has_production', $r[0]);
@@ -306,56 +311,106 @@ class Fleet extends IC {
   							
 		}
 
-  }
+	}
 
 
 
-  public function FleetToFleetResource($fleet_src_id, $fleet_dest_id, $resource_id, $qty){
+	public function FleetToFleetResource($fleet_src_id, $fleet_dest_id, $resource_id, $qty){
+	
+	}  
+	
+	
+	public function FleetToFleetProduction($fleet_src_id, $fleet_dest_id, $production_id, $qty){
+	
+	}
+
+
+
+	
+	public function VaryResource($fleet_id, $resource_id, $qty){	
+		$q = "SELECT * FROM fleet_has_resource WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)){
+	    	$r[0]['stored'] += $qty;
+	    	return $this->db->QuickEdit('fleet_has_resource', $r[0]);
+		}else{
+			$arr = array(
+				'fleet_id' => $fleet_id,
+				'resource_id' => $resource_id,
+				'stored' => $qty
+			);
+			return $this->db->QuickInsert('fleet_has_resource', $arr);
+		}
+	}
+
   
-  }  
-  
-  
-  public function FleetToFleetProduction($fleet_src_id, $fleet_dest_id, $production_id, $qty){
-  
-  }
+	public function SetResource($fleet_id, $resource_id, $qty){
+		$q = "SELECT * FROM fleet_has_resource WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+						AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)){
+			$r[0]['stored'] = $qty;
+			return $this->db->QuickEdit('fleet_has_resource', $r[0]);
+		}else{
+			$arr = array(
+				'fleet_id' => $fleet_id,
+				'resource_id' => $resource_id,
+				'stored' => $qty
+			);
+			return $this->db->QuickInsert('fleet_has_resource', $arr);
+		}
+	}
+	
+	
+	public function AddToQueue($fleet_id, $type, $col, $col_id, $col_qty, $repeat){
+		$arr = array(
+			'fleet_id' => $fleet_id,
+			'type' => $type,
+			'rank' => $this->db->NextRank('fleet_queue', 'rank', "WHERE fleet_id='" . $this->db->esc($fleet_id) . "'")
+		);
+		if ($col){
+			$arr[$col] = $col_id;
+		}
+		if ($col_qty){
+			$arr['qty'] = $col_qty;
+		}
+		if ($repeat){
+			$arr['repeat'] = 1;
+		}
+		return $this->db->QuickInsert('fleet_queue', $arr);
+	}
 
 
-
-
-  public function VaryResource($fleet_id, $resource_id, $qty){
- 		$q = "SELECT * FROM fleet_has_resource WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
- 						AND resource_id='" . $this->db->esc($resource_id) . "'";
- 					//FB::log($q);
- 		if ($r = $this->db->Select($q, false, false, false)){
-	    $r[0]['stored'] += $qty;
-	    return $this->db->QuickEdit('fleet_has_resource', $r[0]);
-    }else{
-    	$arr = array(
-    		'fleet_id' => $fleet_id,
-    		'resource_id' => $resource_id,
-    		'stored' => $qty
-    	);
-    	return $this->db->QuickInsert('fleet_has_resource', $arr);
-    }
-  }
-
-  
-  public function SetResource($fleet_id, $resource_id, $qty){
- 		$q = "SELECT * FROM fleet_has_resource WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
- 						AND resource_id='" . $this->db->esc($resource_id) . "'";
- 		if ($r = $this->db->Select($q, false, false, false)){
-	    $r[0]['stored'] = $qty;
-	    return $this->db->QuickEdit('fleet_has_resource', $r[0]);
-    }else{
-    	$arr = array(
-    		'fleet_id' => $fleet_id,
-    		'resource_id' => $resource_id,
-    		'stored' => $qty
-    	);
-    	return $this->db->QuickInsert('fleet_has_resource', $arr);
-    }
-  }
-
+	public function QueueRemove($ruler_id, $fleet_id, $hash) {
+		$q = "DELETE FROM fleet_queue
+				WHERE MD5(CONCAT(id, '" . $fleet_id . "','".$this->config['salt']."')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
+		$this->db->Edit($q);
+		
+		$this->db->SortRank('fleet_queue', 'rank', 'id', "WHERE fleet_id='" . $this->db->esc($fleet_id) . "'");
+	}
+	
+	
+	
+	public function QueueReorder($ruler_id, $fleet_id, $hashes) {
+		$currentQueue = $this->LoadQueue($ruler_id, $fleet_id);
+		$i = 1;
+		
+		if ($currentQueue[0]['started']) {
+			$i = 2;
+		}
+		
+		foreach ($hashes as $hash) {
+			foreach ($currentQueue as $queue) {
+				if ($hash == $queue['hash']) {
+					$queue['rank'] = $i;
+					$q             = "UPDATE fleet_queue SET rank='" . $this->db->esc($queue['rank']) . "' WHERE id='" . $queue['id'] . "' LIMIT 1";
+					$this->db->Edit($q);
+					$i++;
+					continue 2;
+				}
+			}
+			
+		}
+	}
 
 }
 
