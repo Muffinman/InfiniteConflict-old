@@ -178,6 +178,24 @@
 
 	</div>
 	
+	{if $colonise}
+		<div class="content colonise fleet-transfer">
+			<h1>Colonise Planet</h1>
+			<div class="fleet-info">
+				<form action="/ajax/fleets/colonise" method="post" id="colonise">
+					<p style="margin-bottom: 10px; text-align: center;">You can colonise this planet!</p>
+					<p>
+						<label for="planet_name">Planet Name</label>
+						<input type="text" name="planet_name" id="planet_name" value="" />
+						<input type="hidden" name="fleet_id" id="fleet_id" value="{$fleet.id}" />
+						<input type="submit" name="" value="Colonise!" />
+					</p>
+				</form>
+			</div>
+		</div>
+	{/if}
+	
+	
 	<div class="content fleet-transfer">
 		<h1>Resource Transfer</h1>
 		

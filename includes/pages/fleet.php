@@ -9,8 +9,10 @@ $planets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id']);
 $resources = $IC->Planet->LoadResources();
 $production = $IC->Planet->LoadProduction();
 
-
-
+if ($fleet['planet_id']){
+	$colonise = $IC->Fleet->CanColonise($fleet['id'], $fleet['planet_id']);
+	$smarty->assign('colonise', $colonise);
+}
 
 if ($fleet){
 

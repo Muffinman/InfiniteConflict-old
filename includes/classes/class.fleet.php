@@ -495,6 +495,27 @@ class Fleet extends IC {
 		echo "Travel Time: $time\n";
 		*/		
 	}
+	
+	
+	public function CanColonise($fleet_id, $planet_id){
+		if ($produced = $this->LoadProduced($fleet_id)){
+			$colShip = false;
+			foreach ($produced as $p) {
+				if ($p['can_colonise']){
+					$colShip = true;
+				}
+			}
+		}
+		
+		if ($colShip === true){
+			if ($planet = $this->Planet->LoadPlanet($planet_id)){
+				if (!$planet['home'] && !$planet['ruler_id']){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }
 

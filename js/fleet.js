@@ -4,6 +4,14 @@ $(document).ready(function(){
 		$("#transfer").submit();
 	});
 	
+	$("#colonise").submit(function(e){
+		e.preventDefault();
+		$.post('/ajax/fleets/colonise', $(this).serialize(), function(data){
+			
+		}, 'json');
+		return false;
+	});
+	
 	
 	$("#fleet-queue tbody").sortable({
 		items: 'tr:not(.nodrag)',

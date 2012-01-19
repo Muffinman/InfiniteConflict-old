@@ -47,10 +47,14 @@
 	width:120px;
 }
 
-.fleet-transfer .amount input, .fleet-queue input{
+.fleet-transfer input, .fleet-queue input{
 	width:60px;
 	padding:2px;
 	height:14px;
+}
+
+.colonise input[type=text]{
+	width: 150px;
 }
 
 .fleet-queue input[type=checkbox]{

@@ -969,5 +969,91 @@ class Planet extends IC {
 	}
 	
 	
+	public function Colonise($ruler_id, $planet_id, $planet_name, $fleet_id){
+		$q = "UPDATE planet SET ruler_id = '".$this->db->esc($ruler_id)."',
+								name = '" . $this->db->esc($planet_name) . "'
+				WHERE id='".$this->db->esc($planet_id)."' LIMIT 1";
+		$this->db->Edit($q);
+		
+		
+		$q = "SELECT * FROM planet_colo_building";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				$arr = array(
+					'planet_id' => $planet_id,
+					'building_id' => $row['building_id'],
+					'qty' => $row['qty']
+				);
+			
+				$this->db->QuickInsert('planet_has_building', $arr);
+			}
+		}
+
+		$q = "SELECT * FROM planet_colo_resource";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+			
+				$q = "SELECT * FROM planet_has_resource WHERE resource_id='" . $this->db->esc($row['resource_id']) . "'
+						AND planet_id='" . $this->db->esc($planet_id) . "'";
+				if ($this->db->Select($q)){
+					$q = "UPDATE planet_has_resource SET stored='" . $this->db->esc($row['stored']) . "'
+								WHERE resource_id='" . $this->db->esc($row['resource_id']) . "'
+								AND planet_id='" . $this->db->esc($planet_id) . "' LIMIT 1";
+					$this->db->Edit($q);
+				}else{
+					$q = "INSERT INTO planet_has_resource SET
+								stored='" . $this->db->esc($row['stored']) . "',
+								resource_id='" . $this->db->esc($row['resource_id']) . "',
+							    planet_id='" . $this->db->esc($planet_id) . "'";
+					$this->db->Insert($q);
+				}
+			}
+		}
+		
+				
+		if (!$this->Fleet){
+			$this->Fleet = new Fleet($this->db);
+		}
+		
+		$produced = $this->Fleet->LoadProduced($fleet_id);
+		foreach ($produced as $p){
+			if ($p['can_colonise']){
+				$q = "SELECT * FROM fleet_has_production
+						WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+						AND production_id='" . $this->db->esc($p['id']) . "'";
+				if ($r = $this->db->Select($q)){
+					if ($r[0]['qty'] > 1){
+						$r[0]['qty'] -= 1;
+						$this->db->QuickEdit('fleet_has_production', $r[0]);
+					}else{
+						$q = "DELETE FROM fleet_has_production
+								WHERE fleet_id='" . $this->db->esc($fleet_id) . "'
+								AND production_id='" . $this->db->esc($p['id']) . "'";
+						$this->db->Edit($q);
+					}
+				}	
+			}
+		}
+		
+		return $planet_id;	
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
 }
 ?>
