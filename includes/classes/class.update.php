@@ -13,6 +13,7 @@ class Update extends IC{
 		$this->Ruler = new Ruler($db);
 		$this->Research = new Research($db);
 		$this->Planet = new Planet($db);
+		$this->Fleet = new Fleet($db);
 	}
 	
 	
@@ -441,7 +442,203 @@ class Update extends IC{
 	
 	
 	private function FleetQueues(){
+	
+		// Clear empty fleets
+		$q = "DELETE FROM fleet WHERE id NOT IN (SELECT DISTINCT fleet_id FROM fleet_has_production)";
+		$this->db->Edit($q);
+	
+		// Advance all queues started
+		//$q = "UDPATE fleet_queue SET turns=turns-1 WHERE turns > 0 AND rank=1";
+		//$this->db->Edit($q);
 		
+	
+		// Find all fleets with orders
+		$q = "SELECT DISTINCT fleet_id FROM fleet_queue";
+		if ($fleets = $this->db->Select($q)){
+			foreach ($fleets as $f){
+
+				$repeats = array();
+				
+				$moved = false;
+				$newpos = false;
+
+				// Loop through fleet until we find something with orders
+				$q = "SELECT fq.*, p.home, f.planet_id AS pos, p.ruler_id AS planet_owner, f.ruler_id AS fleet_owner FROM fleet_queue AS fq
+						LEFT JOIN fleet AS f ON fq.fleet_id = f.id
+						LEFT JOIN planet AS p ON fq.planet_id = p.id
+						WHERE fq.fleet_id='" . $f['fleet_id'] . "' ORDER BY rank ASC";
+				if ($queue = $this->db->Select($q)){
+					foreach ($queue as $row){
+					
+						// we've just arrived at a new planet
+						if ($newpos){
+							$row['pos'] = $newpos;
+						}
+						
+						switch($row['type']){
+							 case 'load':
+							 		if ($this->Planet->RulerOwnsPlanet($row['fleet_owner'], $row['pos'])){
+								 		if ($row['resource_id']){
+									 		$this->Fleet->PlanetToFleetResource($row['pos'], $row['fleet_id'], $row['resource_id'], $row['qty']);
+								 		}
+								 		if ($row['production_id']){
+								 			$this->Fleet->PlanetToFleetProduction($row['pos'], $row['fleet_id'], $row['production_id'], $row['qty']);
+								 		}
+							 		}
+							 		
+							 		$this->db->QuickDelete('fleet_queue', $row['id']);
+							 		
+							 		if ($row['repeat']){
+							 			$repeats[] = $row;
+							 		}
+							 	break;
+							 		
+							 case 'unload':
+							 		if ($this->Planet->RulerOwnsPlanet($row['fleet_owner'], $row['pos'])){
+							 			if ($row['resource_id']){
+							 				$this->Fleet->FleetToPlanetResource($row['fleet_id'], $row['pos'], $row['resource_id'], $row['qty']);
+							 			}
+							 			if ($row['production_id']){
+							 				$this->Fleet->FleetToPlanetProduction($row['fleet_id'], $row['pos'], $row['production_id'], $row['qty']);
+							 			}
+							 		}
+							 		
+							 		$this->db->QuickDelete('fleet_queue', $row['id']);
+							 		
+							 		if ($row['repeat']){
+							 			$repeats[] = $row;
+							 		}
+							 	break;
+							 		
+							 case 'unloadall':
+							 		if ($this->Planet->RulerOwnsPlanet($row['fleet_owner'], $row['pos'])){
+							 			if ($res = $this->Fleet->LoadResources($row['fleet_id'])){
+							 				foreach ($res as $r){
+							 					if ($r['transferable']){
+							 						$this->Fleet->FleetToPlanetResource($row['fleet_id'], $row['pos'], $r['resource_id'], $r['stored']);
+							 					}
+							 				}
+							 			}
+							 		}
+							 		
+									$this->db->QuickDelete('fleet_queue', $row['id']);							 		
+							 		
+							 		if ($row['repeat']){
+							 			$repeats[] = $row;
+							 		}
+							 	break;
+							 	
+							 case 'wait':
+							 
+								 	if ($moved){
+								 		break 2;
+								 	}
+							 
+
+									$row['turns'] -= 1;
+									if ($row['turns'] > 0){
+										unset($row['pos']);
+										unset($row['home']);
+										unset($row['fleet_owner']);
+										unset($row['planet_owner']);
+										$this->db->QuickEdit('fleet_queue', $row);
+									}else{
+										$this->db->QuickDelete('fleet_queue', $row['id']);
+										if ($row['repeat']){
+											$repeats[] = $row;
+										}	
+									}
+									$moved = true;
+									break 2;
+									
+							 	break;
+							 		
+							 case 'move':
+							 		if ($row['home']==1 && $row['planet_owner'] != $row['fleet_owner']){
+							 			break 2;
+							 		}
+							 		
+							 		if ($moved){
+							 			break 2;
+							 		}
+							 		
+							 		
+							 		if (!$row['started']){
+							 		
+								 		$row['turns'] = $this->Fleet->TravelTime($row['fleet_id'], $row['pos'], $row['planet_id']) - 1;
+								 		
+								 		unset($row['pos']);
+								 		unset($row['home']);
+								 		unset($row['fleet_owner']);
+								 		unset($row['planet_owner']);
+								 		$row['started']=1;
+								 		$this->db->QuickEdit('fleet_queue', $row);
+								 		
+								 		$q = "UPDATE fleet SET moving=1, planet_id=NULL WHERE id='".$this->db->esc($f['fleet_id'])."'";
+								 		$this->db->Edit($q);
+								 		$moved = true;
+							 			break 2;				 		
+								 		
+							 		}else{
+
+										$row['turns'] -= 1;
+										if ($row['turns'] > 0){
+
+											unset($row['pos']);
+											unset($row['home']);
+											unset($row['fleet_owner']);
+											unset($row['planet_owner']);
+
+											$this->db->QuickEdit('fleet_queue', $row);
+											$moved = true;
+							 				break 2;				 		
+										}else{
+										
+											$newpos = $row['planet_id'];
+										
+											$q = "UPDATE fleet SET moving=NULL, planet_id='".$this->db->esc($row['planet_id'])."' WHERE id='".$this->db->esc($row['fleet_id'])."'";
+											$this->db->Edit($q);
+											$this->db->QuickDelete('fleet_queue', $row['id']);
+											
+											if ($row['repeat']){
+												$repeats[] = $row;
+											}
+											
+											$moved = true;
+											
+										}
+							 			
+							 		}
+							 	break;
+						}
+						
+					}
+					
+				}
+				
+				$this->db->SortRank('fleet_queue', 'rank', 'id', "WHERE fleet_id='" . $this->db->esc($f['fleet_id']) . "'");
+								
+				if ($repeats){
+					foreach ($repeats as $rep){
+						unset($rep['pos']);
+						unset($rep['home']);
+						unset($rep['fleet_owner']);
+						unset($rep['planet_owner']);
+						if ($rep['type'] != 'wait'){
+							unset($rep['turns']);
+						}else{
+							$rep['turns'] = $rep['qty'];
+						}
+						unset($rep['started']);
+						$rep['rank'] = $this->db->NextRank('fleet_queue', 'rank', "WHERE fleet_id='" . $this->db->esc($f['fleet_id']) . "'");	
+						$this->db->QuickInsert('fleet_queue', $rep);	
+					}
+				}				
+				
+			}	
+		}
+		
+	
 	}
 	
 

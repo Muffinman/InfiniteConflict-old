@@ -145,7 +145,7 @@ if ($fleet){
 		}
 		
 		if ($_POST['wait'] > 0){
-			$IC->Fleet->AddToQueue($fleet['id'], 'wait', 'turns', $_POST['wait'], false, $_POST['repeat']);
+			$IC->Fleet->AddToQueue($fleet['id'], 'wait', 'turns', $_POST['wait'], $_POST['wait'], $_POST['repeat']);
 			header('Location: /fleet/' . $fleet['id']);
 			die;
 		}

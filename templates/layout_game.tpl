@@ -18,8 +18,6 @@
   <!--[if IE 7 ]>    <body class="ie7"> <![endif]-->
   <!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
   <!--[if (gt IE 8)|!(IE)]><!--> <body> <!--<![endif]-->
-
-    <img id="background" alt="" src="/images/background.jpg">
     
     <div id="ajax">
       <img alt="Loading... Please wait." src="/images/ajax.gif">

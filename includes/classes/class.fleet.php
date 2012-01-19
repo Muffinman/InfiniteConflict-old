@@ -59,7 +59,7 @@ class Fleet extends IC {
 					}
 				}
 				
-				$queue = $this->LoadQueue($row['fleet_id']);
+				$row['queue'] = $this->LoadQueue($row['id']);
 				
 				$fleets[] = $row;
 			}
@@ -134,7 +134,7 @@ class Fleet extends IC {
 
 
 	public function LoadQueue($fleet_id){
-		$q = "SELECT q.*, r.name AS resource_name, p.name AS production_name, pl.name AS planet_name, MD5(CONCAT(q.id,q.fleet_id,'".$this->config['salt']."')) AS hash
+		$q = "SELECT q.*, r.name AS resource_name, p.name AS production_name, pl.name AS planet_name, pl.galaxy_id, pl.system_id, MD5(CONCAT(q.id,q.fleet_id,'".$this->config['salt']."')) AS hash
 				FROM fleet_queue AS q
 				LEFT JOIN resource AS r ON q.resource_id = r.id
 				LEFT JOIN production AS p ON q.production_id = p.id
@@ -410,6 +410,90 @@ class Fleet extends IC {
 			}
 			
 		}
+	}
+	
+	
+	public function TravelTime($fleet_id, $src_id, $dest_id){
+		// Lookup ship fleet drive;
+		
+		$fleet = $this->LoadFleet($fleet_id);
+		$src = $this->Planet->LoadPlanet($src_id);
+		$dest = $this->Planet->LoadPlanet($dest_id);
+		$ruler = $this->LoadRuler($fleet['ruler_id']);
+		$src_ruler = $this->LoadRuler($src['ruler_id']);
+		$dest_ruler = $this->LoadRuler($dest['ruler_id']);
+		
+		if ($produced = $this->LoadProduced($fleet_id)){
+			$drive=1;
+			foreach($produced as $p){
+				if ($p['drive'] > $drive){
+					$drive = $p['drive'];
+				}
+			}
+		}
+		
+		// Inside system travel
+		if ($src['system_id'] ==  $dest['system_id']){
+			$time = 14 - $drive * 2;
+		}
+		else if ($src['galaxy_id'] ==  $dest['galaxy_id']){
+			$time = 21 - $drive * 3;
+		}
+		else {
+			$time = 40 - $drive * 4;
+		}
+		
+		// 26 - HB
+		// 27 - WG
+		
+		if (($src_ruler['alliance_id'] == $ruler['alliance_id'] && $src_ruler['alliance_id'] > 1) || $src_ruler['id'] == $ruler['id']){
+			if ($buildings = $this->Planet->LoadPlanetBuildings($src_id)){
+				//print_r($buildings);
+				foreach ($buildings as $b){
+					if ($b['building_id'] == 27){
+						$src_JG = true;
+					}
+				}
+			}
+		}
+		
+		
+		if ($buildings = $this->Planet->LoadPlanetBuildings($dest_id)){
+			foreach($buildings as $b){
+				if (($dest_ruler['alliance_id'] == $ruler['alliance_id'] && $dest_ruler['alliance_id'] > 1) || $dest_ruler['id'] == $ruler['id']){
+					if ($b['building_id'] ==  27){
+						$dest_JG = true;
+					}
+				}
+				if ($dest_ruler['id'] == $ruler['id']){
+					if ($b['building_id'] == 26){
+						$dest_HB = true;
+					}
+				}
+			}	
+		}
+		
+		if ($src_JG && $dest_JG){
+			$time = ceil($time * .75);
+		}
+		
+		if ($dest_HB){
+			$time = ceil($time * .75);
+		}
+		
+		
+		return $time;
+		
+		
+		/*
+		echo "Src $src_id\n";
+		echo "Dest $dest_id\n";
+		echo "Fleet Drive $drive\n";
+		echo "Src JG $src_JG\n";
+		echo "Dest JG $dest_JG\n";
+		echo "Dest HB $dest_HB\n";
+		echo "Travel Time: $time\n";
+		*/		
 	}
 
 }
