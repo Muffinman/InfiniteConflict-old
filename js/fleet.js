@@ -7,7 +7,9 @@ $(document).ready(function(){
 	$("#colonise").submit(function(e){
 		e.preventDefault();
 		$.post('/ajax/fleets/colonise', $(this).serialize(), function(data){
-			
+			if (data.planet){
+				window.location = '/planet/' . data.planet;
+			}	
 		}, 'json');
 		return false;
 	});

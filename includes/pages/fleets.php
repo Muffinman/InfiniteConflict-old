@@ -2,7 +2,15 @@
 
 $IC->Fleet = new Fleet($db);
 
-$fleets = $IC->Fleet->LoadRulerFleets($_SESSION['ruler']['id']);
+if ($rulerFleets = $IC->Fleet->LoadRulerFleets($_SESSION['ruler']['id'])){
+	$fleets = array();
+	foreach ($rulerFleets as $f) {
+		$f['name'] = htmlspecialchars($f['name']);
+		$f['planet_name'] = htmlspecialchars($f['planet_name']);
+		$fleets[] = $f;
+	}
+}
+
 $resources = $IC->LoadResources();
 
 

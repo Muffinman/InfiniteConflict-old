@@ -434,13 +434,13 @@ class Fleet extends IC {
 		
 		// Inside system travel
 		if ($src['system_id'] ==  $dest['system_id']){
-			$time = 14 - $drive * 2;
+			$time = 12 - $drive * 2;
 		}
 		else if ($src['galaxy_id'] ==  $dest['galaxy_id']){
-			$time = 21 - $drive * 3;
+			$time = 18 - $drive * 3;
 		}
 		else {
-			$time = 40 - $drive * 4;
+			$time = 28 - $drive * 4;
 		}
 		
 		// 26 - HB

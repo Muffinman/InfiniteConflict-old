@@ -5,7 +5,17 @@ $IC->Fleet = new Fleet($db);
 
 $fleet = $IC->Fleet->LoadFleet($request[1]);
 $fleet['queue'] = $IC->Fleet->LoadQueue($fleet['id']);
-$planets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id']);
+$fleet['name'] = htmlspecialchars($fleet['name']);
+$fleet['planet_name'] = htmlspecialchars($fleet['planet_name']);
+
+if ($rulerPlanets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id'])){
+	$planets = array();
+	foreach($rulerPlanets as $p){
+		$p['name'] = htmlspecialchars($p['name']);
+		$planets[] = $p;
+	}
+}
+
 $resources = $IC->Planet->LoadResources();
 $production = $IC->Planet->LoadProduction();
 
@@ -191,14 +201,13 @@ if ($fleet){
 
 
 
-
-
-			
+	
 			
 		if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $fleet['planet_id'])){
 			$planet = $IC->LoadPlanet($fleet['planet_id']);
 			$planet['produced'] = $IC->Planet->LoadProduced($fleet['planet_id']);
 			$planet['resources'] = $IC->Planet->LoadPlanetResources($fleet['planet_id']);
+			$planet['name'] = htmlspecialchars($planet['name']);
 			$smarty->assign('planet', $planet);
 			
 			if (!$dest_type || !$dest_id){
@@ -213,6 +222,7 @@ if ($fleet){
 				if ($f['id'] != $fleet['id']){
 					$f['produced'] = $IC->Fleet->LoadProduced($f['id']);
 					$f['resources'] = $IC->Fleet->LoadResources($f['id']);
+					$f['name'] = htmlspecialchars($f['name']);
 					$out[] = $f;
 				}
 			}

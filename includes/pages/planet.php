@@ -7,6 +7,8 @@ if ($request[1]){
   if ($planet = $IC->LoadPlanet($request[1])){
     $error = false;
     
+    $planet['name'] = htmlspecialchars($planet['name']);
+    
     if (!$IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $planet['id'])){
     	$error = true;
     }
@@ -23,7 +25,7 @@ if (!$error){
 
   switch ($request[2]){
     case 'production':
-				$availableProduction = $IC->Planet->LoadAvailableProduction($_SESSION['ruler']['id'], $planet['id']);
+		$availableProduction = $IC->Planet->LoadAvailableProduction($_SESSION['ruler']['id'], $planet['id']);
         $productionQueue = $IC->Planet->LoadProductionQueue($_SESSION['ruler']['id'], $planet['id']); 
         $produced = $IC->Planet->LoadProduced($planet['id']);
         $smarty->assign('produced', $produced);
@@ -48,7 +50,7 @@ if (!$error){
         $availableBuildings = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $planet['id']);
         $buildingsQueue = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $planet['id']);    
         $buildings = $IC->Planet->CalcBuildingResources($planet['id']);
-  			$smarty->assign('buildings', $buildings);
+  		$smarty->assign('buildings', $buildings);
         $smarty->assign('availableBuildings', $availableBuildings);
         $smarty->assign('buildingsQueue', $buildingsQueue);
       break;
