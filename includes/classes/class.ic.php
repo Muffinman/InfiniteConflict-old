@@ -94,6 +94,7 @@ class IC {
 				
 				if ($alliance_id){
 					$q = "SELECT * FROM planet
+							LEFT JOIN ruler ON planet.ruler_id = ruler.id
 							WHERE galaxy_id = '" . $this->db->esc($row['id']) . "'
 							AND ruler_id IS NOT NULL
 							AND ruler_id <> '" . $this->db->esc($ruler_id) . "'
@@ -144,10 +145,12 @@ class IC {
 		
 				if ($alliance_id){
 					$q = "SELECT * FROM planet
+							LEFT JOIN ruler ON planet.ruler_id = ruler.id
 							WHERE system_id = '" . $this->db->esc($row['id']) . "'
 							AND ruler_id IS NOT NULL
 							AND ruler_id <> '" . $this->db->esc($ruler_id) . "'
 							AND alliance_id = '" . $this->db->esc($alliance_id) . "'";
+							FB::log($q);
 					if ($this->db->Select($q)){
 						$row['status'] = 'allied'; 
 					} 
@@ -182,7 +185,7 @@ class IC {
 			$maxCols = $config['free_sys_cols'];
 		}
 
-		$q = "SELECT p.*, r.name AS ruler, a.name AS alliance FROM planet AS p
+		$q = "SELECT p.*, r.name AS ruler, r.alliance_id, a.name AS alliance FROM planet AS p
 				LEFT JOIN ruler AS r ON p.ruler_id = r.id
 				LEFT JOIN alliance AS a ON r.alliance_id = a.id
 				WHERE p.system_id='" . $this->db->esc($sys_id) . "'";

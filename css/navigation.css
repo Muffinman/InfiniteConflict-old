@@ -52,7 +52,7 @@ ul.nav li.owned{
 }
 
 ul.nav li.allied{
-  border:1px solid blue;
+  border:1px solid #194bda;
 }
 
 ul.nav li.enemy{
@@ -106,7 +106,7 @@ ul.planet .enemy .planet-ruler{
 }
 
 ul.planet .allied .planet-ruler{
-  color:blue;
+  color:#194bda;
 }
 
 ul.planet .owned .planet-ruler{
