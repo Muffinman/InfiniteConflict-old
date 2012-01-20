@@ -258,6 +258,43 @@
 					</tbody>
 				</table>
 				<p style="text-align:center; margin-top:5px;"><input type="submit" name="from-current-fleet" value="Transfer from Fleet" /></p>
+			
+			{else}
+			
+				<h2 class="margin">Ships and resources in {$fleet.name}</h2>
+				<table class="transfer-available">
+					<thead>
+						<tr>
+							<th>Resource</th>
+							<th>Quantity</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						{if $fleet.resources}
+							{foreach from=$fleet.resources item=res}
+								{if $res.transferable && $res.stored}
+									<tr>
+										<td><image src="/images/resources/{$res.resource_id}.gif" alt="{$res.name}" /> {$res.name}</td>
+										<td>{$res.stored}</td>
+									</tr>
+								{/if}
+							{/foreach}
+						{/if}
+						{if $fleet.produced}
+							{foreach from=$fleet.produced item=p}
+								{if $p.qty}
+									<tr>
+										<td><image src="/images/ships/{$p.id}.jpg" alt="{$p.name}" /> {$p.name}</td>
+										<td>{$p.qty}</td>
+									</tr>
+								{/if}
+							{/foreach}
+						{/if}
+					</tbody>
+				</table>
+			
+			
 			{/if}
 		</form>
 		

@@ -28,7 +28,7 @@
 							{foreach from=$resources item=r}
 								{if $r.transferable && $r.id != 9}
 									{assign var=rid value=$r.id}
-									<td>{$f.resources.$rid.stored}</td>
+									<td>{if $f.resources.$rid.stored}{$f.resources.$rid.stored}{/if}</td>
 								{/if}
 							{/foreach}
 						</tr>

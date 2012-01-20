@@ -249,7 +249,7 @@ class IC {
 	
 	function LoadNextHomeplanet(){
 		$q = "SELECT * FROM planet WHERE ruler_id IS NULL AND home=1 ORDER BY id ASC LIMIT 1";
-		if ($r = $this->db->Select($q)){
+		if ($r = $this->db->Select($q, false, false, false)){
 			return $r[0];
 		}
 	}

@@ -113,7 +113,10 @@ class Ruler extends IC {
 
 
 	public function SignupRuler($arr){
-		if ($ruler = $this->CheckConfirmCode($arr['hash'])){
+		if ($ruler = $this->CheckConfirmCode($arr['hash']) || $arr['confirmed']){
+			if ($arr['confirmed']){
+				$ruler = $arr;
+			}
 			$ruler['name'] = $arr['rulername'];
 			$ruler['confirmed'] = 1;
 			$ruler['hash'] = NULL;
