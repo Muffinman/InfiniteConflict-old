@@ -204,7 +204,7 @@ foreach ($oldrulers as $newruler){
 	$IC->Ruler->SignupRuler($newruler);
 }
 
-$q = "UPDATE config SET val=1 WHERE key='turn'";
+$q = "UPDATE `config` SET `val`=1 WHERE `key`='turn'";
 $db->Edit($q);
 
 

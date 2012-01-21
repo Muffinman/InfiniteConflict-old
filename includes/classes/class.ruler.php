@@ -113,10 +113,13 @@ class Ruler extends IC {
 
 
 	public function SignupRuler($arr){
-		if ($ruler = $this->CheckConfirmCode($arr['hash']) || $arr['confirmed']){
-			if ($arr['confirmed']){
-				$ruler = $arr;
-			}
+		if ($arr['confirmed']){
+			$ruler = $arr;
+		}else{
+			$ruler = $this->CheckConfirmCode($arr['hash']);
+		}
+		if ($ruler){
+
 			$ruler['name'] = $arr['rulername'];
 			$ruler['confirmed'] = 1;
 			$ruler['hash'] = NULL;
@@ -211,7 +214,8 @@ class Ruler extends IC {
 	public function CheckLogin($email, $password){
 		$q = "SELECT * FROM ruler
 				WHERE email='" . $this->db->esc($email) . "'
-				AND `password`='" . $this->db->esc($this->CreatePassword($email, $password)) . "' LIMIT 1";
+				AND `password`='" . $this->db->esc($this->CreatePassword($email, $password)) . "'
+				AND `confirmed`=1 LIMIT 1";
 		if ($r = $this->db->Select($q)){
 			return $r[0];
 		}

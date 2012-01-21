@@ -13,4 +13,5 @@
 <div class="content right">
   <h1>Announcements</h1>
   <p>This is an alpha version, please report any bugs you encounter.</p>
+  <p>The universe may be reset frequently as we test features.</p>
 </div>
