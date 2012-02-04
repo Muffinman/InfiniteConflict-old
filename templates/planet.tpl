@@ -89,50 +89,53 @@
 	
 	<div class="content available">
 	  <h1>Structures Available</h1>
-	  <form id="building-list" action="/ajax/buildings/queue/add/" method="post">
-	    <table>
-	      <thead>
-	        <tr>
-	          <th></th>
-	          <th>Name</th>
-	          {foreach from=$resList item=r}
-	            {if !$r.global && $r.id != 3 && $r.id < 8}
-	              <th class="resource"><img src="/images/resources/{$r.id}.gif" alt="{$r.name}" title="{$r.name}"></th>
-	            {/if}
-	          {/foreach}
-	          <th><img src="/images/time.gif" alt="Construction Time" title="Construction Time"></th>
-	          <th></th>
-	        </tr>
-	      </thead>
-	      <tbody>
-	        {foreach from=$availableBuildings item=b}
-	          <tr>
-	            <td class="building-image"><img src="/images/buildings/{$b.id}.jpg" alt="{$b.name}" title="{$b.name}"></td>
-	            <td class="building-name">{$b.name}</td>
-	            {foreach from=$resList item=r}
-	              {assign var=rid value=$r.id}
-	              {if $rid <= 2}
-	                <td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
-	              {/if}
-	              {if $rid == 4}
-	                <td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
-	              {/if}
-	              {if $rid > 4 && $rid < 8}
-	              	{if $b.resources.$rid.output && !$b.resources.$rid.cost}
-	              		<td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
-	              	{else}
-	                	<td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
-	                {/if}
-	              {/if}
-	            {/foreach}
-	            <td>{$b.turns}</td>
-	            <td><label><input type="radio" name="building_id" value="{$b.id}"></label></td>
-	          </tr>
-	        {/foreach}
-	      </tbody>
-	    </table>
-	    <p><input type="hidden" name="planet_id" value="{$planet.id}"><input type="submit" value="Queue Structure"></p>
-	  </form>
+    <table id="building-list">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          {foreach from=$resList item=r}
+            {if !$r.global && $r.id != 3 && $r.id < 8}
+              <th class="resource"><img src="/images/resources/{$r.id}.gif" alt="{$r.name}" title="{$r.name}"></th>
+            {/if}
+          {/foreach}
+          <th><img src="/images/time.gif" alt="Construction Time" title="Construction Time" /></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach from=$availableBuildings item=b}
+          <tr>
+            <td class="building-image"><img src="/images/buildings/{$b.id}.jpg" alt="{$b.name}" title="{$b.name}" /></td>
+            <td class="building-name">{$b.name}</td>
+            {foreach from=$resList item=r}
+              {assign var=rid value=$r.id}
+              {if $rid <= 2}
+                <td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
+              {/if}
+              {if $rid == 4}
+                <td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
+              {/if}
+              {if $rid > 4 && $rid < 8}
+              	{if $b.resources.$rid.output && !$b.resources.$rid.cost}
+              		<td class="resource{$rid}">{$b.resources.$rid.output_str}</td>
+              	{else}
+                	<td class="resource{$rid}">{$b.resources.$rid.cost_str}</td>
+                {/if}
+              {/if}
+            {/foreach}
+            <td>{$b.turns}</td>
+            <td class="queuebutton">
+            	<form class="building-list" action="/ajax/buildings/queue/add/" method="post">
+            		<input type="hidden" name="building_id" value="{$b.id}" />
+								<input type="hidden" name="planet_id" value="{$planet.id}" />
+								<input type="submit" value="Add" />
+							</form>
+            </td>
+          </tr>
+        {/foreach}
+      </tbody>
+    </table>
 	</div>
 
 	<div class="clear"></div>

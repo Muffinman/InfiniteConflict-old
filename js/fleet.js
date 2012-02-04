@@ -64,6 +64,9 @@ $(document).ready(function(){
 				if (data.queue[i].type == 'unloadall'){
 					html += 'Unload All';
 				}
+				if (data.queue[i].type == 'wait'){
+					html += 'Wait';
+				}
 					
 				html += '</td>';
 				html += '<td>';
@@ -86,7 +89,7 @@ $(document).ready(function(){
 				html += '<td>';
 				
 				if (data.queue[i].turns){
-					html += data.queue[i].turns = ' turns';
+					html += data.queue[i].turns + ' turns';
 				}else{
 					if (data.queue[i].qty){
 						html += data.queue[i].qty;

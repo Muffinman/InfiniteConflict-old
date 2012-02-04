@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	
-	$("#building-list").submit(function(e){
+	$(".building-list").live('submit', function(e){	
 		e.preventDefault();
 		$.post('/ajax/buildings/queue/add/', $(this).serialize(), function(data){
 			redrawBuildingQueue(data);
@@ -147,7 +147,7 @@ $(document).ready(function(){
 
 	var redrawBuildingList = function(data){
 		$("#building-list tbody").html('');
-		$("#building-list").css('display','block');
+		$("#building-list").css('display','table');
 		if (data.available){
 			for (i in data.available){
 				var bld = data.available[i];
@@ -178,7 +178,16 @@ $(document).ready(function(){
 				}
 				
 				html += '<td>'+bld.turns+'</td>';
-				html += '<td><label><input type="radio" name="building_id" value="'+bld.id+'"></label></td>';
+				//html += '<td><label><input type="radio" name="building_id" value="'+bld.id+'"></label></td>';
+				
+				html += '<td>';
+				html += '<form class="building-list" action="/ajax/buildings/queue/add/" method="post">';
+				html += '<input type="hidden" name="building_id" value="'+bld.id+'" />';
+				html += '<input type="hidden" name="planet_id" value="'+data.planet_id+'" />';
+				html += '<input type="submit" value="Add" />';
+				html += '</form>';
+				html += '</td>';
+				
 				html += '</tr>';
 				$("#building-list tbody").append(html);
 			}

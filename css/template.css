@@ -359,3 +359,8 @@ input{
   margin:0;
   margin-bottom:20px;
 }
+
+.ui-sortable tr:not(.nodrag):hover{
+	box-shadow: inset 0px 0px 1px rgba(200,200,200,1);
+	cursor:move;
+}

@@ -19,7 +19,7 @@ if ($IC->Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $_POST['fleet_id'])){
 	
 	}
 	
-	if ($queue = $IC->Fleet->LoadQueue($_SESSION['ruler']['id'], $_POST['fleet_id'])){
+	if ($queue = $IC->Fleet->LoadQueue($_POST['fleet_id'])){
 	  $data['queue'] = $queue;
 	}
 	

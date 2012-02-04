@@ -5,6 +5,8 @@ $db->cacheQueries = false;
 $data = array();
 
 if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id'])){
+	$data['planet_id'] = $_POST['planet_id'];
+	
 	switch($request[3]){
 	
 	  case 'add':

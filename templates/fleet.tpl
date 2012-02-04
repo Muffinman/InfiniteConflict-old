@@ -47,6 +47,10 @@
 								{if $q.type=='unloadall'}
 									Unload All
 								{/if}
+								
+								{if $q.type=='wait'}
+									Wait
+								{/if}
 							</td>
 							
 							<td>

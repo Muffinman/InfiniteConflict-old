@@ -237,6 +237,15 @@
   margin:10px 0;
 }
 
+#planet .available td{
+	padding:4px;
+}
+
+#planet .available td.building-name{
+	min-width:140px;
+}
+
+
 #planet .available input.qty{
 	width:50px;
 	height:20px;
