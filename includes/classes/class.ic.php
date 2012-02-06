@@ -12,6 +12,12 @@ class IC {
 		$this->Planet = new Planet($db);
 		$this->Ruler = new Ruler($db);
 		$this->config = $this->LoadConfig();
+		
+		while ((int)$this->config['update'] == 1){
+			sleep(1);
+			$this->config = $this->LoadConfig();
+		}
+		
 	}
 	
 	public function LoadSession($id){
@@ -25,9 +31,9 @@ class IC {
 	public function LoadConfig(){
 		# Meta data
 		$q = "SELECT * FROM config";
-		if ($r = $this->db->Select($q)){
+		if ($r = $this->db->Select($q, false, false, false)){
 			$config = array();
-			foreach ($r as $row){
+			foreach ($r as $row){			
 				$config[$row['key']] = $row['val'];
 			}
 		}

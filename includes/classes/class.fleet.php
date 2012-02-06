@@ -391,7 +391,7 @@ class Fleet extends IC {
 	
 	
 	public function QueueReorder($ruler_id, $fleet_id, $hashes) {
-		$currentQueue = $this->LoadQueue($ruler_id, $fleet_id);
+		$currentQueue = $this->LoadQueue($fleet_id);
 		$i = 1;
 		
 		if ($currentQueue[0]['started']) {
