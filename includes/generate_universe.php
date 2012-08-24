@@ -6,12 +6,12 @@ if ($_SERVER['REMOTE_ADDR']){
 }
 
 $_SERVER['DOCUMENT_ROOT'] = '..';
-$_SERVER['ENVIRONMENT'] = 'beta';
+//$_SERVER['ENVIRONMENT'] = 'beta';
 
-if (is_dir('/Applications/XAMPP/xamppfiles/')){
-	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
-	ini_set('mysqli.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
-}
+#if (is_dir('/Applications/XAMPP/xamppfiles/')){
+#	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
+#	ini_set('mysqli.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
+#}
 
 require_once('config.php');
 $IC = new IC($db);
@@ -49,6 +49,9 @@ $db->Query($q);
 #$db->Query($q);
 #$q = "ALTER TABLE ruler AUTO_INCREMENT = 1";
 #$db->Query($q);
+
+$q = "UPDATE ruler SET name=''";
+$db->Query($q);
 
 $q = "DELETE FROM alliance WHERE 1";
 $db->Query($q);

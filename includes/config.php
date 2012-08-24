@@ -38,6 +38,7 @@ if ($_SERVER['ENVIRONMENT'] == 'beta') {
   $db_pass = 'matt15';
   $db_host = 'localhost';
   
+  /*
   if ($_SERVER['REMOTE_ADDR']){
 	  // If we're using the live server, then we need to force the main URL for the payment processing to work.
 	  if ($_SERVER['HTTP_HOST'] != 'www.infiniteconflict.com'){
@@ -45,6 +46,7 @@ if ($_SERVER['ENVIRONMENT'] == 'beta') {
 	    header('Location: http://www.infiniteconflict.com' . $_SERVER['REQUEST_URI']);
 	  }
   }
+  */
 }
 
 # Store paths in session (for AJAX scripts)

@@ -29,8 +29,8 @@ if ($_POST){
 
     if ($ruler = $IC->Ruler->SignupRuler($arr)){
       $IC->Ruler->Login($ruler['id']);
-      header('Location: /');
-      exit;
+    	header('Location: /');
+    	exit;
     }
   }
 }

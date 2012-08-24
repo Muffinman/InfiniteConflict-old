@@ -95,8 +95,13 @@ class Ruler extends IC {
 	}
 
 
-	public function CheckRulerName($name){
-		$q = "SELECT * FROM ruler WHERE name='" . $this->db->esc($name) . "' LIMIT 1";
+	public function CheckRulerName($name, $id){
+		$q = "SELECT * FROM ruler
+						WHERE name='" . $this->db->esc($name) . "' ";
+		if ($id){
+			$q .= "AND id <> '" . $this->db->esc($id) . "' ";	
+		}				
+		$q .= "LIMIT 1";
 		if ($r = $this->db->Select($q)){
 			return false;
 		}
