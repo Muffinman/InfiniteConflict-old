@@ -6,6 +6,7 @@ if ($_SERVER['REMOTE_ADDR']){
 }
 
 $_SERVER['DOCUMENT_ROOT'] = '..';
+$_SERVER['ENVIRONMENT'] = 'beta';
 
 if (is_dir('/Applications/XAMPP/xamppfiles/')){
 	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
@@ -23,15 +24,6 @@ $q = "SELECT ruler.id, ruler.confirmed, ruler.name AS rulername, planet.name AS 
 			AND planet.home=1";
 $oldrulers = $db->Select($q);
 
-#$q = "TRUNCATE TABLE ruler";
-#$db->Query($q);
-
-$q = "TRUNCATE TABLE alliance";
-$db->Query($q);
-
-$q = "TRUNCATE TABLE fleet";
-$db->Query($q);
-
 $q = "TRUNCATE TABLE ruler_has_research";
 $db->Query($q);
 
@@ -41,19 +33,49 @@ $db->Query($q);
 $q = "TRUNCATE TABLE ruler_research_queue";
 $db->Query($q);
 
+$q = "TRUNCATE TABLE planet_has_resource";
+$db->Query($q);
+
+$q = "TRUNCATE TABLE planet_has_building";
+$db->Query($q);
+
+$q = "TRUNCATE TABLE planet_has_production";
+$db->Query($q);
+
+$q = "TRUNCATE TABLE planet_conversion_queue";
+$db->Query($q);
+
+#$q = "DELETE FROM ruler WHERE 1";
+#$db->Query($q);
+#$q = "ALTER TABLE ruler AUTO_INCREMENT = 1";
+#$db->Query($q);
+
+$q = "DELETE FROM alliance WHERE 1";
+$db->Query($q);
+$q = "ALTER TABLE alliance AUTO_INCREMENT = 1";
+$db->Query($q);
+
+$q = "DELETE FROM fleet WHERE 1";
+$db->Query($q);
+$q = "ALTER TABLE alliance AUTO_INCREMENT = 1";
+$db->Query($q);
+
 $q = "TRUNCATE TABLE session";
 $db->Query($q);
 
-$q = "TRUNCATE TABLE galaxy";
+$q = "DELETE FROM galaxy WHERE 1";
+$db->Query($q);
+$q = "ALTER TABLE galaxy AUTO_INCREMENT = 1";
 $db->Query($q);
 
-$q = "TRUNCATE TABLE system";
+$q = "DELETE FROM system WHERE 1";
+$db->Query($q);
+$q = "ALTER TABLE system AUTO_INCREMENT = 1";
 $db->Query($q);
 
-$q = "TRUNCATE TABLE planet";
+$q = "DELETE FROM planet WHERE 1";
 $db->Query($q);
-
-$q = "TRUNCATE TABLE planet_has_resource";
+$q = "ALTER TABLE planet AUTO_INCREMENT = 1";
 $db->Query($q);
 
 for ($i=1; $i<=$IC->config['gals']; $i++){
@@ -199,9 +221,10 @@ $q = "UPDATE ruler SET asset_score=0, combat_score=0, asset_rank=0, combat_rank=
 $db->Edit($q);
 
 
-
-foreach ($oldrulers as $newruler){
-	$IC->Ruler->SignupRuler($newruler);
+if ($oldrulers){
+	foreach ($oldrulers as $newruler){
+		$IC->Ruler->SignupRuler($newruler);
+	}
 }
 
 $q = "UPDATE `config` SET `val`=1 WHERE `key`='turn'";
