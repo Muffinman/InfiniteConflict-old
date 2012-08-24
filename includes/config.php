@@ -27,9 +27,9 @@ define('COOKIE_LIFETIME', 365*24*3600);
 # Environment settings (abve definitions can moved here if necessary)
 if ($_SERVER['ENVIRONMENT'] == 'beta') {
   FB::setEnabled(true);
-  $db_name = 'ic';
-  $db_user = 'ic';
-  $db_pass = 'matt15';
+  $db_name = 'infiniteconflict';
+  $db_user = 'infiniteconflict';
+  $db_pass = 'n._aB-0n}*';
   $db_host = 'localhost';
 } else {
   FB::setEnabled(false);

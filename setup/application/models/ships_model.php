@@ -7,7 +7,7 @@ class Ships_model extends CI_Model {
   }
 
   public function read(){
-    $q = "SELECT * FROM ship ORDER BY id ASC";
+    $q = "SELECT * FROM production ORDER BY id ASC";
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
       return $query->result_array();
@@ -16,7 +16,7 @@ class Ships_model extends CI_Model {
   }
 
   public function read_single($id){
-    $q = "SELECT * FROM ship WHERE id=" . $this->db->escape($id) . " LIMIT 1";
+    $q = "SELECT * FROM production WHERE id=" . $this->db->escape($id) . " LIMIT 1";
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
       return $query->row_array();
@@ -55,7 +55,7 @@ class Ships_model extends CI_Model {
   }
 
   public function delete($id){
-    $q = "DELETE FROM ship WHERE id=" . $this->db->escape($id);
+    $q = "DELETE FROM production WHERE id=" . $this->db->escape($id);
     return $this->db->query($q);
   }
 
@@ -69,9 +69,9 @@ class Ships_model extends CI_Model {
   }
 
   public function ship_resources_list($id){
-    $q = "SELECT r.*, resource.name FROM ship_has_resource AS r
+    $q = "SELECT r.*, resource.name FROM production_has_resource AS r
             LEFT JOIN resource ON r.resource_id = resource.id
-            WHERE ship_id=" . $this->db->escape($id);
+            WHERE production_id=" . $this->db->escape($id);
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
       return $query->result_array();
@@ -80,9 +80,9 @@ class Ships_model extends CI_Model {
   }
 
   public function ship_resources_single($id, $resource_id){
-    $q = "SELECT r.*, resource.name FROM ship_has_resource AS r
+    $q = "SELECT r.*, resource.name FROM production_has_resource AS r
             LEFT JOIN resource ON r.resource_id = resource.id
-            WHERE ship_id=" . $this->db->escape($id) . '
+            WHERE production_id=" . $this->db->escape($id) . '
             AND resource_id=' . $this->db->escape($resource_id); 
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
@@ -114,24 +114,24 @@ class Ships_model extends CI_Model {
 
   public function resources_create($id, $data){
     $data['ship_id'] = $id;
-    $q = $this->db->insert_string('ship_has_resource', $data);
+    $q = $this->db->insert_string('production_has_resource', $data);
     return $this->db->query($q);
   }
   
   public function resources_update($id, $resource_id, $data){
-    $q = $this->db->update_string('ship_has_resource', $data, "ship_id=" . $this->db->escape($id) . ' AND resource_id=' . $this->db->escape($resource_id));
+    $q = $this->db->update_string('production_has_resource', $data, "production_id=" . $this->db->escape($id) . ' AND resource_id=' . $this->db->escape($resource_id));
     return $this->db->query($q);  
   }
   
   public function resources_delete($id, $resource_id){
-    $q = "DELETE FROM ship_has_resource WHERE ship_id=" . $this->db->escape($id) . " AND resource_id=" . $this->db->escape($resource_id);
+    $q = "DELETE FROM production_has_resource WHERE production_id=" . $this->db->escape($id) . " AND resource_id=" . $this->db->escape($resource_id);
     return $this->db->query($q);
   }
 
   public function ships_preq_list($id){
-    $q = "SELECT b.* FROM ship_prereq AS p
-              LEFT JOIN building AS b ON p.prereq = b.id
-              WHERE p.ship_id=" . $this->db->escape($id);
+    $q = "SELECT b.* FROM production_bld_prereq AS p
+              LEFT JOIN building AS b ON p.building_id = b.id
+              WHERE p.production_id=" . $this->db->escape($id);
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
       return $query->result_array();
@@ -147,7 +147,7 @@ class Ships_model extends CI_Model {
     foreach ($ships as $b){
       if (!empty($used)){
         foreach ($used as $b2){
-          if ($b2['prereq'] == $b['id']){
+          if ($b2['building_id'] == $b['id']){
             continue 2;
           }
         }
@@ -161,13 +161,13 @@ class Ships_model extends CI_Model {
   }
 
   public function ships_preq_create($id, $data){
-    $data['ship_id'] = $id;
-    $q = $this->db->insert_string('ship_prereq', $data);
+    $data['production_id'] = $id;
+    $q = $this->db->insert_string('production_bld_prereq', $data);
     return $this->db->query($q);
   }
 
   public function ships_preq_delete($id, $prereq){
-    $q = "DELETE FROM ship_prereq WHERE ship_id=" . $this->db->escape($id) . " AND prereq=" . $this->db->escape($prereq);
+    $q = "DELETE FROM production_bld_prereq WHERE production_id=" . $this->db->escape($id) . " AND building_id=" . $this->db->escape($prereq);
     return $this->db->query($q);
   }
 
@@ -183,9 +183,9 @@ class Ships_model extends CI_Model {
 
 
   public function research_preq_list($id){
-    $q = "SELECT r.* FROM ship_res_prereq AS p
+    $q = "SELECT r.* FROM production_res_prereq AS p
               LEFT JOIN research AS r ON p.research_id = r.id
-              WHERE p.ship_id=" . $this->db->escape($id);
+              WHERE p.production_id=" . $this->db->escape($id);
     $query = $this->db->query($q);
     if ($query->num_rows() > 0){
       return $query->result_array();
@@ -215,13 +215,13 @@ class Ships_model extends CI_Model {
   }
 
   public function research_preq_create($id, $data){
-    $data['ship_id'] = $id;
-    $q = $this->db->insert_string('ship_res_prereq', $data);
+    $data['production_id'] = $id;
+    $q = $this->db->insert_string('production_res_prereq', $data);
     return $this->db->query($q);
   }
 
   public function research_preq_delete($id, $prereq){
-    $q = "DELETE FROM ship_res_prereq WHERE ship_id=" . $this->db->escape($id) . " AND research_id=" . $this->db->escape($prereq);
+    $q = "DELETE FROM production_res_prereq WHERE production_id=" . $this->db->escape($id) . " AND research_id=" . $this->db->escape($prereq);
     return $this->db->query($q);
   }
 
