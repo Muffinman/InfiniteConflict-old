@@ -1,0 +1,17 @@
+.createAlliance label {
+    line-height: 20px;
+    width: auto;
+}
+
+
+.createAlliance input[type="text"] {
+    height: 18px;
+    padding: 2px;
+    width: 120px;
+}
+
+
+.createAlliance input[type="submit"] {
+    height: 24px;
+    width: auto;
+}

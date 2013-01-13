@@ -3,15 +3,6 @@
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 
-if (!file_exists('templates_c/styles.css')){
-	require_once('css/styles.css.php');
-}
-
-if (!file_exists('templates_c/scripts.js')){
-	require_once('js/scripts.js.php');
-}
-
-
 $smarty->assign('title', 'Infinite Conflict - The Second Best Tick Based Strategy Game.');
 $smarty->assign('keywords', 'Online game, strategy game, online strategy game');
 
@@ -27,7 +18,9 @@ if (!$_SESSION['ruler']
     && $request[0] != 'register'
     && $request[0] != 'confirm'
     && $request[0] != 'forgotten'
-    && $request[0] != 'support'){
+    && $request[0] != 'support'
+    && $request[0] != 'styles.css'
+    && $request[0] != 'scripts.js'){
   $_SESSION['redirect'] = $_SERVER['REQUEST_URI'];
   header('Location: /login');
   die;
@@ -46,9 +39,37 @@ if ($request[0] == 'ajax'){
   }
 }
 
-if (file_exists('includes/pages/' . $request[0] . '.php')){
+else if ($request[0] == 'scripts.js'){
+	$scripts = array();
+	$scripts[] = SITE_ROOTPATH . 'js/jquery-1.6.2.min.js';
+	$scripts[] = SITE_ROOTPATH . 'js/jquery-ui-1.8.14.custom.min.js';
+	$scripts[] = SITE_ROOTPATH . 'js/modernizr-1.5.min.js';
+	$scripts[] = SITE_ROOTPATH . 'js/main.js';
+	$scripts[] = SITE_ROOTPATH . 'js/research.js';
+	$scripts[] = SITE_ROOTPATH . 'js/planet.js';
+	$scripts[] = SITE_ROOTPATH . 'js/fleet.js';
+	$minify_method = 'js';
+	require_once  'includes/minify/minify.php';
+}
+
+else if ($request[0] == 'styles.css'){
+	$scripts = array();
+	$scripts[] = SITE_ROOTPATH . 'css/reset.css';
+	$scripts[] = SITE_ROOTPATH . 'css/template.css';
+	$scripts[] = SITE_ROOTPATH . 'css/planet.css';
+	$scripts[] = SITE_ROOTPATH . 'css/research.css';
+	$scripts[] = SITE_ROOTPATH . 'css/navigation.css';
+	$scripts[] = SITE_ROOTPATH . 'css/fleets.css';
+	$scripts[] = SITE_ROOTPATH . 'css/alliances.css';
+	$minify_method = 'css';
+	require_once  'includes/minify/minify.php';
+}
+
+else if (file_exists('includes/pages/' . $request[0] . '.php')){
   require_once 'includes/pages/' . $request[0] . '.php';
-}else{
+}
+
+else{
   require_once 'includes/pages/default.php';
 }
 

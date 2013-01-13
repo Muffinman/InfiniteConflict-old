@@ -6,10 +6,10 @@ if ($_SERVER['REMOTE_ADDR']){
 
 $_SERVER['DOCUMENT_ROOT'] = '..';
 
-if (is_dir('/Applications/XAMPP/xamppfiles/')){
-	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
-	ini_set('mysqli.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
-}
+#if (is_dir('/Applications/XAMPP/xamppfiles/')){
+#	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
+#	ini_set('mysqli.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
+#}
 
 require_once('config.php');
 

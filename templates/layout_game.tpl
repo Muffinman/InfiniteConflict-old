@@ -9,9 +9,9 @@
     <meta name="author" content="Matt Jones">
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
     <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/templates_c/styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <link href='http://fonts.googleapis.com/css?family=Play:400,700&v2' rel='stylesheet' type='text/css'>
-    <script src="/templates_c/scripts.js"></script>
+    <script src="/scripts.js"></script>
 
   </head>
   <!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->

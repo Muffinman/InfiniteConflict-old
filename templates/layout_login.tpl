@@ -12,10 +12,8 @@
 		<link rel="stylesheet" href="/css/reset.css">
 		<link rel="stylesheet" href="/css/template.css">
 		<link rel="stylesheet" href="/css/login.css">
-	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	  <script src="/js/modernizr-1.5.min.js"></script>
-	  <script src="/js/scripts.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Play:400,700&v2' rel='stylesheet' type='text/css'>
+	  <script src="/scripts.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Play:400,700&amp;v2' rel='stylesheet' type='text/css'>
 
 	</head>
 	<!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->

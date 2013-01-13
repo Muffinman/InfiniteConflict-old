@@ -48,7 +48,7 @@ class Update extends IC{
 					$afford = true;
 					if ($resources = $this->Research->LoadResearchResources($row['research_id'])){
 						foreach ($resources as $res){
-							if ($res['cost'] > $this->Ruler->LoadResource($row['ruler_id'], $res['resource_id'])){
+							if ($res['cost'] > $this->Ruler->LoadRulerResource($row['ruler_id'], $res['resource_id'])){
 								$afford = false;
 							}
 						}
@@ -512,7 +512,7 @@ class Update extends IC{
 							 		
 							 case 'unloadall':
 							 		if ($this->Planet->RulerOwnsPlanet($row['fleet_owner'], $row['pos'])){
-							 			if ($res = $this->Fleet->LoadResources($row['fleet_id'])){
+							 			if ($res = $this->Fleet->LoadFleetResources($row['fleet_id'])){
 							 				foreach ($res as $r){
 							 					if ($r['transferable']){
 							 						$this->Fleet->FleetToPlanetResource($row['fleet_id'], $row['pos'], $r['resource_id'], $r['stored']);

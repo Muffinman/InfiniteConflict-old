@@ -24,7 +24,7 @@ class Fleet extends IC {
 						LEFT JOIN planet AS p ON f.planet_id = p.id
 						WHERE f.id='" . $this->db->esc($fleet_id) . "'";
 		if ($r = $this->db->Select($q)){
-			$r[0]['resources'] = $this->LoadResources($fleet_id);
+			$r[0]['resources'] = $this->LoadFleetResources($fleet_id);
 			$r[0]['produced'] = $this->LoadProduced($fleet_id);
 			return $r[0];
 		}
@@ -53,7 +53,7 @@ class Fleet extends IC {
 		if ($r = $this->db->Select($q)){
 			$fleets = array();
 			foreach ($r as $row){
-				if ($resources = $this->LoadResources($row['id'])){
+				if ($resources = $this->LoadFleetResources($row['id'])){
 					foreach ($resources as $res){
 						$row['resources'][$res['resource_id']] = $res;
 					}
@@ -90,7 +90,7 @@ class Fleet extends IC {
 	}	
 	
 	
-	public function LoadResources($fleet_id){
+	public function LoadFleetResources($fleet_id){
 		$q = "SELECT fr.*, r.name, r.transferable FROM fleet_has_resource AS fr
 						LEFT JOIN resource AS r ON fr.resource_id = r.id
 						WHERE fleet_id='" . $this->db->esc($fleet_id) . "'";
@@ -122,7 +122,7 @@ class Fleet extends IC {
 	
 	
 	public function LoadStored($fleet_id, $resource_id){
-		if ($res = $this->LoadResources($fleet_id)){
+		if ($res = $this->LoadFleetResources($fleet_id)){
 			foreach ($res as $r){
 				if ($r['resource_id'] == $resource_id){
 					return $r['stored'];
@@ -314,12 +314,12 @@ class Fleet extends IC {
 	}
 
 
-
+	// TODO
 	public function FleetToFleetResource($fleet_src_id, $fleet_dest_id, $resource_id, $qty){
 	
 	}  
 	
-	
+	// TODO
 	public function FleetToFleetProduction($fleet_src_id, $fleet_dest_id, $production_id, $qty){
 	
 	}

@@ -18,6 +18,7 @@ class Ruler extends IC {
 		return $this->db->Select($q);
 	}
 
+
 	public function LoadRulerPlanets($id){
 		$q = "SELECT * FROM planet WHERE ruler_id='" . $this->db->esc($id) . "'
 				ORDER BY id ASC";
@@ -32,7 +33,7 @@ class Ruler extends IC {
 	}
 
 
-	public function LoadResource($ruler_id, $resource_id){
+	public function LoadRulerResource($ruler_id, $resource_id){
 		$q = "SELECT * FROM ruler_has_resource
 				WHERE ruler_id='" . $this->db->esc($ruler_id) . "'
 				AND resource_id='" . $this->db->esc($resource_id) . "' LIMIT 1";
@@ -240,6 +241,7 @@ class Ruler extends IC {
 		return true;
 	}
 
+
 	public function SendRegEmail($id){
 		$ruler = $this->LoadRuler($id);
 		$this->smarty->assign('ruler', $ruler);
@@ -247,9 +249,11 @@ class Ruler extends IC {
 		return $this->SendEmail($ruler['email'], $subject, 'register.tpl');
 	}
 
+
 	public function CreatePassword($email, $pass){
 		return md5(md5($email) . md5($pass));
 	}
+
 
 	public function VaryResource($ruler_id, $resource_id, $qty){
 	
@@ -269,11 +273,10 @@ class Ruler extends IC {
 					resource_id = '" . $this->db->esc($resource_id) . "'";
 			return $this->db->Insert($q);    	
 		}
-		
 	}
 
-	public function SetResource($ruler_id, $resource_id, $qty){
 
+	public function SetResource($ruler_id, $resource_id, $qty){
 		$q = "SELECT * FROM ruler_has_resource 
 				WHERE ruler_id = '" . $this->db->esc($ruler_id) . "'
 				AND resource_id = '" . $this->db->esc($resource_id) . "'";
@@ -285,12 +288,47 @@ class Ruler extends IC {
 		}
 		
 		else{
-			$q = "INSERT INTO ruler_has_resource SET qty = '" . $this->db->esc($qty) . "',
+			$q = "INSERT INTO ruler_has_resource SET
+					qty = '" . $this->db->esc($qty) . "',
 					ruler_id = '" . $this->db->esc($ruler_id) . "',
 					resource_id = '" . $this->db->esc($resource_id) . "'";
 			return $this->db->Insert($q);    	
 		}
 
+	}
+
+
+	public function LoadAlliance($id){
+		$alliance = $this->db->QuickSelect('alliance', $id);
+		return $alliance;
+	}
+
+
+	public function LoadAlliances(){
+		$q = "SELECT * FROM alliance ORDER BY name ASC";
+		return $this->db->Select($q);		
+	}
+
+
+	public function CreateAlliance($name, $founder){
+		$arr = array(	
+			'name' => $name,
+			'founder' => $founder
+		);
+		if ($id = $this->db->QuickInsert('alliance', $arr)){
+			$this->AddRulerToAlliance($founder, $id);
+			return $this->LoadAlliance($id);
+		}
+		return false;
+	}
+	
+	private function AddRulerToAlliance($ruler_id, $alliance_id){
+		$arr = array(
+			'alliance_id' => $alliance_id,
+			'id' => $ruler_id,
+			'leaving' => NULL
+		);
+		return $this->db->QuickEdit('ruler', $arr);
 	}
 
 }

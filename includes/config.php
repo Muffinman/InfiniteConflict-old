@@ -32,21 +32,11 @@ if ($_SERVER['ENVIRONMENT'] == 'beta') {
   $db_pass = 'n._aB-0n}*';
   $db_host = 'localhost';
 } else {
-  FB::setEnabled(false);
+  FB::setEnabled(true);
   $db_name = 'ic';
-  $db_user = 'ic';
-  $db_pass = 'matt15';
+  $db_user = 'orphans';
+  $db_pass = 'press';
   $db_host = 'localhost';
-  
-  /*
-  if ($_SERVER['REMOTE_ADDR']){
-	  // If we're using the live server, then we need to force the main URL for the payment processing to work.
-	  if ($_SERVER['HTTP_HOST'] != 'www.infiniteconflict.com'){
-	    header('HTTP/1.1 301 Moved Permanently');
-	    header('Location: http://www.infiniteconflict.com' . $_SERVER['REQUEST_URI']);
-	  }
-  }
-  */
 }
 
 # Store paths in session (for AJAX scripts)

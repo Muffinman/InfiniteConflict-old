@@ -221,7 +221,7 @@ if ($fleet){
 			foreach($fleets as $f){
 				if ($f['id'] != $fleet['id']){
 					$f['produced'] = $IC->Fleet->LoadProduced($f['id']);
-					$f['resources'] = $IC->Fleet->LoadResources($f['id']);
+					$f['resources'] = $IC->Fleet->LoadFleetResources($f['id']);
 					$f['name'] = htmlspecialchars($f['name']);
 					$out[] = $f;
 				}
