@@ -23,9 +23,9 @@ This example game is a clone of the original DarkGalaxy game concept, with some 
 System Requirements
 -------------------
 
-Apache 2 (other web servers will work providing you convert the supplied .htaccess file to work with your webserver)
-PHP 5.3
-MySQL 5
+* **Apache 2** (other web servers will work providing you convert the supplied .htaccess file to work with your webserver)
+* **PHP 5.3**
+* **MySQL 5**
 
 Newer versions of the above will work, these are just the minimum.
 
