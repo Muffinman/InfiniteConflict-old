@@ -51,7 +51,7 @@ This code makes use of FirePHP to log various data to the Firebug console. In or
 Areas of Active Development
 --------------------------
 
-* Alliances *in progress*
+* Alliances - *in progress*
 * Combat
 * News
 * Messaging
