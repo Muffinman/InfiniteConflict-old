@@ -1,9 +1,0 @@
-.DS_Store
-
-(.*).esproj
-
-templates_c
-originals
-setup/application/cache
-setup/application/cache/*
-setup/application/cache/smarty/compiled/*
