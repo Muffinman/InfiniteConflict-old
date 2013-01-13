@@ -39,7 +39,6 @@ Directory Structure
 * **includes/classes/** - all libraries and class files here
 * **includes/pages/** - all /[scriptName] requests will call the file named [scriptName] in this folder
 * **js/** - Javascript files go here, new ones will also require an entry in index.php in order to be cached and minified
-* **originals/** - Should be here, to be deleted
 * **setup/** - This is a little test site I created to setup/modify the game config. It is built on CodeIgniter.
 * **templates/** - All smarty template files here
 * **templates_c/** - All template cache files here, including cached/minified styles.css and scripts.js files.
