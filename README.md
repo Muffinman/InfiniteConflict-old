@@ -49,7 +49,7 @@ Development Hints
 
 This code makes use of FirePHP to log various data to the Firebug console. In order to make use of this, you will need Firefox, the Firebug addon, and either Developer Companion addon or the FirePHP addon installed. I recommend the Developer Companion addon as it provides a tider interface for displaying the logged messages.
 
-Areas of Actie Development
+Areas of Active Development
 --------------------------
 
 * Alliances *in progress*
