@@ -8,13 +8,19 @@ if ($_SERVER['REMOTE_ADDR']){
 $_SERVER['DOCUMENT_ROOT'] = '..';
 //$_SERVER['ENVIRONMENT'] = 'beta';
 
+define('HARD_RESET', false); // if TRUE, all rulers and home planets will also be deleted.
+
 #if (is_dir('/Applications/XAMPP/xamppfiles/')){
 #	ini_set('mysql.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
 #	ini_set('mysqli.default_socket', '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock');
 #}
 
 require_once('config.php');
+$db->recordQueries = false;
+$db->cacheQueries = false;
 $IC = new IC($db);
+
+ob_end_clean();
 
 
 // We use this data to re-insert later
@@ -24,62 +30,39 @@ $q = "SELECT ruler.id, ruler.confirmed, ruler.name AS rulername, planet.name AS 
 			AND planet.home=1";
 $oldrulers = $db->Select($q);
 
-$q = "TRUNCATE TABLE ruler_has_research";
-$db->Query($q);
+$emptyTables = array(
+	'ruler_has_research',
+	'ruler_has_resource',
+	'ruler_research_queue',
+	'planet_has_resource',
+	'planet_has_building',
+	'planet_has_production',
+	'planet_conversion_queue',
+	'alliance',
+	'fleet',
+	'session',
+	'galaxy',
+	'system',
+	'planet'
+);
 
-$q = "TRUNCATE TABLE ruler_has_resource";
-$db->Query($q);
 
-$q = "TRUNCATE TABLE ruler_research_queue";
-$db->Query($q);
+if (HARD_RESET === true) {
+	$emptyTables[] = 'ruler';
+}else{
+	$q = "UPDATE ruler SET name=''";
+	$db->Query($q);
+	echo 'Clearing ruler names' . "\n";
+}
 
-$q = "TRUNCATE TABLE planet_has_resource";
-$db->Query($q);
+foreach ($emptyTables as $t){
+	$q = "DELETE FROM `$t` WHERE 1";
+	$db->Query($q);
+	$q = "ALTER TABLE `$t` AUTO_INCREMENT = 1";
+	$db->Query($q);	
+	echo 'Emptying `' . $t . "`\n";
+}
 
-$q = "TRUNCATE TABLE planet_has_building";
-$db->Query($q);
-
-$q = "TRUNCATE TABLE planet_has_production";
-$db->Query($q);
-
-$q = "TRUNCATE TABLE planet_conversion_queue";
-$db->Query($q);
-
-#$q = "DELETE FROM ruler WHERE 1";
-#$db->Query($q);
-#$q = "ALTER TABLE ruler AUTO_INCREMENT = 1";
-#$db->Query($q);
-
-$q = "UPDATE ruler SET name=''";
-$db->Query($q);
-
-$q = "DELETE FROM alliance WHERE 1";
-$db->Query($q);
-$q = "ALTER TABLE alliance AUTO_INCREMENT = 1";
-$db->Query($q);
-
-$q = "DELETE FROM fleet WHERE 1";
-$db->Query($q);
-$q = "ALTER TABLE alliance AUTO_INCREMENT = 1";
-$db->Query($q);
-
-$q = "TRUNCATE TABLE session";
-$db->Query($q);
-
-$q = "DELETE FROM galaxy WHERE 1";
-$db->Query($q);
-$q = "ALTER TABLE galaxy AUTO_INCREMENT = 1";
-$db->Query($q);
-
-$q = "DELETE FROM system WHERE 1";
-$db->Query($q);
-$q = "ALTER TABLE system AUTO_INCREMENT = 1";
-$db->Query($q);
-
-$q = "DELETE FROM planet WHERE 1";
-$db->Query($q);
-$q = "ALTER TABLE planet AUTO_INCREMENT = 1";
-$db->Query($q);
 
 for ($i=1; $i<=$IC->config['gals']; $i++){
 	$gal = array();
@@ -98,6 +81,10 @@ for ($i=1; $i<=$IC->config['gals']; $i++){
 	$prev = $gal['type'];
 
 	if ($gal['id'] = $db->QuickInsert('galaxy', $gal)){
+
+		echo "\n";
+		echo 'Creating Galaxy ' . $gal['id'] . "\n";
+		echo "Creating Systems\n";
 
 		$planets = array();
 
@@ -142,6 +129,8 @@ for ($i=1; $i<=$IC->config['gals']; $i++){
 				}
 			}
 		}
+
+		echo "Creating " . sizeof($planets) . " planets\n";
 
 		$db->ExtendedInsert('planet', $planets);
 
@@ -224,7 +213,7 @@ $q = "UPDATE ruler SET asset_score=0, combat_score=0, asset_rank=0, combat_rank=
 $db->Edit($q);
 
 
-if ($oldrulers){
+if ($oldrulers && HARD_RESET !== true){
 	foreach ($oldrulers as $newruler){
 		$IC->Ruler->SignupRuler($newruler);
 	}

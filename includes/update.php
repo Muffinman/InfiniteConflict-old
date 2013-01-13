@@ -14,10 +14,19 @@ $_SERVER['DOCUMENT_ROOT'] = '..';
 require_once('config.php');
 
 FB::setEnabled(false);
+ob_end_clean();
 
 $Update = new Update($db);
 $Update->process();
 
+if (is_numeric($argv[1]) && $argv[1] > 1){
+	echo "Update 1 done\n";
+	for ($i = 2; $i <= $argv[1]; $i++){
+		$Update->db->ClearCache();
+		$Update->process();
+		echo "Update " . $i . " done\n";
+	}
+}
 
 echo closedown($pagestart) . " Total time\n";
 echo number_format($db->totalQueryTime, 3) . " Query time\n"; 

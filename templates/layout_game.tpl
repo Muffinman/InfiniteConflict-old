@@ -11,7 +11,12 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="/styles.css">
     <link href='http://fonts.googleapis.com/css?family=Play:400,700&v2' rel='stylesheet' type='text/css'>
-    <script src="/scripts.js"></script>
+    <script  type="text/javascript" src="/scripts.js"></script>
+
+    <script type="text/javascript">
+	    var update_next = {$time_till_update};
+	    var update_interval = {$config.turn_length};
+    </script>
 
   </head>
   <!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
@@ -30,7 +35,7 @@
 
     <div id="userbox">
       <p class="avatar"><img src="{$ruler.avatar}" alt="{$ruler.name}"></p>
-      <p>{$ruler.name} <a href="/logout">[Logout]</a> - Turn : <a href="/turns">{$config.turn}</a> {$smarty.now|date_format:"%H:%M %Z"}</p>
+      <p>{$ruler.name} <a href="/logout">[Logout]</a> - Turn : <a href="/turns" id="turn_counter">{$config.turn}</a> {$smarty.now|date_format:"%H:%M %Z"}</p>
       <p class="messages"><a href="/messages">Messages</a></p>
       <p class="news"><a href="/news">News</a></p>
       <p class="ql" title="Researched Queue Length">QL: {$ruler.QL}</p>
@@ -63,7 +68,7 @@
           <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time}s ({$page_query_time}s database).</p>
+            <p>Page generated in {$page_time}s ({$page_query_time}s database). Next update in <span id="update_next">{$time_till_update}</span>s.</p>
           </div>
         </div>
       </div>

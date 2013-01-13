@@ -19,10 +19,16 @@ function template_data() {
 
 	$smarty->assign('site_url', SITE_LOCATION);
 
+	$now = time();
+	$future = mktime(date('H'), date('i')+1, 0);
+	$smarty->assign('time_till_update', ($future - $now));
+
   if ($sess = $IC->LoadSession($_COOKIE['ic_session'])){
     $_SESSION['ruler'] = $IC->LoadRuler($sess['ruler_id']);
-    $_SESSION['ruler']['avatar'] = '/images/avatar.png';
+    //$_SESSION['ruler']['avatar'] = '/images/avatar.png';
     $_SESSION['ruler']['resources'] = $IC->Ruler->LoadRulerResources($sess['ruler_id']);
+    
+    $_SESSION['ruler']['avatar'] = 'http://www.gravatar.com/avatar/' . md5(strtolower($_SESSION['ruler']['email']));
     
     if (!$_SESSION['ruler']['QL']){
     	$_SESSION['ruler']['QL'] = $IC->Ruler->LoadRulerQL($sess['ruler_id']);
