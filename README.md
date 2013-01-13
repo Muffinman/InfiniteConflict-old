@@ -52,6 +52,7 @@ Areas of Active Development
 --------------------------
 
 * Alliances - *in progress*
+* Comms
 * Combat
 * News
 * Messaging
