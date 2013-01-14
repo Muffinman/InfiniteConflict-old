@@ -697,7 +697,7 @@ class Planet extends IC {
 	}
 	
 	
-	function QueueConversion($ruler_id, $planet_id, $resource_id, $qty) {
+	public function QueueConversion($ruler_id, $planet_id, $resource_id, $qty) {
 		if ((int) $qty < 1) {
 			return false;
 		}
@@ -858,7 +858,7 @@ class Planet extends IC {
 	}
 	
 	
-	function QueueProduction($ruler_id, $planet_id, $production_id, $qty) {
+	public function QueueProduction($ruler_id, $planet_id, $production_id, $qty) {
 		if ((int) $qty < 1) {
 			return false;
 		}
@@ -1041,9 +1041,31 @@ class Planet extends IC {
 
 
 
+	public function LoadNextPlanet ($ruler_id, $planet_id){
+		$q = "SELECT id FROM planet
+				WHERE ruler_id='" . $this->db->esc($ruler_id) . "'
+				AND id > '" . $planet_id . "'
+				ORDER BY id ASC
+				LIMIT 1";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['id'];
+		}
+		return false;
+	}
 
 
 
+	public function LoadPreviousPlanet ($ruler_id, $planet_id){
+		$q = "SELECT id FROM planet
+				WHERE ruler_id='" . $this->db->esc($ruler_id) . "'
+				AND id < '" . $planet_id . "'
+				ORDER BY id DESC
+				LIMIT 1";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['id'];
+		}
+		return false;
+	}
 
 
 

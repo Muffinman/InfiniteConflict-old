@@ -20,6 +20,9 @@ if (!$error){
     $IC->Planet->QueueBuilding($_SESSION['ruler']['id'], $planet['id'], $_POST['building-list']);
   }
 
+  $planet['next'] = $IC->Planet->LoadNextPlanet($_SESSION['ruler']['id'], $planet['id']);
+  $planet['previous'] = $IC->Planet->LoadPreviousPlanet($_SESSION['ruler']['id'], $planet['id']);
+
   $resources = $IC->Planet->CalcPlanetResources($planet['id']);
   $template = 'planet.tpl';
 

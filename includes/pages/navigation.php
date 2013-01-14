@@ -24,6 +24,9 @@ if ($request[1]){
 if ($request[2]){
   if ($system = $IC->LoadSystem($request[2])){
     $planets = $IC->LoadPlanets($galaxy['id'], $system['id'], $_SESSION['ruler']['id'], $_SESSION['ruler']['alliance_id']);
+    $system['previous'] = $IC->LoadPreviousSystem($galaxy['id'], $system['id']);
+    $system['next'] = $IC->LoadNextSystem($galaxy['id'], $system['id']);
+
     $smarty->assign('system', $system);
     $smarty->assign('planets', $planets);
     $smarty->assign('content', $smarty->fetch('nav_system.tpl'));

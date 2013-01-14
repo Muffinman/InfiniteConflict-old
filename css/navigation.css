@@ -1,3 +1,20 @@
+#nav {
+	position: relative;
+}
+
+#nav .prev {
+	position: absolute;
+	top:50%;
+	margin-top: 5px;
+}
+
+#nav .next {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	margin-top: 5px;
+}
+
 #nav .universe{
   background:black;
   width:auto;

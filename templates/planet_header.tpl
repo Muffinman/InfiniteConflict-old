@@ -4,7 +4,11 @@
   </div>
 
   <div class="planet-info">
-    <h1>{$planet.name} <a href="/navigation/{$planet.galaxy_id}/{$planet.system_id}">(<img src="/images/coords.gif" alt="coords" /> {$planet.id})</a></h1>
+    <h1>
+    	{if $planet.previous}<a href="/planet/{$planet.previous}">&lt;</a> {/if}
+    	{$planet.name} <a href="/navigation/{$planet.galaxy_id}/{$planet.system_id}">(<img src="/images/coords.gif" alt="coords" /> {$planet.id})</a>
+    	{if $planet.next} <a href="/planet/{$planet.next}">&gt;</a>{/if}
+    </h1>
 
     <p class="static-resources">
       {foreach from=$resources key=res item=r}

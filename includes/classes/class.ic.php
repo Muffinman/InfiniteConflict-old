@@ -224,6 +224,35 @@ class IC {
 	}
 	
 	
+	
+	public function LoadPreviousSystem($gal_id, $sys_id){
+		$q = "SELECT id FROM system
+				WHERE galaxy_id='" . $this->db->esc($gal_id) . "'
+				AND id < '" . $this->db->esc($sys_id) . "'
+				ORDER BY id DESC
+				LIMIT 1";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['id'];
+		}
+		return false;
+	}
+
+
+
+	public function LoadNextSystem($gal_id, $sys_id){
+		$q = "SELECT id FROM system
+				WHERE galaxy_id='" . $this->db->esc($gal_id) . "'
+				AND id > '" . $this->db->esc($sys_id) . "'
+				ORDER BY id ASC
+				LIMIT 1";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['id'];
+		}
+		return false;
+	}
+
+	
+	
 	public function SendEmail($to, $subject, $template){
 		$email_body = $this->smarty->fetch('email/' . $template);
 		$this->smarty->assign('email_body', $email_body);
