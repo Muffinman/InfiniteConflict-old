@@ -1,34 +1,67 @@
 <?
 
-class Update extends IC{
+class Update { 
 	var $config;
 	var $resources = array();
+	var $pagestart;
 	
-	function __construct(&$db){
-		$this->db = $db;
+	function __construct(){
+		$this->db = db::getInstance();
+		$this->IC = IC::getInstance();
 		#$this->db->useCache = false;
 		#$this->db->cacheQueries = false;
-		$this->config = $this->LoadConfig();
+		$this->config = IC::getInstance()->LoadConfig();
 		
-		$this->Ruler = new Ruler($db);
-		$this->Research = new Research($db);
-		$this->Planet = new Planet($db);
-		$this->Fleet = new Fleet($db);
+		$this->Ruler = Ruler::getInstance();
+		$this->Research = Research::getInstance();
+		$this->Planet = Planet::getInstance();
+		$this->Fleet = Fleet::getInstance();
 	}
 	
 	
 	// Main method to process update	
 	public function process(){
+		$updateStart = time_tracker();
+		$this->pageStart = time_tracker();
 		$this->SetUpdate();
+		echo 'SetUpdate() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->ResearchQueues();
+		echo 'ResearchQueues() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->BuildingQueues();
+		echo 'BuildingQueues() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->ProductionQueues();
+		echo 'ProductionQueues() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->ConversionQueues();
+		echo 'ConversionQueues() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->FleetQueues();
+		echo 'FleetQueues() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->LocalInterest();
+		echo 'LocalInterest() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->GlobalInterest();
+		echo 'GlobalInterest() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->LocalOutputs();
+		echo 'LocalOutputs() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
+		$this->pageStart = time_tracker();
 		$this->GlobalOutputs();	
+		echo 'GlobalOutputs() -> ' . time_tracker($this->pageStart) . " " . time_tracker($updateStart) . "\n";
+		
 		$this->EndUpdate();
 		return true;
 	}
@@ -140,8 +173,6 @@ class Update extends IC{
 						}
 						
 						
-						
-						
 						if ($res['stores'] > 0 && $row['demolish']){
 							foreach ($output as $o){
 								if ($o['id'] == $res['resource_id'] && $o['req_storage']){
@@ -225,7 +256,7 @@ class Update extends IC{
 				if ($resources = $this->Planet->LoadBuildingResources($row['building_id'])){
 					foreach ($resources as $res){
 						if ($res['single_output']){
-							if ($this->ResourceIsGlobal($res['resource'])){
+							if ($this->IC->ResourceIsGlobal($res['resource_id'])){
 								if ($row['demolish'] == 1){
 									$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], -$res['single_output']);
 								}else{
@@ -240,8 +271,32 @@ class Update extends IC{
 							}
 						}
 						
+						if ($res['output'] && !$this->IC->ResourceIsGlobal($res['resource_id'])){
+							if ($row['demolish'] == 1){
+								$this->Planet->VaryOutput($row['planet_id'], $res['resource_id'], -$res['output']);							
+							}else{
+								$this->Planet->VaryOutput($row['planet_id'], $res['resource_id'], $res['output']);
+							}
+						}
+
+						if ($res['stores'] && !$this->IC->ResourceIsGlobal($res['resource_id'])){
+							if ($row['demolish'] == 1){
+								$this->Planet->VaryStorage($row['planet_id'], $res['resource_id'], -$res['stores']);							
+							}else{
+								$this->Planet->VaryStorage($row['planet_id'], $res['resource_id'], $res['stores']);
+							}
+						}
+
+						if ($res['abundance'] && !$this->IC->ResourceIsGlobal($res['resource_id'])){
+							if ($row['demolish'] == 1){
+								$this->Planet->VaryAbundance($row['planet_id'], $res['resource_id'], -$res['abundance']);							
+							}else{
+								$this->Planet->VaryAbundance($row['planet_id'], $res['resource_id'], $res['abundance']);
+							}
+						}
+						
 						if ($row['demolish'] && $res['cost']){
-							if ($this->ResourceIsGlobal($res['resource'])){
+							if ($this->IC->ResourceIsGlobal($res['resource_id'])){
 								$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['cost']);
 							}else{
 								$this->Planet->VaryResource($row['planet_id'], $res['resource_id'], $res['cost']);
@@ -263,7 +318,7 @@ class Update extends IC{
 	
 	private function ProductionQueues(){
 
-  	// Queues about to start
+  		// Queues about to start
 		$q = "SELECT * FROM planet_production_queue
 						WHERE started IS NULL
 						AND rank=1";
@@ -433,7 +488,7 @@ class Update extends IC{
 				}
 				
 				$this->db->QuickDelete('planet_conversion_queue', $row['id']);
-			  $this->db->SortRank('planet_conversion_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
+			    $this->db->SortRank('planet_conversion_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($row['planet_id']) . "'");
 				
 			}
 		}
@@ -643,10 +698,9 @@ class Update extends IC{
 	
 
 	private function LocalInterest(){
-		if ($res = $this->LoadResources()){
+		if ($res = $this->IC->LoadResources()){
 			foreach ($res as $r){
 				if ($r['interest'] != 0 && $r['global'] == 0){
-					//$q = "UPDATE planet_has_resource SET stored = stored * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
 					
 					$q = "SELECT pb.planet_id, ROUND(SUM(interest),3) AS interest FROM planet_has_resource AS pr
 						LEFT JOIN planet_has_building AS pb ON pr.planet_id = pb.planet_id
@@ -668,6 +722,8 @@ class Update extends IC{
 				}
 			}
 			
+			
+			// The following code block resets stored resources back to max storage value, if for some reason we gave exceeded it.
 			$q = "SELECT table1.*, SUM(total_stores) as total, pr.stored FROM
 							(
 								SELECT planet_id, pb.building_id, pb.qty, br.resource_id, stores, pb.qty * stores AS total_stores FROM planet_has_building AS pb
@@ -682,7 +738,7 @@ class Update extends IC{
 							HAVING stored > total";
 			if ($r = $this->db->Select($q)){
 				foreach ($r as $row){
-					if (!$this->ResourceIsGlobal($row['resource_id'])){
+					if (!$this->IC->ResourceIsGlobal($row['resource_id'])){
 						$this->Planet->SetResource($row['planet_id'], $row['resource_id'], $row['total']);
 						//echo "Setting resource ".$row['resource_id']." from ".$row['stored']." to ".$row['total']." on PID: " . $row['planet_id'] . "\n";
 					}
@@ -693,7 +749,7 @@ class Update extends IC{
 
 	
 	private function GlobalInterest(){
-		$res = $this->LoadResources();
+		$res = $this->IC->LoadResources();
 		foreach ($res as $r){
 			if ($r['interest'] != 0 && $r['global'] == 1){
 				$q = "UPDATE ruler_has_resource SET qty = qty * (1+" . $this->db->esc($r['interest']) . ") WHERE resource_id='" . $this->db->esc($r['id']) . "'";
@@ -704,68 +760,86 @@ class Update extends IC{
 
 
 	private function LocalOutputs(){
-		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
-		if ($r = $this->db->Select($q)){
-			foreach ($r as $row){
-				if ($output = $this->Planet->CalcPlanetResources($row['id'], false)){
-					foreach ($output as $res){
-						if (!$this->ResourceIsGlobal($res['id'])){
-							if ($res['output'] != 0){
-								$this->Planet->VaryResource($row['id'], $res['id'], $res['output']);
-							}
-
-							if ($res['stored'] + $res['output'] > $res['storage'] && $res['req_storage'] == 1){
-								$this->Planet->SetResource($row['id'], $res['id'], $res['storage']);
-							}
-							if ($res['stored'] + $res['output'] < 0){
-								$this->Planet->SetResource($row['id'], $res['id'], 0);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	
-	private function GlobalOutputs(){
-		$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
+		//$q = "SELECT * FROM planet WHERE ruler_id IS NOT NULL";
+		//if ($r = $this->db->Select($q)){
+		//	foreach ($r as $row){
+		//		$this->Planet->ResetOutputsCache($row['id']);
+		//	}
+		//}
+		
+		// Standard outputs
+		$q = "UPDATE planet_has_resource SET stored = stored + output";
+		$this->db->Edit($q);
+
+		// Reset minus resources to 0
+		$q = "UPDATE planet_has_resource SET stored = 0 WHERE stored < 0";
+		$this->db->Edit($q);
+		
+		// Reset resources over storage
+		$q = "UPDATE planet_has_resource SET stored = storage
+				WHERE stored > storage
+				AND resource_id IN (SELECT id FROM resource WHERE req_storage = 1)";
+		$this->db->Edit($q);
+		
+		// Loop through any resources which have taxes, to update values where needed (i.e. reset food output after pop growth)
+		$q = "SELECT pr.*, resource_tax.output_resource FROM planet_has_resource AS pr
+				JOIN resource_tax ON resource_tax.resource_id = pr.resource_id
+				LEFT JOIN resource ON resource.id = resource_tax.output_resource
+				WHERE stored > 0
+				AND resource.global <> 1";
 		if ($r = $this->db->Select($q)){
 			foreach ($r as $row){
-				if ($output = $this->Planet->CalcPlanetResources($row['id'], false)){
-					foreach ($output as $res){
-						if ($res['global']){
-							$this->Ruler->VaryResource($row['ruler_id'], $res['id'], $res['output']);
-						}	
-						if ($res['stored']){
-							if ($taxes = $this->LoadResourceTaxes($res['id'])){						
-								foreach ($taxes as $tax){
-									if ($this->ResourceIsGlobal($tax['output_resource'])){
-										$this->Ruler->VaryResource($row['ruler_id'], $tax['output_resource'], $res['stored'] * $tax['rate']);
-									}
-								}							
-							}
-						}
-					}
+				$output = $this->Planet->CalcOutput($row['planet_id'], $row['resource_id'], true);
+				if ($output != $row['output']){
+					$this->Planet->SetOutput($row['planet_id'], $row['resource_id'], $output);
 				}
 			}
 		}
 		
-		if ($rulers = $this->Ruler->LoadRulers()){
-			foreach($rulers as $ruler){
-				if ($resources = $this->Ruler->LoadRulerResources($ruler['id'])){
-					foreach($resources as $res){
-						if ($res['global']){
-							if ($taxes = $this->LoadResourceTaxes($res['id'])){
-								foreach ($taxes as $tax){
-									if ($this->ResourceIsGlobal($tax['output_resource'])){
-										$this->Ruler->VaryResource($ruler['id'], $tax['output_resource'], $res['stored'] * $tax['rate']);
-									}
-								}
-							}
-						}
-					}
-				}
+	}
+
+	
+	private function GlobalOutputs(){
+		$q = "SELECT pr.*, planet.ruler_id FROM planet_has_resource AS pr
+					LEFT JOIN resource ON pr.resource_id = resource.id
+					LEFT JOIN planet ON pr.planet_id = planet.id
+					WHERE output > 0
+					AND resource.global = 1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				$this->Ruler->VaryResource($row['ruler_id'], $res['resource_id'], $res['output']);				
+			}
+		}
+		
+		
+		$q = "SELECT pr.*, resource_tax.output_resource, resource_tax.rate, planet.ruler_id FROM planet_has_resource AS pr
+				JOIN resource_tax ON resource_tax.resource_id = pr.resource_id
+				LEFT JOIN planet ON pr.planet_id = planet.id				
+				LEFT JOIN resource ON resource.id = resource_tax.output_resource
+				WHERE stored > 0
+				AND resource.global = 1";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				$this->Ruler->VaryResource($row['ruler_id'], $row['output_resource'], $row['stored'] * $row['rate']);
+			}
+		}		
+		
+		$q = "SELECT * FROM ruler_has_resource AS rr
+				LEFT JOIN resource ON resource.id = rr.resource_id
+				WHERE resource.global = 1
+				AND rr.resource_id IN (
+					SELECT resource_id FROM resource_tax
+					LEFT JOIN resource ON resource.id = resource_tax.output_resource
+					WHERE resource.global = 1
+				)";
+		if ($r = $this->db->Select($q)){
+			foreach ($r as $row){
+				if ($taxes = $this->LoadResourceTaxes($row['resource_id'])){
+					foreach ($taxes as $tax){
+						$this->Ruler->VaryResource($row['ruler_id'], $tax['output_resource'], $row['qty'] * $tax['rate']);						
+					}					
+				}				
 			}
 		}
 	}	

@@ -4,13 +4,13 @@ $db->cacheQueries = false;
 
 $data = array();
 
-if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id'])){
+if ($Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id'])){
 	$data['planet_id'] = $_POST['planet_id'];
 	
 	switch($request[3]){
 	
 	  case 'add':
-	      if ($id = $IC->Planet->QueueBuilding($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['building_id'])){
+	      if ($id = $Planet->QueueBuilding($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['building_id'])){
 	        $data['response'] = 'success';
 	        $data['id'] = $id;
 	      }else{
@@ -20,7 +20,7 @@ if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id']))
 	    break;
 	    
 	  case 'demolish':
-	      if ($id = $IC->Planet->QueueBuilding($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['building_id'], true)){
+	      if ($id = $Planet->QueueBuilding($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['building_id'], true)){
 	        $data['response'] = 'success';
 	        $data['id'] = $id;
 	      }else{
@@ -30,19 +30,24 @@ if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $_POST['planet_id']))
 	    break;	    
 	
 	  case 'remove':
-	      $IC->Planet->QueueBuildingRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4]);
+	      $Planet->QueueBuildingRemove($_SESSION['ruler']['id'], $_POST['planet_id'], $request[4]);
 	    break;
 	
 	  case 'reorder':
-	      $IC->Planet->QueueBuildingReorder($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['hash']);
+	      if ($Planet->QueueBuildingReorder($_SESSION['ruler']['id'], $_POST['planet_id'], $_POST['hash'])){
+		      $data['response'] = 'success';
+	      }else{
+		      $data['response'] = 'failure';
+		      $data['id'] = $Planet->lastError;
+	      }
 	    break;
 	
 	}
 	
-	if ($queue = $IC->Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $_POST['planet_id'])){
+	if ($queue = $Planet->LoadBuildingsQueue($_SESSION['ruler']['id'], $_POST['planet_id'])){
 	  $data['queue'] = $queue;
 	}
-	$data['available'] = $IC->Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $_POST['planet_id']);
+	$data['available'] = $Planet->LoadAvailableBuildings($_SESSION['ruler']['id'], $_POST['planet_id']);
 	$data['resources'] = $IC->LoadResources();
 	
 }else{

@@ -1,14 +1,3 @@
-@font-face {
-	font-family: Atarian;
-	src: url('SF Atarian System.ttf');
-}
-
-@font-face {
-	font-family: Atarian;
-	font-weight: bold;
-	src: url('SF Atarian System.ttf');
-}
-
 html{
 	background-color: black;
 	background-image: url(/images/background3.jpg);
@@ -227,17 +216,44 @@ input{
   list-style:none;
   display:block;
   float:left;
-  margin-right:-22px;
+  margin-right:-15px;
   height:38px;
+  width:154px;
 }
 
 #menu li a{
   display:block;
   height:38px;
-  width:152px;
-  background:url(/images/home2.gif) top left no-repeat;
-  text-indent:-999em;
+  width:154px;
+  background:url(/images/stripe.png) top left no-repeat;
+  color: white;
+  font-family: Play, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
 }
+
+#menu li a span {
+  display: block;
+  padding: 5px;
+  height: 28px;
+  line-height: 28px;
+  padding-left: 55px;
+}
+
+#menu li a:hover {
+  background-position: 0 -40px;
+  margin-top:-1px;
+  height: 39px;
+}
+
+#menu li.active a {
+  background-position: 0 -120px;  
+  position: absolute;
+  z-index: 999;
+  border-right: 1px solid #7e7e7e;
+}
+
+/*
 
 #menu li.home{
   width:130px;
@@ -263,45 +279,33 @@ input{
   width:154px;
 }
 
-
 #menu li.home a{
   width:130px;
 }
+*/
 
-#menu li.planets a{
-  width:154px;
-  background:url(/images/planets.gif) top left no-repeat;
+#menu li.home a span{
+  background:url(/images/icons/home.png) 30px 50% no-repeat;
 }
 
-#menu li.fleets a{
-  width:154px;
-  background:url(/images/fleets.gif) top left no-repeat;
+#menu li.planets a span{
+  background:url(/images/icons/ringed.png) 30px 50% no-repeat;
 }
 
-#menu li.navigation a{
-  width:154px;
-  background:url(/images/navigation.gif) top left no-repeat;
+#menu li.fleets a span{
+  background:url(/images/icons/rocket.png) 30px 50% no-repeat;
 }
 
-#menu li.research a{
-  width:154px;
-  background:url(/images/research.gif) top left no-repeat;
+#menu li.navigation a span{
+  background:url(/images/icons/satellite.png) 30px 50% no-repeat;
 }
 
-#menu li.alliances a{
-  width:154px;
-  background:url(/images/alliances.gif) top left no-repeat;
+#menu li.research a span{
+  background:url(/images/icons/laser.png) 30px 50% no-repeat;
 }
 
-#menu li a:hover{
-  background-position: -212px 0;
-}
-
-
-#menu li a.active{
-  background-position: -424px 0;
-  z-index:999;
-  position:absolute;
+#menu li.alliances a span{
+  background:url(/images/icons/cosmo.png) 30px 50% no-repeat;
 }
 
 .lower-content{
@@ -309,8 +313,8 @@ input{
 }
 
 .content{
-	background:#2c2c2c url(/images/head2back.png) -1px 0 repeat-x;
-  background:rgba(50,50,50,0.9) url(/images/head2back.png) -1px 0 repeat-x;
+	background:#2c2c2c url(/images/stripe3.png) -1px 0 repeat-x;
+  background:rgba(50,50,50,0.9) url(/images/stripe3.png) -1px 0 repeat-x;
   padding:10px;
   border:1px solid #404040;
   margin-bottom:10px;
@@ -322,6 +326,13 @@ input{
   text-shadow:1px 1px 0px black;
   margin-bottom:14px;
   height:20px;
+}
+
+.content .error {
+	padding: 8px;
+	margin-bottom: 10px;
+	border: 1px solid #5c1d28;
+	background: #351e23;
 }
 
 .content h1 a{

@@ -51,7 +51,7 @@ $smarty->debugging = false;
 
 # Database connection
 require_once 'classes/class.mysql.php';
-$db = new mysql();
+$db = db::getInstance();
 $db->dbName = $db_name;
 $db->dbUser = $db_user;
 $db->dbPass = $db_pass;

@@ -8,9 +8,9 @@ if ($_SESSION['ruler']){
 $form = new Form();
 
 if ($_POST && !$form->hasErrors){
-  if ($ruler = $IC->Ruler->CheckLogin($_POST['email'], $_POST['password'])){    
-    if ($planets = $IC->Ruler->LoadRulerPlanets($ruler['id'])){
-	    $IC->Ruler->Login($ruler['id']);
+  if ($ruler = $Ruler->CheckLogin($_POST['email'], $_POST['password'])){    
+    if ($planets = $Ruler->LoadRulerPlanets($ruler['id'])){
+	    $Ruler->Login($ruler['id']);
 	    header('Location: /');
 	    die($planets);
     }else{

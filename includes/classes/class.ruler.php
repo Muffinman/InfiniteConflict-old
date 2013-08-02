@@ -1,11 +1,22 @@
 <?
 
-class Ruler extends IC {
+class Ruler {
 
-	public function __construct(&$db){
-		$this->db = &$db;
-		$this->Planet = new Planet($db);
+	private static $instance;
+
+	public function __construct() {
+		$this->db = db::getInstance();
+		$this->Research = Research::getInstance();
 	}
+	
+	public static function getInstance() {
+		if (!Ruler::$instance instanceof self) {
+			 Ruler::$instance = new self();
+		}
+		return Ruler::$instance;
+	}
+
+	private function __clone() { }
 
 
 	public function LoadRuler($id){
@@ -25,9 +36,18 @@ class Ruler extends IC {
 		if ($r = $this->db->Select($q)){
 			$planets = array();
 			foreach ($r as $row){
-				$planets[] = $this->LoadPlanet($row['id']);
+				$planets[] = IC::getInstance()->LoadPlanet($row['id']);
 			}
 			return $planets;
+		}
+		return false;
+	}
+
+
+	public function LoadRulerPlanetCount($id){
+		$q = "SELECT COUNT(id) AS planets FROM planet WHERE ruler_id='" . $this->db->esc($id) . "'";
+		if ($r = $this->db->Select($q)) {
+			return $r[0]['planets'];
 		}
 		return false;
 	}
@@ -46,9 +66,6 @@ class Ruler extends IC {
 
 	public function LoadRulerQL($ruler_id){
 		$QL=1;
-		if (!$this->Research){
-			$this->Research = new Research($this->db);
-		}
 		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
 			foreach($research as $r){
 				if (preg_match('/Queue Length (?P<digit>\d+)/', $r['name'], $matches)){
@@ -63,9 +80,6 @@ class Ruler extends IC {
 
 	public function LoadRulerPL($ruler_id){
 		$PL=1;
-		if (!$this->Research){
-			$this->Research = new Research($this->db);
-		}
 		if ($research = $this->Research->LoadRulerResearch($ruler_id)){
 			foreach($research as $r){
 				if (preg_match('/Planet Limit (?P<digit>\d+)/', $r['name'], $matches)){
@@ -316,19 +330,27 @@ class Ruler extends IC {
 			'founder' => $founder
 		);
 		if ($id = $this->db->QuickInsert('alliance', $arr)){
-			$this->AddRulerToAlliance($founder, $id);
+			$this->AddRulerToAlliance($founder, $id, 0);
 			return $this->LoadAlliance($id);
 		}
 		return false;
 	}
 	
-	private function AddRulerToAlliance($ruler_id, $alliance_id){
+	private function AddRulerToAlliance($ruler_id, $alliance_id, $level=0){
 		$arr = array(
 			'alliance_id' => $alliance_id,
 			'id' => $ruler_id,
-			'leaving' => NULL
+			'leaving' => NULL,
+			'alliance_level' => $level
 		);
 		return $this->db->QuickEdit('ruler', $arr);
+	}
+
+	public function LoadAllianceMembers($id){
+		$q = "SELECT * FROM ruler
+				WHERE alliance_id = '" . $this->db->esc($id) . "'
+				ORDER BY alliance_level DESC";
+		return $this->db->Select($q);
 	}
 
 }

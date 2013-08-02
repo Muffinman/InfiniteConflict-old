@@ -4,13 +4,24 @@
  *	This class controls all planet related methods
  *
  */
-class Planet extends IC {
-	public function __construct(&$db) {
-		$this->db =& $db;
-		$this->Research = new Research($db);
+class Planet {
+
+	private static $instance;
+
+	public function __construct() {
+		$this->db = db::getInstance();
+		$this->Research = Research::getInstance();
 	}
 	
-	
+	public static function getInstance() {
+		if (!Planet::$instance instanceof self) {
+			 Planet::$instance = new self();
+		}
+		return Planet::$instance;
+	}
+
+	private function __clone() { }
+
 	
 	public function LoadPlanetResources($id, $cache = true) {
 		$q = "SELECT pr.*, r.creatable, r.transferable, r.name FROM	 planet_has_resource AS pr
@@ -49,7 +60,7 @@ class Planet extends IC {
 	}
 	
 	public function RulerOwnsPlanet($ruler_id, $planet_id) {
-		$planet = $this->LoadPlanet($planet_id);
+		$planet = IC::getInstance()->LoadPlanet($planet_id);
 		
 		if ($planet['ruler_id'] == $ruler_id) {
 			return true;
@@ -59,7 +70,7 @@ class Planet extends IC {
 	
 	
 	public function CalcBuildingResources($planet_id) {
-		$resources = $this->LoadResources();
+		$resources = IC::getInstance()->LoadResources();
 		$buildings = $this->LoadPlanetBuildings($planet_id);
 		
 		$out = array();
@@ -109,7 +120,7 @@ class Planet extends IC {
 	
 	
 	public function CalcPlanetResources($id, $cache = true) {
-		$resources = $this->LoadResources();
+		$resources = IC::getInstance()->LoadResources();
 		$planet    = $this->LoadPlanetResources($id, $cache);
 		
 		$out = array();
@@ -144,6 +155,43 @@ class Planet extends IC {
 		}
 		return $out;
 	}
+
+
+
+	public function LoadPlanetResources2($id, $cache = true) {
+		$resources = IC::getInstance()->LoadResources();
+		$planet    = $this->LoadPlanetResources($id, $cache);
+		
+		$out = array();
+		foreach ($resources as $r) {
+			$out[$r['name']] = array(
+				'id' => $r['id'],
+				'interest' => $r['interest'],
+				'req_storage' => $r['req_storage'],
+				'creatable' => $r['creatable'],
+				'stored' => 0,
+				'stored_str' => 0,
+				'global' => $r['global'],
+				'storage' => $this->CalcStorage($id, $r['id']),
+				'storage_str' => number_format($this->CalcStorage($id, $r['id']), 0)
+			);
+			
+			foreach ($planet as $res) {
+				if ($r['id'] == $res['resource_id']) {
+					$out[$r['name']]['id']             = $r['id'];
+					$out[$r['name']]['stored']         = $res['stored'];
+					$out[$r['name']]['stored_str']     = number_format($out[$r['name']]['stored'], 0);
+					$out[$r['name']]['output']         = $res['output'];
+					$out[$r['name']]['output_str']     = ($out[$r['name']]['output'] < 0 ? '' : '+') . number_format($out[$r['name']]['output'], 0);
+					$out[$r['name']]['abundance']      = $res['abundance'];
+					$out[$r['name']]['abundance_str']  = $out[$r['name']]['abundance'] * 100;
+					$out[$r['name']]['busy']           = $this->CalcBusy($id, $r['id'], $cache);
+					$out[$r['name']]['busy_str']       = number_format($out[$r['name']]['busy'], 0);
+				}
+			}
+		}
+		return $out;
+	}
 	
 	
 	
@@ -156,6 +204,7 @@ class Planet extends IC {
 			foreach ($resources as $r) {
 				if ($r['resource_id'] == $resource_id) {
 					$res = $r;
+					$res['output'] = 0;
 					break;
 				}
 			}
@@ -201,7 +250,7 @@ class Planet extends IC {
 	public function CalcStorage($planet_id, $resource_id) {
 		$buildings = $this->LoadPlanetBuildings($planet_id);
 		
-		$res = $this->LoadResource($resource_id);
+		$res = IC::getInstance()->LoadResource($resource_id);
 		
 		$storage = 0;
 		
@@ -440,6 +489,13 @@ class Planet extends IC {
 							}
 						}
 					}
+					if ($queue){
+						foreach ($queue as $q) {
+							if ($q['building_id'] == $id) {
+								$found = true;
+							}
+						}						
+					}
 					if ($found === false) {
 						continue 2;
 					}
@@ -577,10 +633,18 @@ class Planet extends IC {
 	
 	
 	public function QueueBuildingRemove($ruler_id, $planet_id, $hash) {
-		$q = "DELETE FROM planet_building_queue
-				WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "','".$this->config['salt']."')) = '" . $this->db->esc($hash) . "' AND started IS NULL LIMIT 1";
-		$this->db->Edit($q);
-		
+		$q = "SELECT * FROM planet_building_queue
+				WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "','".$this->config['salt']."')) = '" . $this->db->esc($hash) . "'
+					AND started IS NULL LIMIT 1";
+					
+		if ($r = $this->db->Select($q)){
+			$q = "DELETE FROM planet_building_queue
+					WHERE building_id IN (SELECT building_id FROM building_prereq WHERE prereq = '" . $this->db->esc($r[0]['building_id']) . "')
+					OR id = '" . $this->db->esc($r[0]['id']) . "'
+					AND planet_id = '" . $this->db->esc($planet_id) . "'";
+			$this->db->Edit($q);
+		}
+							
 		$this->db->SortRank('planet_building_queue', 'rank', 'id', "WHERE planet_id='" . $this->db->esc($planet_id) . "'");
 	}
 	
@@ -588,31 +652,76 @@ class Planet extends IC {
 	
 	public function QueueBuildingReorder($ruler_id, $planet_id, $hashes) {
 		$currentQueue = $this->LoadBuildingsQueue($ruler_id, $planet_id);
+		$current   = $this->LoadPlanetBuildings($planet_id);
+		$queuePrereqs = array();
+		$queries = array();
+
 		$i            = 1;
 		
 		if ($currentQueue[0]['started']) {
 			$i = 2;
 		}
-		
+				
 		foreach ($hashes as $hash) {
-			foreach ($currentQueue as $queue) {
-				if ($hash == $queue['hash']) {
-					$queue['rank'] = $i;
-					$q             = "UPDATE planet_building_queue SET rank='" . $this->db->esc($queue['rank']) . "' WHERE id='" . $queue['id'] . "' LIMIT 1";
-					$this->db->Edit($q);
-					$i++;
-					continue 2;
+
+			$q = "SELECT * FROM planet_building_queue
+					WHERE MD5(CONCAT(id, '" . $ruler_id . "', '" . $planet_id . "','".$this->config['salt']."')) = '" . $this->db->esc($hash) . "'
+					AND planet_id = '" . $this->db->esc($planet_id) . "'";
+					
+			if ($thisQueue = $this->db->Select($q)){
+				$queue = $thisQueue[0];
+				$queuePrereqs[] = $queue['building_id'];				
+				$prereq = $this->LoadBuildingPrereq($queue['building_id']);
+				$found = false;
+				
+				if ($prereq['building']) {
+					foreach ($prereq['building'] as $id) {
+					
+						$found = false;
+						if ($current) {
+							foreach ($current as $cur) {
+								if ($cur['building_id'] == $id) {
+									$found = true;
+								}
+							}
+						}
+						if ($queue){
+							foreach ($queuePrereqs as $building_id) {
+								if ($building_id == $id) {
+									$found = true;
+								}
+							}					
+						}					
+					}
+					
+					if ($found === false){
+						$this->lastError = 'ERROR: Your items cannot be queued in this order due to missing pre-requisites.';
+						return false;
+					}else{
+						$queue['rank'] = $i;
+						$i++;
+						$queries[] = "UPDATE planet_building_queue
+										SET rank='" . $this->db->esc($queue['rank']) . "'
+										WHERE id='" . $queue['id'] . "' LIMIT 1";
+					}
 				}
 			}
-			
 		}
+		
+		
+		if ($queries){
+			foreach ($queries as $q){
+				$this->db->Edit($q);
+			}
+		}
+		return true;
 	}
 	
 	
 	
 	
 	public function LoadAvailableConversions($ruler_id, $planet_id) {
-		$resources = $this->LoadResources();
+		$resources = IC::getInstance()->LoadResources();
 		$buildings = $this->LoadPlanetBuildings($planet_id);
 		$research  = $this->Research->LoadRulerResearch($ruler_id);
 		$queue     = $this->LoadConversionQueue($ruler_id, $planet_id);
@@ -967,6 +1076,106 @@ class Planet extends IC {
 			return $this->db->QuickInsert('planet_has_resource', $arr);
 		}
 	}
+
+	public function VaryStorage($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['storage'] += $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'storage' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
+	
+	public function SetStorage($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['storage'] = $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'storage' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
+
+	public function VaryOutput($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['output'] += $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'output' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
+	
+	// Function not yet used
+	public function SetOutput($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['output'] = $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'output' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
+
+
+	// Function not yet used
+	public function VaryAbundance($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['abundance'] += $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'abundance' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
+	
+	// Function not yet used
+	public function SetAbundance($planet_id, $resource_id, $qty) {
+		$q = "SELECT * FROM planet_has_resource WHERE planet_id='" . $this->db->esc($planet_id) . "'
+				AND resource_id='" . $this->db->esc($resource_id) . "'";
+		if ($r = $this->db->Select($q, false, false, false)) {
+			$r[0]['abundance'] = $qty;
+			return $this->db->QuickEdit('planet_has_resource', $r[0]);
+		} else {
+			$arr = array(
+				'planet_id' => $planet_id,
+				'resource_id' => $resource_id,
+				'abundance' => $qty
+			);
+			return $this->db->QuickInsert('planet_has_resource', $arr);
+		}
+	}
 	
 	
 	public function Colonise($ruler_id, $planet_id, $planet_name, $fleet_id){
@@ -996,15 +1205,19 @@ class Planet extends IC {
 				$q = "SELECT * FROM planet_has_resource WHERE resource_id='" . $this->db->esc($row['resource_id']) . "'
 						AND planet_id='" . $this->db->esc($planet_id) . "'";
 				if ($this->db->Select($q)){
-					$q = "UPDATE planet_has_resource SET stored='" . $this->db->esc($row['stored']) . "'
+					$q = "UPDATE planet_has_resource SET
+								stored='" . $this->db->esc($row['stored']) . "',
+								storage='" . $this->CalcStorage($planet_id, $row['resource_id']) . "'
 								WHERE resource_id='" . $this->db->esc($row['resource_id']) . "'
 								AND planet_id='" . $this->db->esc($planet_id) . "' LIMIT 1";
 					$this->db->Edit($q);
 				}else{
 					$q = "INSERT INTO planet_has_resource SET
 								stored='" . $this->db->esc($row['stored']) . "',
+								abundance='" . $this->db->esc($row['abundance']) . "',
+								storage='" . $this->CalcStorage($planet_id, $row['resource_id']) . "',
 								resource_id='" . $this->db->esc($row['resource_id']) . "',
-							    planet_id='" . $this->db->esc($planet_id) . "'";
+								planet_id='" . $this->db->esc($planet_id) . "'";
 					$this->db->Insert($q);
 				}
 			}
@@ -1034,6 +1247,8 @@ class Planet extends IC {
 				}	
 			}
 		}
+		
+		$this->ResetOutputsCache($planet_id);
 		
 		return $planet_id;	
 		
@@ -1068,7 +1283,17 @@ class Planet extends IC {
 	}
 
 
-
+	public function ResetOutputsCache($planet_id) {
+		if ($outputs = $this->CalcPlanetResources($planet_id, false)){
+			foreach ($outputs as $resource => $res){
+				if (!$res['global']){
+					$this->SetStorage($planet_id, $res['id'], $res['storage']);
+					$this->SetOutput($planet_id, $res['id'], $res['output']);
+					$this->SetAbundance($planet_id, $res['id'], $res['abundance']);
+				}
+			}
+		}
+	}
 
 
 

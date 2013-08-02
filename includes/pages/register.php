@@ -1,7 +1,6 @@
 <?
 
-$R = new Ruler($db);
-$R->smarty = $smarty;
+$Ruler->smarty = $smarty;
 
 $form = new Form();
 
@@ -15,7 +14,7 @@ $form->Match('password', 'password2', 'password');
 
 if ($_POST){
 
-  if (!$R->CheckEmail($form->formData['email'])){
+  if (!$Ruler->CheckEmail($form->formData['email'])){
     $form->AddError('email', 'Email address in use');
   }
 
@@ -26,10 +25,10 @@ if ($_POST){
 
     $arr = array(
       'email' => $form->formData['email'],
-      'password' => $R->CreatePassword($form->formData['email'], $form->formData['password'])
+      'password' => $Ruler->CreatePassword($form->formData['email'], $form->formData['password'])
     );
 
-    if ($ruler = $R->CreateRuler($arr)){
+    if ($ruler = $Ruler->CreateRuler($arr)){
       $smarty->assign('content', $smarty->fetch('register_complete.tpl'));
       $smarty->display('layout_login.tpl');
       exit;

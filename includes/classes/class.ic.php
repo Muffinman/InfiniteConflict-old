@@ -5,12 +5,16 @@ class IC {
 	var $db;
 	var $smarty;
 	var $config;
+	var $lastError;
 	
-	public function __construct(&$db){
-		$this->db = &$db;
-		$this->Research = new Research($db);
-		$this->Planet = new Planet($db);
-		$this->Ruler = new Ruler($db);
+	private static $instance;
+
+	public function __construct(){
+		$this->db = db::getInstance();
+		$this->Research = Research::getInstance();
+		$this->Planet = Planet::getInstance();
+		$this->Ruler = Ruler::getInstance();
+		$this->Fleet = Fleet::getInstance();
 		$this->config = $this->LoadConfig();
 		
 		while ((int)$this->config['update'] == 1){
@@ -20,6 +24,15 @@ class IC {
 		
 	}
 	
+	private function __clone() { }
+
+	public static function getInstance() {
+		if (!IC::$instance instanceof self) {
+			 IC::$instance = new self();
+		}
+		return IC::$instance;
+	}
+
 	public function LoadSession($id){
 		$q = "SELECT * FROM session WHERE session_id='" . $this->db->esc($id) . "' LIMIT 1";
 		if ($r = $this->db->Select($q)){

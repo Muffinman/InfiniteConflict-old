@@ -47,12 +47,12 @@
       <div id="container">
 
         <ul id="menu">
-          <li class="home"><a {if $request.0 == ''}class="active" {/if}href="/">Home</a></li>
-          <li class="planets"><a {if $request.0 == 'planets' || $request.0 == 'planet'}class="active" {/if}href="/planets">Planets</a></li>
-          <li class="fleets"><a {if $request.0 == 'fleets' || $request.0 == 'fleet'}class="active" {/if}href="/fleets">Fleets</a></li>
-          <li class="navigation"><a {if $request.0 == 'navigation'}class="active" {/if}href="/navigation">Navigation</a></li>
-          <li class="research"><a {if $request.0 == 'research'}class="active" {/if}href="/research">Research</a></li>
-          <li class="alliances"><a {if $request.0 == 'alliances'}class="active" {/if}href="/alliances">Alliances</a></li>
+          <li class="home{if $request.0 == ''} active{/if}"><a href="/"><span>Home</span></a></li>
+          <li class="planets{if $request.0 == 'planets' || $request.0 == 'planet'} active{/if}"><a href="/planets"><span>Planets</span></a></li>
+          <li class="fleets{if $request.0 == 'fleets' || $request.0 == 'fleet'} active{/if}"><a href="/fleets"><span>Fleets</span></a></li>
+          <li class="navigation{if $request.0 == 'navigation'} active{/if}"><a href="/navigation"><span>Nav</span></a></li>
+          <li class="research{if $request.0 == 'research'} active{/if}"><a href="/research"><span>Research</span></a></li>
+          <li class="alliances{if $request.0 == 'alliances'} active{/if}"><a href="/alliances"><span>Alliances</span></a></li>
         </ul>
 
 
@@ -68,7 +68,7 @@
           <div class="clear"></div>
 
           <div class="content headbar footer">
-            <p>Page generated in {$page_time}s ({$page_query_time}s database). Next update in <span id="update_next">{$time_till_update}</span>s.</p>
+            <p>Page generated in {$page_time}s ({$page_query_time}s database). {$page_queries} Queries. Next update in <span id="update_next">{$time_till_update}</span>s.</p>
           </div>
         </div>
       </div>

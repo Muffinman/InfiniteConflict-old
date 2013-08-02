@@ -16,15 +16,18 @@ require_once('config.php');
 FB::setEnabled(false);
 ob_end_clean();
 
-$Update = new Update($db);
+$IC = IC::getInstance();
+
+$Update = new Update();
 $Update->process();
+$Update->pagestart = $pagestart;
 
 if (is_numeric($argv[1]) && $argv[1] > 1){
-	echo "Update 1 done\n";
+	echo "Update 1 done\n\n";
 	for ($i = 2; $i <= $argv[1]; $i++){
 		$Update->db->ClearCache();
 		$Update->process();
-		echo "Update " . $i . " done\n";
+		echo "Update " . $i . " done\n\n";
 	}
 }
 

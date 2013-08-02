@@ -1,10 +1,21 @@
 <?
 
-class Research extends IC {
+class Research {
 
-	public function __construct(&$db){
-		$this->db = &$db;
+	private static $instance;
+
+	public function __construct() {
+		$this->db = db::getInstance();
 	}
+	
+	public static function getInstance() {
+		if (!Research::$instance instanceof self) {
+			 Research::$instance = new self();
+		}
+		return Research::$instance;
+	}
+
+	private function __clone() { }
 
 
 	public function LoadResearch(){

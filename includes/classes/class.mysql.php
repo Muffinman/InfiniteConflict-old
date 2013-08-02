@@ -19,7 +19,7 @@
  *  
  */
 
-class mysql {
+class db {
 
   # config vars
   var $dbHost;
@@ -41,11 +41,22 @@ class mysql {
   var $queryCache = array();
   var $usedCache=0;
 
-  function mysql() {
+  private static $instance;
+  private function __clone() { }
+
+
+  function __construct() {
     $this->dbHost = 'localhost';
     $this->allQueries = array();
     $this->numQueries = 0;
     $this->errStr = '';
+  }
+
+  public static function getInstance() {
+      if (!db::$instance instanceof self) {
+           db::$instance = new self();
+      }
+      return db::$instance;
   }
 
   function esc($s){

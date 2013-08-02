@@ -37,7 +37,11 @@ $(document).ready(function(){
 		},
 			stop: function(event, ui){
 				$.post('/ajax/buildings/queue/reorder/', $(this).sortable('serialize') + '&planet_id=' + $("#planet_id").val(), function(data){
-					redrawBuildingQueue(data);
+					if (data.response == 'success'){
+						redrawBuildingQueue(data);
+					}else{
+						$('<p class="error">' + data.id + '</p>').insertAfter("#planet .queue h1");
+					}
 				}, 'json');
 			}
 	});

@@ -1,14 +1,14 @@
 <?
 $error = true;
 
-$IC->Fleet = new Fleet($db);
+//$IC->Fleet = new Fleet($db);
 
-$fleet = $IC->Fleet->LoadFleet($request[1]);
-$fleet['queue'] = $IC->Fleet->LoadQueue($fleet['id']);
+$fleet = $Fleet->LoadFleet($request[1]);
+$fleet['queue'] = $Fleet->LoadQueue($fleet['id']);
 $fleet['name'] = htmlspecialchars($fleet['name']);
 $fleet['planet_name'] = htmlspecialchars($fleet['planet_name']);
 
-if ($rulerPlanets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id'])){
+if ($rulerPlanets = $Ruler->LoadRulerPlanets($_SESSION['ruler']['id'])){
 	$planets = array();
 	foreach($rulerPlanets as $p){
 		$p['name'] = htmlspecialchars($p['name']);
@@ -16,17 +16,17 @@ if ($rulerPlanets = $IC->Ruler->LoadRulerPlanets($_SESSION['ruler']['id'])){
 	}
 }
 
-$resources = $IC->Planet->LoadResources();
-$production = $IC->Planet->LoadProduction();
+$resources = $IC->LoadResources();
+$production = $Planet->LoadProduction();
 
 if ($fleet['planet_id']){
-	$colonise = $IC->Fleet->CanColonise($fleet['id'], $fleet['planet_id']);
+	$colonise = $Fleet->CanColonise($_SESSION['ruler']['id'], $fleet['id'], $fleet['planet_id']);
 	$smarty->assign('colonise', $colonise);
 }
 
 if ($fleet){
 
-	if ($IC->Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){		
+	if ($Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){		
 		
 		if ($_POST['transfer-dest'] && $request[2] == 'transfer'){
 			$dest = explode("_", $_POST['transfer-dest']);
@@ -39,11 +39,11 @@ if ($fleet){
 			}
 			
 			if ($dest_type == 'planet'){
-				if (!$IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $dest_id)){
+				if (!$Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $dest_id)){
 					unset($dest_type);
 					unset($dest_id);
 				}
-				if (!$IC->Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){
+				if (!$Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){
 					unset($dest_type);
 					unset($dest_id);
 				}
@@ -54,11 +54,11 @@ if ($fleet){
 			}
 		
 			if ($dest_type == 'fleet'){
-				if (!$IC->Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $dest_id)){
+				if (!$Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $dest_id)){
 					unset($dest_type);
 					unset($dest_id);
 				}
-				if (!$IC->Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){
+				if (!$Fleet->RulerOwnsFleet($_SESSION['ruler']['id'], $fleet['id'])){
 					unset($dest_type);
 					unset($dest_id);
 				}
@@ -70,14 +70,14 @@ if ($fleet){
 			if ($_POST['resource']){
 				foreach($_POST['resource'] as $k => $v){
 					if ($v){
-						$IC->Fleet->PlanetToFleetResource($dest_id, $fleet['id'], $k, $v);
+						$Fleet->PlanetToFleetResource($dest_id, $fleet['id'], $k, $v);
 					}
 				}
 			}
 			if ($_POST['produced']){
 				foreach($_POST['produced'] as $k => $v){
 					if ($v){
-						$IC->Fleet->PlanetToFleetProduction($dest_id, $fleet['id'], $k, $v);
+						$Fleet->PlanetToFleetProduction($dest_id, $fleet['id'], $k, $v);
 					}
 				}
 			}
@@ -90,14 +90,14 @@ if ($fleet){
 			if ($_POST['resource']){
 				foreach($_POST['resource'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToPlanetResource($fleet['id'], $dest_id, $k, $v);
+						$Fleet->FleetToPlanetResource($fleet['id'], $dest_id, $k, $v);
 					}
 				}
 			}
 			if ($_POST['produced']){
 				foreach($_POST['produced'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToPlanetProduction($fleet['id'], $dest_id, $k, $v);
+						$Fleet->FleetToPlanetProduction($fleet['id'], $dest_id, $k, $v);
 					}
 				}
 			}
@@ -110,14 +110,14 @@ if ($fleet){
 			if ($_POST['resource']){
 				foreach($_POST['resource'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToFleetResource($fleet['id'], $dest_id, $k, $v);
+						$Fleet->FleetToFleetResource($fleet['id'], $dest_id, $k, $v);
 					}
 				}
 			}
 			if ($_POST['produced']){
 				foreach($_POST['produced'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToFleetProduction($fleet['id'], $dest_id, $k, $v);
+						$Fleet->FleetToFleetProduction($fleet['id'], $dest_id, $k, $v);
 					}
 				}
 			}
@@ -130,14 +130,14 @@ if ($fleet){
 			if ($_POST['resource']){
 				foreach($_POST['resource'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToFleetResource($dest_id, $fleet['id'], $k, $v);
+						$Fleet->FleetToFleetResource($dest_id, $fleet['id'], $k, $v);
 					}
 				}
 			}
 			if ($_POST['produced']){
 				foreach($_POST['produced'] as $k => $v){
 					if ($v){
-						$IC->Fleet->FleetToFleetProduction($dest_id, $fleet['id'], $k, $v);
+						$Fleet->FleetToFleetProduction($dest_id, $fleet['id'], $k, $v);
 					}
 				}
 			}
@@ -151,19 +151,19 @@ if ($fleet){
 
 		
 		if ($_POST['planet_id'] > 0){
-			$IC->Fleet->AddToQueue($fleet['id'], 'move', 'planet_id', $_POST['planet_id'], false, $_POST['repeat']);
+			$Fleet->AddToQueue($fleet['id'], 'move', 'planet_id', $_POST['planet_id'], false, $_POST['repeat']);
 			header('Location: /fleet/' . $fleet['id']);
 			die;
 		}
 		
 		if ($_POST['wait'] > 0){
-			$IC->Fleet->AddToQueue($fleet['id'], 'wait', 'turns', $_POST['wait'], $_POST['wait'], $_POST['repeat']);
+			$Fleet->AddToQueue($fleet['id'], 'wait', 'turns', $_POST['wait'], $_POST['wait'], $_POST['repeat']);
 			header('Location: /fleet/' . $fleet['id']);
 			die;
 		}
 		
 		if ($_POST['unloadall']){
-			$IC->Fleet->AddToQueue($fleet['id'], 'unloadall', false, false, false, $_POST['repeat']);
+			$Fleet->AddToQueue($fleet['id'], 'unloadall', false, false, false, $_POST['repeat']);
 			header('Location: /fleet/' . $fleet['id']);
 			die;
 		}
@@ -171,12 +171,12 @@ if ($fleet){
 		if ($_POST['addtoqueue'] == 'Load'){
 			foreach($_POST['production'] as $k => $v){
 				if ($v > 0){
-					$IC->Fleet->AddToQueue($fleet['id'], 'load', 'production_id', $k, $v, $_POST['repeat']);
+					$Fleet->AddToQueue($fleet['id'], 'load', 'production_id', $k, $v, $_POST['repeat']);
 				}
 			}
 			foreach($_POST['resource'] as $k => $v){
 				if ($v > 0){
-					$IC->Fleet->AddToQueue($fleet['id'], 'load', 'resource_id', $k, $v, $_POST['repeat']);
+					$Fleet->AddToQueue($fleet['id'], 'load', 'resource_id', $k, $v, $_POST['repeat']);
 				}
 			}
 			header('Location: /fleet/' . $fleet['id']);
@@ -186,12 +186,12 @@ if ($fleet){
 		if ($_POST['addtoqueue'] == 'Unload'){
 			foreach($_POST['production'] as $k => $v){
 				if ($v > 0){
-					$IC->Fleet->AddToQueue($fleet['id'], 'unload', 'production_id', $k, $v, $_POST['repeat']);
+					$Fleet->AddToQueue($fleet['id'], 'unload', 'production_id', $k, $v, $_POST['repeat']);
 				}
 			}
 			foreach($_POST['resource'] as $k => $v){
 				if ($v > 0){
-					$IC->Fleet->AddToQueue($fleet['id'], 'unload', 'resource_id', $k, $v, $_POST['repeat']);
+					$Fleet->AddToQueue($fleet['id'], 'unload', 'resource_id', $k, $v, $_POST['repeat']);
 				}
 			}
 			header('Location: /fleet/' . $fleet['id']);
@@ -203,10 +203,10 @@ if ($fleet){
 
 	
 			
-		if ($IC->Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $fleet['planet_id'])){
+		if ($Planet->RulerOwnsPlanet($_SESSION['ruler']['id'], $fleet['planet_id'])){
 			$planet = $IC->LoadPlanet($fleet['planet_id']);
-			$planet['produced'] = $IC->Planet->LoadProduced($fleet['planet_id']);
-			$planet['resources'] = $IC->Planet->LoadPlanetResources($fleet['planet_id']);
+			$planet['produced'] = $Planet->LoadProduced($fleet['planet_id']);
+			$planet['resources'] = $Planet->LoadPlanetResources($fleet['planet_id']);
 			$planet['name'] = htmlspecialchars($planet['name']);
 			$smarty->assign('planet', $planet);
 			
@@ -216,12 +216,12 @@ if ($fleet){
 			}
 		}
 		
-		if ($fleets = $IC->Fleet->LoadPlanetFleets($fleet['planet_id'], $_SESSION['ruler']['id'])){
+		if ($fleets = $Fleet->LoadPlanetFleets($fleet['planet_id'], $_SESSION['ruler']['id'])){
 			$out = array();
 			foreach($fleets as $f){
 				if ($f['id'] != $fleet['id']){
-					$f['produced'] = $IC->Fleet->LoadProduced($f['id']);
-					$f['resources'] = $IC->Fleet->LoadFleetResources($f['id']);
+					$f['produced'] = $Fleet->LoadProduced($f['id']);
+					$f['resources'] = $Fleet->LoadFleetResources($f['id']);
 					$f['name'] = htmlspecialchars($f['name']);
 					$out[] = $f;
 				}

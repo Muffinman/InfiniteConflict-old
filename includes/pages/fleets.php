@@ -1,8 +1,8 @@
 <?php
 
-$IC->Fleet = new Fleet($db);
+//$IC->Fleet = new Fleet($db);
 
-if ($rulerFleets = $IC->Fleet->LoadRulerFleets($_SESSION['ruler']['id'])){
+if ($rulerFleets = $Fleet->LoadRulerFleets($_SESSION['ruler']['id'])){
 	$fleets = array();
 	foreach ($rulerFleets as $f) {
 		$f['name'] = htmlspecialchars($f['name']);

@@ -1,12 +1,23 @@
 <?
 
-class Fleet extends IC {
+class Fleet {
 
+	private static $instance;
 
-	function __construct(&$db){
-		$this->db = $db;
-		$this->Planet = new Planet($db);
+	public function __construct() {
+		$this->db = db::getInstance();
+		$this->Planet = Planet::getInstance();
+		$this->Ruler = Ruler::getInstance();
 	}
+	
+	public static function getInstance() {
+		if (!Fleet::$instance instanceof self) {
+			 Fleet::$instance = new self();
+		}
+		return Fleet::$instance;
+	}
+
+	private function __clone() { }
 	
 	
 	public function RulerOwnsFleet($ruler_id, $fleet_id){
@@ -67,6 +78,17 @@ class Fleet extends IC {
 		}
 		return false;
 	}
+
+
+	public function LoadRulerFleetCount($ruler_id){
+		$q = "SELECT COUNT(id) AS fleets FROM fleet
+						WHERE fleet.ruler_id='" . $this->db->esc($ruler_id) . "'";
+		if ($r = $this->db->Select($q)){
+			return $r[0]['fleets'];
+		}
+		return false;
+	}
+
 	
 	
 	public function LoadPlanetFleets($planet_id, $ruler_id=false){
@@ -416,12 +438,14 @@ class Fleet extends IC {
 	public function TravelTime($fleet_id, $src_id, $dest_id){
 		// Lookup ship fleet drive;
 		
+		$IC = IC::getInstance();
+
 		$fleet = $this->LoadFleet($fleet_id);
-		$src = $this->Planet->LoadPlanet($src_id);
-		$dest = $this->Planet->LoadPlanet($dest_id);
-		$ruler = $this->LoadRuler($fleet['ruler_id']);
-		$src_ruler = $this->LoadRuler($src['ruler_id']);
-		$dest_ruler = $this->LoadRuler($dest['ruler_id']);
+		$src = $IC->LoadPlanet($src_id);
+		$dest = $IC->LoadPlanet($dest_id);
+		$ruler = $IC->LoadRuler($fleet['ruler_id']);
+		$src_ruler = $IC->LoadRuler($src['ruler_id']);
+		$dest_ruler = $IC->LoadRuler($dest['ruler_id']);
 		
 		if ($produced = $this->LoadProduced($fleet_id)){
 			$drive=1;
@@ -497,7 +521,7 @@ class Fleet extends IC {
 	}
 	
 	
-	public function CanColonise($fleet_id, $planet_id){
+	public function CanColonise($ruler_id, $fleet_id, $planet_id){
 		if ($produced = $this->LoadProduced($fleet_id)){
 			$colShip = false;
 			foreach ($produced as $p) {
@@ -508,9 +532,11 @@ class Fleet extends IC {
 		}
 		
 		if ($colShip === true){
-			if ($planet = $this->Planet->LoadPlanet($planet_id)){
+			if ($planet = IC::getInstance()->LoadPlanet($planet_id)){
 				if (!$planet['home'] && !$planet['ruler_id']){
-					return true;
+					if ($num_planets = $this->Ruler->LoadRulerPlanetCount($ruler_id) && $num_planets < $this->Ruler->LoadRulerPL($ruler_id)){
+						return true;
+					}
 				}
 			}
 		}

@@ -3,6 +3,9 @@
   <p><img src="{$ruler.avatar}" alt="{$ruler.name}"/></p>
   <p><strong>Ruler name:</strong> {$ruler.name}</p>
   <p>&nbsp;</p>
+  <p><strong>Planets:</strong> {$ruler.planets}</p>
+  <p><strong>Fleets:</strong> {$ruler.fleets}</p>
+  <p>&nbsp;</p>
   <p><strong>Asset Score:</strong> {$ruler.asset_score}</p>
   <p><strong>Combat Score:</strong> {$ruler.combat_score}</p>
   <p>&nbsp;</p>

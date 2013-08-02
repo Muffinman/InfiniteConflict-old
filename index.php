@@ -6,7 +6,13 @@ require_once 'includes/functions.php';
 $smarty->assign('title', 'Infinite Conflict - The Second Best Tick Based Strategy Game.');
 $smarty->assign('keywords', 'Online game, strategy game, online strategy game');
 
-$IC = new IC($db);
+$IC = IC::getInstance();
+$Ruler = Ruler::getInstance();
+$Research = Research::getInstance();
+$Planet = Planet::getInstance();
+$Ruler = Ruler::getInstance();
+$Fleet = Fleet::getInstance();
+
 $IC->smarty = $smarty;
 
 # Detect URL components
