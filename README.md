@@ -3,6 +3,12 @@ InfiniteConflict
 
 Tick Based Strategy Game
 
+NOTE: This is now a dead project.
+---------------------------------
+
+I will be leaving it here to refer to, but will not be committing any further changes to this. I may try to develop this in Laravel in the future.
+
+
 Idea
 ----
 
